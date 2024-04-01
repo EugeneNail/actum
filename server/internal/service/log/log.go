@@ -22,19 +22,19 @@ func Info(message string) {
 	appendMessage(message, infoLogger)
 }
 
-func Debug(message string) {
+func Debug(message any) {
 	appendMessage(message, debugLogger)
 }
 
-func Error(message string) {
+func Error(message error) {
 	appendMessage(message, errorLogger)
 }
 
-func appendMessage(message string, logger *log.Logger) {
+func appendMessage(message any, logger *log.Logger) {
 	logger.Println(message)
 }
 
-func RotateLogFiles() {
+func RotateFiles() {
 	setOutputFile()
 	for range time.Tick(time.Second) {
 		if time.Now().Hour() == 0 && time.Now().Minute() == 0 {
