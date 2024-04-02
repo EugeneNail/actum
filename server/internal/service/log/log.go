@@ -15,7 +15,7 @@ var errorLogger *log.Logger
 func init() {
 	infoLogger = log.New(os.Stdout, "INFO  ", log.Ltime|log.Lmicroseconds)
 	debugLogger = log.New(os.Stdout, "DEBUG ", log.Ltime|log.Lmicroseconds)
-	errorLogger = log.New(os.Stdout, "ERROR ", log.Ltime|log.Lmicroseconds)
+	errorLogger = log.New(os.Stdout, "ERROR ", log.Ltime|log.Lmicroseconds|log.Lshortfile)
 }
 
 func Info(message string) {
@@ -35,21 +35,22 @@ func appendMessage(message string, logger *log.Logger) {
 }
 
 func RotateLogFiles() {
+	setOutputFile()
 	for range time.Tick(time.Second) {
-		writer := io.MultiWriter(getOutputFile(), os.Stdout)
-		infoLogger.SetOutput(writer)
-		debugLogger.SetOutput(writer)
-		errorLogger.SetOutput(writer)
+		if time.Now().Hour() == 0 && time.Now().Minute() == 0 {
+			setOutputFile()
+		}
 	}
 }
 
-func getOutputFile() (file *os.File) {
-	defer func(file *os.File) {
-		if err := file.Close(); err != nil {
-			errorLogger.Println(err)
-		}
-	}(file)
+func setOutputFile() {
+	writer := io.MultiWriter(getOutputFile(), os.Stdout)
+	infoLogger.SetOutput(writer)
+	debugLogger.SetOutput(writer)
+	errorLogger.SetOutput(writer)
+}
 
+func getOutputFile() (file *os.File) {
 	directory := os.Getenv("LOG_PATH")
 	filename := fmt.Sprintf(
 		"%s/%s.log",
@@ -64,6 +65,10 @@ func getOutputFile() (file *os.File) {
 		file, _ = os.Create(filename)
 	} else {
 		file, _ = os.OpenFile(filename, os.O_WRONLY|os.O_APPEND, 0755)
+	}
+
+	if err := file.Close(); err != nil {
+		errorLogger.Println(err)
 	}
 
 	return
