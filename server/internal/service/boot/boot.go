@@ -8,9 +8,11 @@ import (
 	"path/filepath"
 )
 
-func LoadEnv() error {
+func LoadEnv() {
 	envPath := filepath.Join(GetRootDirectory(), ".env")
-	return godotenv.Load(envPath)
+	if err := godotenv.Load(envPath); err != nil {
+		panic(err)
+	}
 }
 
 func GetRootDirectory() string {
