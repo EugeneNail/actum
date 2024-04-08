@@ -1,7 +1,7 @@
 package main
 
 import (
-	"errors"
+	"flag"
 	"fmt"
 	"github.com/EugeneNail/actum/internal/service/env"
 	"log"
@@ -12,37 +12,37 @@ import (
 
 func main() {
 	env.Load()
+
 	if len(os.Args) == 1 {
-		log.Fatal(errors.New("object is missing"))
+		fmt.Println("subcommand required")
+		os.Exit(1)
 	}
-	switch object := os.Args[1]; object {
+
+	switch subcommand := os.Args[1]; subcommand {
 	case "migration":
 		createMigration()
+	default:
+		panic("unknown subcommand")
 	}
 
 }
 
 func createMigration() {
-	if len(os.Args) == 2 {
-		log.Fatal(errors.New("name of migration is missing"))
-	}
-
-	name := os.Args[2]
+	name := *flag.
+		NewFlagSet("migration", flag.ExitOnError).
+		String("name", "nameless_migration", "migration name")
 	now := time.Now().Unix()
-	migrations := getMigrationsDirectory()
+	migrations := filepath.Join(os.Getenv("APP_PATH"), "internal", "database", "migrations")
 	up := fmt.Sprintf("%s/%d.%s.%s.sql", migrations, now, name, "up")
 	down := fmt.Sprintf("%s/%d.%s.%s.sql", migrations, now, name, "down")
-
 	_, err := os.Create(up)
-	if err != nil {
-		log.Fatal(err)
-	}
+	check(err)
 	_, err = os.Create(down)
-	if err != nil {
-		log.Fatal(err)
-	}
+	check(err)
 }
 
-func getMigrationsDirectory() string {
-	return filepath.Join(os.Getenv("APP_PATH"), "internal", "database", "migrations")
+func check(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
 }

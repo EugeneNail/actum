@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"database/sql"
+	"flag"
 	"fmt"
 	"github.com/EugeneNail/actum/internal/database/mysql"
 	"github.com/EugeneNail/actum/internal/service/env"
@@ -10,7 +11,6 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
-	"strconv"
 	"strings"
 )
 
@@ -22,18 +22,19 @@ type migration struct {
 func main() {
 	env.Load()
 	createTable()
+	rollbackCommand := flag.NewFlagSet("rollback", flag.ExitOnError)
+	steps := rollbackCommand.Int("steps", -1, "number of migrations to rollback")
 
 	switch {
 	case len(os.Args) == 1:
 		migrate()
-	case len(os.Args) == 2 && os.Args[1] == "rollback":
-		rollback(-1)
-	case len(os.Args) == 3 && os.Args[1] == "rollback":
-		steps, err := strconv.Atoi(os.Args[2])
+	case os.Args[1] == "rollback":
+		err := rollbackCommand.Parse(os.Args[2:])
 		check(err)
-		rollback(steps)
+		rollback(*steps)
 	default:
-		log.Fatal("invalid command arguments")
+		fmt.Println("invalid command arguments")
+		os.Exit(1)
 	}
 }
 
@@ -47,6 +48,7 @@ func rollback(steps int) {
 			break
 		}
 		currentMigration := getCurrentMigration(migrations, appliedMigrations[i])
+		apply(currentMigration)
 		apply(currentMigration)
 		steps--
 		isRolledBack = true
@@ -170,16 +172,17 @@ func createTable() {
 	check(err)
 }
 
-func check(error error) {
-	if error != nil {
-		log.Fatal(error)
-	}
-}
-
 func checkTransaction(err error, migration migration, transaction *sql.Tx) {
 	if err != nil {
 		transaction.Rollback()
 		fmt.Println("FAIL", migration.name, "\n")
 		log.Fatal(err)
+	}
+}
+
+func check(err error) {
+	if err != nil {
+		log.Fatal(err)
+
 	}
 }
