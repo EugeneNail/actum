@@ -71,17 +71,13 @@ func RegisterRoute(method string, pattern string, handlerFunction func(http.Resp
 
 func validateMethod(method string) {
 	validMethods := []string{"POST", "GET", "HEAD", "OPTIONS", "PUT", "PATCH", "DELETE"}
-	isValid := false
 
 	for _, validMethod := range validMethods {
 		if method == validMethod {
 			return
 		}
 	}
-
-	if !isValid {
-		panic("invalid route method: " + method)
-	}
+	panic("invalid route method: " + method)
 }
 
 func GetVariable(request *http.Request, index int) string {
