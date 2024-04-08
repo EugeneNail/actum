@@ -44,22 +44,22 @@ func Serve() http.HandlerFunc {
 }
 
 func Get(pattern string, handlerFunction func(http.ResponseWriter, *http.Request)) {
-	NewRoute("GET", pattern, handlerFunction)
+	RegisterRoute("GET", pattern, handlerFunction)
 }
 
 func Post(pattern string, handlerFunction func(http.ResponseWriter, *http.Request)) {
-	NewRoute("POST", pattern, handlerFunction)
+	RegisterRoute("POST", pattern, handlerFunction)
 }
 
 func Put(pattern string, handlerFunction func(http.ResponseWriter, *http.Request)) {
-	NewRoute("PUT", pattern, handlerFunction)
+	RegisterRoute("PUT", pattern, handlerFunction)
 }
 
 func Delete(pattern string, handlerFunction func(http.ResponseWriter, *http.Request)) {
-	NewRoute("DELETE", pattern, handlerFunction)
+	RegisterRoute("DELETE", pattern, handlerFunction)
 }
 
-func NewRoute(method string, pattern string, handlerFunction func(http.ResponseWriter, *http.Request)) {
+func RegisterRoute(method string, pattern string, handlerFunction func(http.ResponseWriter, *http.Request)) {
 	validateMethod(method)
 	pattern = regexp.MustCompile(":[a-zA-Z]*").ReplaceAllString(pattern, "([0-9a-zA-Z_-]+)")
 	routes = append(routes, route{
@@ -70,13 +70,12 @@ func NewRoute(method string, pattern string, handlerFunction func(http.ResponseW
 }
 
 func validateMethod(method string) {
-	methods := []string{"POST", "GET", "HEAD", "OPTIONS", "PUT", "PATCH", "DELETE"}
+	validMethods := []string{"POST", "GET", "HEAD", "OPTIONS", "PUT", "PATCH", "DELETE"}
 	isValid := false
 
-	for _, validMethod := range methods {
+	for _, validMethod := range validMethods {
 		if method == validMethod {
-			isValid = true
-			break
+			return
 		}
 	}
 
