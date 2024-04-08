@@ -49,7 +49,6 @@ func rollback(steps int) {
 		}
 		currentMigration := getCurrentMigration(migrations, appliedMigrations[i])
 		apply(currentMigration)
-		apply(currentMigration)
 		steps--
 		isRolledBack = true
 	}
@@ -183,6 +182,5 @@ func checkTransaction(err error, migration migration, transaction *sql.Tx) {
 func check(err error) {
 	if err != nil {
 		log.Fatal(err)
-
 	}
 }
