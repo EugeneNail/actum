@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/EugeneNail/actum/internal/database/mysql"
-	"github.com/EugeneNail/actum/internal/service/boot"
+	"github.com/EugeneNail/actum/internal/service/env"
 	"log"
 	"os"
 	"path/filepath"
@@ -20,7 +20,7 @@ type migration struct {
 }
 
 func main() {
-	boot.LoadEnv()
+	env.Load()
 	createTable()
 
 	switch {

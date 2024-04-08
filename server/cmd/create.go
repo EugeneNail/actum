@@ -3,7 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
-	"github.com/EugeneNail/actum/internal/service/boot"
+	"github.com/EugeneNail/actum/internal/service/env"
 	"log"
 	"os"
 	"path/filepath"
@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	boot.LoadEnv()
+	env.Load()
 	if len(os.Args) == 1 {
 		log.Fatal(errors.New("object is missing"))
 	}
