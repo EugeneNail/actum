@@ -22,34 +22,36 @@ type migration struct {
 func main() {
 	env.Load()
 	createTable()
-	rollbackCommand := flag.NewFlagSet("rollback", flag.ExitOnError)
-	steps := rollbackCommand.Int("steps", -1, "number of migrations to rollback")
+	checkMigrationsDirectory()
 
 	switch {
 	case len(os.Args) == 1:
 		migrate()
 	case os.Args[1] == "rollback":
-		err := rollbackCommand.Parse(os.Args[2:])
-		check(err)
-		rollback(*steps)
+		rollback()
 	default:
 		fmt.Println("invalid command arguments")
 		os.Exit(1)
 	}
 }
 
-func rollback(steps int) {
+func rollback() {
+	rollbackCommand := flag.NewFlagSet("rollback", flag.ExitOnError)
+	steps := rollbackCommand.Int("steps", -1, "number of migrations to rollback")
+	err := rollbackCommand.Parse(os.Args[2:])
+	check(err)
+
 	migrations := getMigrations("down")
 	appliedMigrations := getAppliedMigrations()
 	var isRolledBack bool
 
 	for i := len(appliedMigrations) - 1; i >= 0; i-- {
-		if steps == 0 {
+		if *steps == 0 {
 			break
 		}
 		currentMigration := getCurrentMigration(migrations, appliedMigrations[i])
 		apply(currentMigration)
-		steps--
+		*steps--
 		isRolledBack = true
 	}
 
@@ -89,6 +91,17 @@ func migrate() {
 
 	if !isMigrated {
 		fmt.Println("Nothing to migrate")
+	}
+}
+
+func checkMigrationsDirectory() {
+	pathToMigrations := filepath.Join(
+		os.Getenv("APP_PATH"), "internal", "database", "migrations",
+	)
+	_, err := os.Stat(pathToMigrations)
+	if err != nil && os.IsNotExist(err) {
+		err := os.MkdirAll(pathToMigrations, 0755)
+		check(err)
 	}
 }
 
@@ -163,7 +176,7 @@ func createTable() {
 	query := ` 
 	CREATE TABLE IF NOT EXISTS migrations (
 	    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-		migrations VARCHAR(255) NOT NULL,
+		migration VARCHAR(255) NOT NULL,
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		PRIMARY KEY (id)
 	);`
