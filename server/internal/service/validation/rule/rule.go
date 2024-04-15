@@ -7,34 +7,45 @@ import (
 	"strings"
 )
 
-func Determine(pipeRule string) Rule {
+func Determine(pipeRule string) RuleFunc {
 	rule := strings.Split(pipeRule, ":")
 	switch rule[0] {
 	case "required":
-		return required{}
+		return required
 	case "min":
-		return newMinRule(rule)
+		return newMinRuleFunc(rule)
 	default:
 		return nil
 	}
 }
 
-func newMinRule(rule []string) Rule {
-	if len(rule) == 1 {
-		return min{0}
-	}
-	limit, err := strconv.Atoi(rule[1])
+func newMinRuleFunc(rule []string) RuleFunc {
+	limit := 0
+	if len(rule) == 2 {
+		parsed, err := strconv.Atoi(rule[1])
 
-	if err != nil {
-		return min{0}
+		if err == nil {
+			limit = parsed
+		}
 	}
 
-	return min{limit}
+	return func(name string, value any) error {
+		switch value.(type) {
+		case string:
+			if len(value.(string)) < limit {
+				return fmt.Errorf("The %s field must be at least %d characters long", name, limit)
+			}
+		case int:
+			if value.(int) < limit {
+				return fmt.Errorf("The %s field must be greater than %d", name, limit)
+			}
+		}
+
+		return nil
+	}
 }
 
-type required struct{}
-
-func (this required) Apply(name string, value any) error {
+func required(name string, value any) error {
 	if value == 0 || value == "" || value == nil {
 		return errors.New(fmt.Sprintf("The %s field is required", name))
 	}
@@ -42,25 +53,4 @@ func (this required) Apply(name string, value any) error {
 	return nil
 }
 
-type min struct {
-	limit int
-}
-
-func (this min) Apply(name string, value any) error {
-	switch value.(type) {
-	case string:
-		if len(value.(string)) < this.limit {
-			return fmt.Errorf("The %s field must be at least %d characters long", name, this.limit)
-		}
-	case int:
-		if value.(int) < this.limit {
-			return fmt.Errorf("The %s field must be greater than %d", name, this.limit)
-		}
-	}
-
-	return nil
-}
-
-type Rule interface {
-	Apply(string, any) error
-}
+type RuleFunc func(string, any) error

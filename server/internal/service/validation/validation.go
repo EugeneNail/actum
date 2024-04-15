@@ -7,40 +7,21 @@ import (
 )
 
 type field struct {
-	name  string
-	value any
-	rules []rule.Rule
+	name      string
+	value     any
+	ruleFuncs []rule.RuleFunc
 }
 
 type Validation struct {
-	fields []field
 	errors map[string]string
 }
 
 func New(data any) *Validation {
-	validation := &Validation{make([]field, 0), map[string]string{}}
+	validation := &Validation{map[string]string{}}
 	fields := extractFields(data)
 	validation.errors = validate(fields)
 
 	return validation
-}
-
-func validate(fields []field) map[string]string {
-	errors := make(map[string]string)
-
-	for _, field := range fields {
-	ruleLoop:
-		for _, rule := range field.rules {
-			err := rule.Apply(field.name, field.value)
-
-			if err != nil {
-				errors[field.name] = err.Error()
-				break ruleLoop
-			}
-		}
-	}
-
-	return errors
 }
 
 func extractFields(data any) []field {
@@ -59,13 +40,31 @@ func extractFields(data any) []field {
 }
 
 func newField(name string, value any, pipeRules string) field {
-	var rules = make([]rule.Rule, 0)
+	var rules = make([]rule.RuleFunc, 0)
 
 	for _, pipeRule := range strings.Split(pipeRules, "|") {
 		rules = append(rules, rule.Determine(pipeRule))
 	}
 
 	return field{name, value, rules}
+}
+
+func validate(fields []field) map[string]string {
+	errors := make(map[string]string)
+
+	for _, field := range fields {
+	ruleLoop:
+		for _, ruleFunc := range field.ruleFuncs {
+			err := ruleFunc(field.name, field.value)
+
+			if err != nil {
+				errors[field.name] = err.Error()
+				break ruleLoop
+			}
+		}
+	}
+
+	return errors
 }
 
 func (this *Validation) Errors() map[string]string {
