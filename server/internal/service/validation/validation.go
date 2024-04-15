@@ -1,8 +1,8 @@
 package validation
 
 import (
-	"fmt"
 	"github.com/EugeneNail/actum/internal/service/validation/rule"
+	"reflect"
 	"strings"
 )
 
@@ -17,77 +17,61 @@ type Validation struct {
 	errors map[string]string
 }
 
-func (this *Validation) IsFailed() bool {
-	return len(this.errors) > 0
+func New(data any) *Validation {
+	validation := &Validation{make([]field, 0), map[string]string{}}
+	fields := extractFields(data)
+	validation.errors = validate(fields)
+
+	return validation
 }
 
-func (this *Validation) Field(name string, value any, pipeRules string) *Validation {
+func validate(fields []field) map[string]string {
+	errors := make(map[string]string)
+
+	for _, field := range fields {
+	ruleLoop:
+		for _, rule := range field.rules {
+			err := rule.Apply(field.name, field.value)
+
+			if err != nil {
+				errors[field.name] = err.Error()
+				break ruleLoop
+			}
+		}
+	}
+
+	return errors
+}
+
+func extractFields(data any) []field {
+	structFields := reflect.VisibleFields(reflect.TypeOf(data))
+	v := reflect.ValueOf(data)
+	var fields = make([]field, 0, len(structFields))
+
+	for _, structField := range structFields {
+		name := structField.Tag.Get("json")
+		pipeRules := structField.Tag.Get("rules")
+		value := v.FieldByName(structField.Name).Interface()
+		fields = append(fields, newField(name, value, pipeRules))
+	}
+
+	return fields
+}
+
+func newField(name string, value any, pipeRules string) field {
 	var rules = make([]rule.Rule, 0)
 
 	for _, pipeRule := range strings.Split(pipeRules, "|") {
 		rules = append(rules, rule.Determine(pipeRule))
 	}
 
-	field := field{name, value, rules}
-	this.fields = append(this.fields, field)
-
-	return this
+	return field{name, value, rules}
 }
 
-func New() *Validation {
-	return &Validation{make([]field, 0), make(map[string]string)}
+func (this *Validation) Errors() map[string]string {
+	return this.errors
 }
 
-func (this *Validation) Perform() (*Validation, error) {
-	for _, field := range this.fields {
-		err := validate(field)
-
-		if err != nil {
-			this.errors[field.name] = err.Error()
-		}
-	}
-
-	fmt.Println(this.errors)
-	return this, nil
+func (this *Validation) IsFailed() bool {
+	return len(this.errors) > 0
 }
-
-func validate(field field) error {
-	for _, rule := range field.rules {
-		err := rule.Apply(field.name, field.value)
-
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-//
-//func (this *field) validate() error {
-//	for _, constraint := range this.rule {
-//		err := constraint.apply(this.name, this.value)
-//
-//		if err != nil {
-//			return err
-//		}
-//	}
-//
-//	return nil
-//}
-//
-//func (this *Validation) extractRules() error {
-//	for _, rule := range this.fields {
-//		for _, pipeRule := range strings.Split(rule.pipeRules, "|") {
-//			rule, err := extractRule(pipeRule)
-//
-//			if err != nil {
-//				return err
-//			}
-//			field.rule = append(field.rule, rule)
-//		}
-//		fmt.Printf("Field rule: %v\n", rule.rule)
-//	}
-//
-//	return nil
-//}

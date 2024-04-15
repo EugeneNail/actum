@@ -56,11 +56,6 @@ func (this min) Apply(name string, value any) error {
 		if value.(int) < this.limit {
 			return fmt.Errorf("The %s field must be greater than %d", name, this.limit)
 		}
-	case []any:
-		fmt.Println("It is array")
-		if (len(value.([]any))) < this.limit {
-			return fmt.Errorf("The %s field must have at least %d items", name, this.limit)
-		}
 	}
 
 	return nil
