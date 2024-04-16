@@ -15,7 +15,7 @@ func Determine(pipeRule string) RuleFunc {
 	case "min":
 		return newMinRuleFunc(rule)
 	default:
-		return nil
+		return func(string, any) error { return nil }
 	}
 }
 
