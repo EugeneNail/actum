@@ -1,6 +1,7 @@
 package validation
 
 import (
+	"errors"
 	"github.com/EugeneNail/actum/internal/service/validation/rule"
 	"reflect"
 	"strings"
@@ -12,16 +13,15 @@ type field struct {
 	ruleFuncs []rule.RuleFunc
 }
 
-type Validation struct {
-	errors map[string]string
-}
-
-func New(data any) *Validation {
-	validation := &Validation{map[string]string{}}
+func New(data any) (map[string]string, error) {
 	fields := extractFields(data)
-	validation.errors = validate(fields)
+	validationErrors := validate(fields)
 
-	return validation
+	if len(validationErrors) > 0 {
+		return validationErrors, errors.New("unprocessable entity")
+	}
+
+	return validationErrors, nil
 }
 
 func extractFields(data any) []field {
@@ -65,12 +65,4 @@ func validate(fields []field) map[string]string {
 	}
 
 	return errors
-}
-
-func (this *Validation) Errors() map[string]string {
-	return this.errors
-}
-
-func (this *Validation) IsFailed() bool {
-	return len(this.errors) > 0
 }
