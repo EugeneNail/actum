@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"github.com/EugeneNail/actum/internal/service/env"
 	"log"
@@ -18,7 +17,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	switch subcommand := os.Args[1]; subcommand {
+	switch os.Args[1] {
 	case "migration":
 		createMigration()
 	default:
@@ -28,9 +27,10 @@ func main() {
 }
 
 func createMigration() {
-	name := *flag.
-		NewFlagSet("migration", flag.ExitOnError).
-		String("name", "nameless_migration", "migration name")
+	name := "nameless_migration"
+	if len(os.Args) > 2 {
+		name = os.Args[2]
+	}
 	now := time.Now().Unix()
 	pathToMigrations := filepath.Join(
 		os.Getenv("APP_PATH"), "internal", "database", "migrations",
