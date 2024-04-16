@@ -10,10 +10,12 @@ import (
 
 func Load() {
 	directory := getRootDirectory()
+	err := os.Setenv("APP_PATH", directory)
+	check(err)
 	file, err := os.Open(filepath.Join(directory, ".env"))
 	check(err)
-
 	defer file.Close()
+
 	scanner := bufio.NewScanner(file)
 	regex := regexp.MustCompile("^[a-zA-Z0-9_]+=")
 
