@@ -43,7 +43,7 @@ func newField(name string, value any, pipeRules string) field {
 	var rules = make([]rule.RuleFunc, 0)
 
 	for _, pipeRule := range strings.Split(pipeRules, "|") {
-		rules = append(rules, rule.Determine(pipeRule))
+		rules = append(rules, rule.Extract(pipeRule))
 	}
 
 	return field{name, value, rules}

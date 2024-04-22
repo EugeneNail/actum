@@ -46,7 +46,10 @@ func (this *User) Save() error {
 	if err != nil {
 		return fmt.Errorf("users.Save(): %w", err)
 	}
-	this.Id = int(id)
+
+	if id != 0 {
+		this.Id = int(id)
+	}
 
 	return nil
 }

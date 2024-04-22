@@ -10,7 +10,7 @@ import (
 
 type RuleFunc func(string, any) error
 
-func Determine(pipeRule string) RuleFunc {
+func Extract(pipeRule string) RuleFunc {
 	rule := strings.Split(pipeRule, ":")
 	switch rule[0] {
 	case "required":
