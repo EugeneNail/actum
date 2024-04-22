@@ -52,3 +52,7 @@ func check(err error) {
 		panic(err)
 	}
 }
+
+func Get(key string) string {
+	return os.Getenv(key)
+}
