@@ -13,7 +13,7 @@ type field struct {
 	ruleFuncs []rule.RuleFunc
 }
 
-func New(data any) (map[string]string, error) {
+func Perform(data any) (map[string]string, error) {
 	fields := extractFields(data)
 	validationErrors := validate(fields)
 
