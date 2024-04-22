@@ -1,3 +1,6 @@
 
 server/.env
 .idea/*
+server/create
+server/migrate
+server/main
