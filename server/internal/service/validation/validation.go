@@ -1,7 +1,7 @@
 package validation
 
 import (
-	"errors"
+	"fmt"
 	"github.com/EugeneNail/actum/internal/service/validation/rule"
 	"reflect"
 	"strings"
@@ -15,10 +15,10 @@ type field struct {
 
 func Perform(data any) (map[string]string, error) {
 	fields := extractFields(data)
-	validationErrors := validate(fields)
+	validationErrors, err := validate(fields)
 
-	if len(validationErrors) > 0 {
-		return validationErrors, errors.New("unprocessable entity")
+	if err != nil {
+		return nil, fmt.Errorf("validation.Perform(): %w", err)
 	}
 
 	return validationErrors, nil
@@ -30,10 +30,13 @@ func extractFields(data any) []field {
 	var fields = make([]field, 0, len(structFields))
 
 	for _, structField := range structFields {
-		name := structField.Tag.Get("json")
 		pipeRules := structField.Tag.Get("rules")
-		value := v.FieldByName(structField.Name).Interface()
-		fields = append(fields, newField(name, value, pipeRules))
+
+		if len(pipeRules) > 0 {
+			name := structField.Tag.Get("json")
+			value := v.FieldByName(structField.Name).Interface()
+			fields = append(fields, newField(name, value, pipeRules))
+		}
 	}
 
 	return fields
@@ -49,20 +52,24 @@ func newField(name string, value any, pipeRules string) field {
 	return field{name, value, rules}
 }
 
-func validate(fields []field) map[string]string {
+func validate(fields []field) (map[string]string, error) {
 	errors := make(map[string]string)
 
 	for _, field := range fields {
-	ruleLoop:
+	currentFieldLoop:
 		for _, ruleFunc := range field.ruleFuncs {
-			err := ruleFunc(field.name, field.value)
+			validationError, err := ruleFunc(field.name, field.value)
 
 			if err != nil {
-				errors[field.name] = err.Error()
-				break ruleLoop
+				return nil, fmt.Errorf("validate(): %w", err)
+			}
+
+			if validationError != nil {
+				errors[field.name] = validationError.Error()
+				break currentFieldLoop
 			}
 		}
 	}
 
-	return errors
+	return errors, nil
 }

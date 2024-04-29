@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-type RuleFunc func(string, any) error
+type RuleFunc func(string, any) (error, error)
 
 func Extract(pipeRule string) RuleFunc {
 	rule := strings.Split(pipeRule, ":")
@@ -32,63 +32,72 @@ func Extract(pipeRule string) RuleFunc {
 	case "regex":
 		return newRegexRuleFunc(rule)
 	default:
-		return func(string, any) error { return nil }
+		return func(string, any) (error, error) { return nil, fmt.Errorf("unknown rule %s", rule[0]) }
 	}
 }
 
-func required(name string, value any) error {
-	if value == 0 || value == "" || value == nil {
-		return fmt.Errorf("The %s field is required", name)
+func required(name string, value any) (error, error) {
+	if value == 0 || value == "" {
+		return fmt.Errorf("The %s field is required", name), nil
 	}
 
-	return nil
+	return nil, nil
 }
 
-func accepted(name string, value any) error {
+func accepted(name string, value any) (error, error) {
 	if value != true {
-		return fmt.Errorf("The %s field must be accepted", name)
+		return fmt.Errorf("The %s field must be accepted", name), nil
 	}
 
-	return nil
+	return nil, nil
 }
 
-func word(name string, value any) error {
+func word(name string, value any) (error, error) {
 	match, err := regexp.MatchString("^[a-zA-Z]+$", value.(string))
 
 	if err != nil || !match {
-		return fmt.Errorf("The %s field be one word", name)
+		return fmt.Errorf("The %s field be one word", name), nil
 	}
 
-	return nil
+	return nil, nil
 }
 
-func sentence(name string, value any) error {
+func sentence(name string, value any) (error, error) {
 	match, err := regexp.MatchString("^[a-zA-Z0-9 -/]+$", value.(string))
-	if err != nil || !match {
-		return fmt.Errorf("The %s field must be a sentence containing letters, number, spaces, slashes or dashes", name)
+
+	if err != nil {
+		return nil, fmt.Errorf("sentence(): %w", err)
 	}
 
-	return nil
+	if !match {
+		return fmt.Errorf("The %s field must be a sentence containing letters, number, spaces, slashes or dashes", name), nil
+	}
+
+	return nil, nil
 }
 
-func date(name string, value any) error {
+func date(name string, value any) (error, error) {
 	_, err := time.Parse(time.DateTime, value.(string))
 
 	if err != nil {
-		return fmt.Errorf("The %s field must be a datetime value", name)
+		return fmt.Errorf("The %s field must be a datetime value", name), nil
 	}
 
-	return nil
+	return nil, nil
 }
 
-func email(name string, value any) error {
+func email(name string, value any) (error, error) {
 	match, err := regexp.MatchString("^\\S+@\\S+\\.\\S+$", value.(string))
 
-	if err != nil || !match {
-		return fmt.Errorf("The %s field must be a valid email address", name)
+	if err != nil {
+		return nil, fmt.Errorf("email(): %w", err)
 	}
 
-	return nil
+	if !match {
+		return fmt.Errorf("The %s field must be a valid email address", name), nil
+	}
+
+	return nil, nil
 }
 
 func newMinRuleFunc(rule []string) RuleFunc {
@@ -101,19 +110,19 @@ func newMinRuleFunc(rule []string) RuleFunc {
 		}
 	}
 
-	return func(name string, value any) error {
+	return func(name string, value any) (error, error) {
 		switch value.(type) {
 		case string:
 			if len(value.(string)) < limit {
-				return fmt.Errorf("The %s field must be at least %d characters", name, limit)
+				return fmt.Errorf("The %s field must be at least %d characters", name, limit), nil
 			}
 		case int:
 			if value.(int) < limit {
-				return fmt.Errorf("The %s field must be greater than %d", name, limit)
+				return fmt.Errorf("The %s field must be greater than %d", name, limit), nil
 			}
 		}
 
-		return nil
+		return nil, nil
 	}
 }
 
@@ -127,36 +136,39 @@ func newMaxRuleFunc(rule []string) RuleFunc {
 		}
 	}
 
-	return func(name string, value any) error {
+	return func(name string, value any) (error, error) {
 		switch value.(type) {
 		case string:
 			if len(value.(string)) > limit {
-				return fmt.Errorf("The %s field must not be greater than %d characters", name, limit)
+				return fmt.Errorf("The %s field must not be greater than %d characters", name, limit), nil
 			}
 		case int:
 			if value.(int) > limit {
-				return fmt.Errorf("The %s field must be less than %d", name, limit)
+				return fmt.Errorf("The %s field must be less than %d", name, limit), nil
 			}
 		}
 
-		return nil
+		return nil, nil
 	}
 }
 
 func newRegexRuleFunc(rule []string) RuleFunc {
 	pattern := ".*"
-
 	if len(rule) == 2 {
 		pattern = rule[1]
 	}
 
-	return func(name string, value any) error {
+	return func(name string, value any) (error, error) {
 		match, err := regexp.MatchString(pattern, value.(string))
 
-		if err != nil || !match {
-			return fmt.Errorf("The %s field format is invalid", name)
+		if err != nil {
+			return nil, fmt.Errorf("newRegexRuleFunc(): %w", err)
 		}
 
-		return nil
+		if !match {
+			return fmt.Errorf("The %s field format is invalid", name), nil
+		}
+
+		return nil, nil
 	}
 }
