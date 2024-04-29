@@ -2,6 +2,7 @@ package rule
 
 import (
 	"fmt"
+	"github.com/EugeneNail/actum/internal/database/mysql"
 	"regexp"
 	"strconv"
 	"strings"
@@ -31,6 +32,8 @@ func Extract(pipeRule string) RuleFunc {
 		return newMaxRuleFunc(rule)
 	case "regex":
 		return newRegexRuleFunc(rule)
+	case "unique":
+		return newUniqueRuleFunc(rule)
 	default:
 		return func(string, any) (error, error) { return nil, fmt.Errorf("unknown rule %s", rule[0]) }
 	}
@@ -167,6 +170,48 @@ func newRegexRuleFunc(rule []string) RuleFunc {
 
 		if !match {
 			return fmt.Errorf("The %s field format is invalid", name), nil
+		}
+
+		return nil, nil
+	}
+}
+
+func newUniqueRuleFunc(rule []string) RuleFunc {
+	table, column := "", ""
+
+	if len(rule) == 2 {
+		args := strings.Split(rule[1], ",")
+		switch len(args) {
+		case 1:
+			table, column = args[0], ""
+		case 2:
+			table, column = args[0], args[1]
+		}
+	}
+
+	return func(name string, value any) (error, error) {
+		db, err := mysql.Connect()
+		if err != nil {
+			return nil, fmt.Errorf("newUniqueRuleFunc(): %w", err)
+		}
+
+		query := fmt.Sprintf("SELECT COUNT(*) FROM %s WHERE %s = ?", table, column)
+		result, err := db.Query(query, value)
+		if err != nil {
+			return nil, fmt.Errorf("newUniqueRuleFunc(): %w", err)
+		}
+
+		var count int
+		for result.Next() {
+			err := result.Scan(&count)
+
+			if err != nil {
+				return nil, fmt.Errorf("newUniqueRuleFunc(): %w", err)
+			}
+		}
+
+		if count > 0 {
+			return fmt.Errorf("The %s has already been taken", name), nil
 		}
 
 		return nil, nil
