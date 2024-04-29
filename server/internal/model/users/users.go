@@ -12,8 +12,27 @@ type User struct {
 	Password string `json:"password"`
 }
 
-func find(id int) (User, error) {
-	panic("not implemented")
+func Find(id int) (User, error) {
+	var user User
+	db, err := mysql.Connect()
+	defer db.Close()
+
+	if err != nil {
+		return user, fmt.Errorf("users.Find(): %w", err)
+	}
+	result, err := db.Query(`SELECT * FROM users WHERE id = ? LIMIT 1`, id)
+
+	if err != nil {
+		return user, fmt.Errorf("users.Find(): %w", err)
+	}
+
+	for result.Next() {
+		if err := result.Scan(&user.Id, &user.Name, &user.Email, &user.Password); err != nil {
+			return user, fmt.Errorf("users.Find(): %w", err)
+		}
+	}
+
+	return user, nil
 }
 
 func list() ([]User, error) {

@@ -13,8 +13,8 @@ import (
 
 type storeInput struct {
 	Id                   int    `json:"id"`
-	Name                 string `json:"name" rules:"required|min:3|max:20"`
-	Email                string `json:"email" rules:"required|email|max:100"`
+	Name                 string `json:"name" rules:"required|word|min:3|max:20"`
+	Email                string `json:"email" rules:"required|email|max:100|unique:users,email"`
 	Password             string `json:"password" rules:"required|min:8|max:100"`
 	PasswordConfirmation string `json:"passwordConfirmation" rules:"required|min:8|max:100"`
 }
@@ -25,13 +25,20 @@ func Store(writer http.ResponseWriter, request *http.Request) {
 	input, err := controller.Parse[storeInput](writer, request)
 
 	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	validationErrors, err := validation.Perform(input)
+
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	if errors, err := validation.Perform(input); err != nil {
+	if len(validationErrors) > 0 {
 		writer.WriteHeader(http.StatusUnprocessableEntity)
 
-		if err := encoder.Encode(errors); err != nil {
+		if err := encoder.Encode(validationErrors); err != nil {
 			http.Error(writer, err.Error(), http.StatusInternalServerError)
 		}
 		return
