@@ -7,6 +7,7 @@ import (
 	"github.com/EugeneNail/actum/internal/model/users"
 	"github.com/EugeneNail/actum/internal/service/controller"
 	"github.com/EugeneNail/actum/internal/service/env"
+	"github.com/EugeneNail/actum/internal/service/log"
 	"github.com/EugeneNail/actum/internal/service/validation"
 	"net/http"
 )
@@ -26,12 +27,14 @@ func Store(writer http.ResponseWriter, request *http.Request) {
 
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		log.Error(err)
 		return
 	}
 	validationErrors, err := validation.Perform(input)
 
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		log.Error(err)
 		return
 	}
 
@@ -40,6 +43,7 @@ func Store(writer http.ResponseWriter, request *http.Request) {
 
 		if err := encoder.Encode(validationErrors); err != nil {
 			http.Error(writer, err.Error(), http.StatusInternalServerError)
+			log.Error(err)
 		}
 		return
 	}
@@ -50,6 +54,7 @@ func Store(writer http.ResponseWriter, request *http.Request) {
 
 		if err != nil {
 			http.Error(writer, err.Error(), http.StatusInternalServerError)
+			log.Error(err)
 		}
 		return
 	}
@@ -58,13 +63,17 @@ func Store(writer http.ResponseWriter, request *http.Request) {
 
 	if err = user.Save(); err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		log.Error(err)
 		return
 	}
 	writer.WriteHeader(http.StatusCreated)
 
 	if err = encoder.Encode(user.Id); err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		log.Error(err)
+		return
 	}
+	log.Info("Created user", user.Id)
 }
 
 func hashPassword(password string) string {
