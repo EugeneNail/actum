@@ -1,0 +1,60 @@
+@import ../../variables
+
+.field-wrapper
+  width: 100%
+
+.field
+  border-bottom: 1px #aaa solid
+  width: 100%
+  background: darken($secondary, 1%)
+  border-radius: 8px 8px 0px 0px
+  display: flex
+  place-items: center
+
+  &:has(*:hover)
+    background: darken($secondary, 2%)
+
+  &:has(&__input:focus)
+    background: darken($secondary, 4%)
+    border-bottom: 2px $accent solid
+
+  &__icon-container
+    width: 60px
+    display: grid
+    place-items: center
+
+  &__icon
+
+
+  &__input-container
+    position: relative
+    height: fit-content
+    width: 100%
+
+
+  &__label
+    pointer-events: none
+    transition: 0.3s
+    position: absolute
+    left: 0px
+    top: 16px
+
+  &__input
+    padding: 26px 10px 5px 0px
+    height: 100%
+    width: 100%
+    background: none
+
+  &__input:focus + &__label
+    color: $accent
+    font-size: 12px
+    top: 8px
+
+  &__input:not(:placeholder-shown) + &__label
+    font-size: 12px
+    top: 8px
+
+  &__error
+    color: #ec0b00
+    font-size: 14px
+    padding: 10px
