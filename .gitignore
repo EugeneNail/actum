@@ -1,6 +1,6 @@
 
-server/.env
+backend/.env
 .idea/*
-server/create
-server/migrate
-server/main
+backend/create
+backend/migrate
+backend/main
