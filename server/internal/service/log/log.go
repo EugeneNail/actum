@@ -2,9 +2,12 @@ package log
 
 import (
 	"fmt"
+	"github.com/EugeneNail/actum/internal/service/env"
 	"io"
 	"log"
 	"os"
+	"path/filepath"
+	"runtime"
 	"time"
 )
 
@@ -15,7 +18,7 @@ var errorLogger *log.Logger
 func init() {
 	infoLogger = log.New(os.Stdout, "INFO  ", log.Ltime|log.Ltime)
 	debugLogger = log.New(os.Stdout, "DEBUG ", log.Ltime|log.Ltime)
-	errorLogger = log.New(os.Stdout, "ERROR ", log.Ltime|log.Ltime|log.Lshortfile)
+	errorLogger = log.New(os.Stdout, "ERROR ", log.Ltime|log.Ltime)
 }
 
 func Info(a ...any) {
@@ -27,7 +30,10 @@ func Debug(value any) {
 }
 
 func Error(error error) {
-	errorLogger.Println(error)
+	_, file, line, _ := runtime.Caller(1)
+	relativePath, _ := filepath.Rel(env.Get("APP_PATH"), file)
+	location := fmt.Sprintf("%s:%d", relativePath, line)
+	errorLogger.Println(location, error)
 }
 
 func RotateFiles() {
