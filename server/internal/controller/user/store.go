@@ -15,8 +15,8 @@ type storeInput struct {
 	Id                   int    `json:"id"`
 	Name                 string `json:"name" rules:"required|word|min:3|max:20"`
 	Email                string `json:"email" rules:"required|email|max:100|unique:users,email"`
-	Password             string `json:"password" rules:"required|min:8|max:100"`
-	PasswordConfirmation string `json:"passwordConfirmation" rules:"required|min:8|max:100"`
+	Password             string `json:"password" rules:"required|min:8|max:100|mixedCase|regex:^\\S+$"`
+	PasswordConfirmation string `json:"passwordConfirmation" rules:"required|min:8|max:100|mixedCase|regex:^\\S+$"`
 }
 
 func Store(writer http.ResponseWriter, request *http.Request) {

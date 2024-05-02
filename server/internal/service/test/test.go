@@ -15,14 +15,14 @@ type Field struct {
 func AssertValidationSuccess[T any](field Field, t *testing.T) {
 	errorCount := getValidationErrorCount[T](field)
 	if errorCount > 0 {
-		t.Errorf("%s: should success at value [%s]", field.Name, field.Value)
+		t.Errorf("%s: must success at value [%s]", field.Name, field.Value)
 	}
 }
 
 func AssertValidationFail[T any](field Field, t *testing.T) {
 	errorCount := getValidationErrorCount[T](field)
 	if errorCount == 0 {
-		t.Errorf("%s: should fail at value [%s] ", field.Name, field.Value)
+		t.Errorf("%s: must fail at value [%s] ", field.Name, field.Value)
 	}
 }
 

@@ -130,19 +130,41 @@ func TestStoreValidation(t *testing.T) {
 		{"name", "William"},
 		{"name", "Bartholomew"},
 		{"name", "Benjamin"},
+		{"email", "user@domain.com"},
+		{"email", "user.a.user@domain.com"},
+		{"email", "user@106list.org"},
+		{"email", "user_user@domain.com"},
+		{"email", "user@domain-12.ru"},
+		{"email", "user_user.a.user@domain.com"},
+		{"password", "Strong123"},
+		{"password", "VeryStrongP@ssw0rd32186"},
+		{"password", "J7<}9*G?a\\-0"},
+		{"password", "/Pb/>BX<82rQvW4tq!'9i1@0(e7Kzq/F?RnP<iq:ob;h#l,'%q"},
 	}
 	for _, field := range successes {
 		test.AssertValidationSuccess[storeInput](field, t)
 	}
 
 	fails := []test.Field{
+		{"name", ""},
 		{"name", "Jo"},
-		{"name", "VeryVeryVeryVeryVeryLongName"},
+		{"name", strings.Repeat("Very", 5) + "LongName"},
 		{"name", "John1"},
 		{"name", "John's"},
 		{"name", "123"},
-		{"name", "@"},
 		{"name", "/*-+"},
+		{"email", ""},
+		{"email", "user@"},
+		{"email", "@domain.com"},
+		{"email", "user domain.com"},
+		{"email", "Veryuser@domain."},
+		{"password", ""},
+		{"password", "Short"},
+		{"password", "12345678"},
+		{"password", "nomixedcase"},
+		{"password", "NOMIXEDCASE"},
+		{"password", "With spaces"},
+		{"password", strings.Repeat("Very", 25) + "LongPassword"},
 	}
 	for _, field := range fails {
 		test.AssertValidationFail[storeInput](field, t)
