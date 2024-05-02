@@ -18,20 +18,16 @@ func init() {
 	errorLogger = log.New(os.Stdout, "ERROR ", log.Ltime|log.Lmicroseconds|log.Lshortfile)
 }
 
-func Info(message string) {
-	appendMessage(message, infoLogger)
+func Info(a ...any) {
+	infoLogger.Println(a...)
 }
 
-func Debug(message any) {
-	appendMessage(message, debugLogger)
+func Debug(value any) {
+	debugLogger.Println(value)
 }
 
-func Error(message error) {
-	appendMessage(message, errorLogger)
-}
-
-func appendMessage(message any, logger *log.Logger) {
-	logger.Println(message)
+func Error(error error) {
+	errorLogger.Println(error)
 }
 
 func RotateFiles() {
