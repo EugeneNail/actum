@@ -13,9 +13,9 @@ var debugLogger *log.Logger
 var errorLogger *log.Logger
 
 func init() {
-	infoLogger = log.New(os.Stdout, "INFO  ", log.Ltime|log.Lmicroseconds)
-	debugLogger = log.New(os.Stdout, "DEBUG ", log.Ltime|log.Lmicroseconds)
-	errorLogger = log.New(os.Stdout, "ERROR ", log.Ltime|log.Lmicroseconds|log.Lshortfile)
+	infoLogger = log.New(os.Stdout, "INFO  ", log.Ltime|log.Ltime)
+	debugLogger = log.New(os.Stdout, "DEBUG ", log.Ltime|log.Ltime)
+	errorLogger = log.New(os.Stdout, "ERROR ", log.Ltime|log.Ltime|log.Lshortfile)
 }
 
 func Info(a ...any) {
@@ -47,6 +47,8 @@ func setOutputFile() {
 }
 
 func getOutputFile() (file *os.File) {
+	defer file.Close()
+
 	directory := os.Getenv("LOG_PATH")
 	filename := fmt.Sprintf(
 		"%s/%s.log",
@@ -55,16 +57,12 @@ func getOutputFile() (file *os.File) {
 	)
 
 	if _, err := os.Stat(filename); os.IsNotExist(err) {
-		if os.MkdirAll(directory, 0755) != nil {
+		if os.MkdirAll(directory, 0666) != nil {
 			errorLogger.Println(err)
 		}
 		file, _ = os.Create(filename)
 	} else {
-		file, _ = os.OpenFile(filename, os.O_WRONLY|os.O_APPEND, 0755)
-	}
-
-	if err := file.Close(); err != nil {
-		errorLogger.Println(err)
+		file, _ = os.OpenFile(filename, os.O_WRONLY|os.O_APPEND, 0666)
 	}
 
 	return
