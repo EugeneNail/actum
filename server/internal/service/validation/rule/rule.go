@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode"
 )
 
 type RuleFunc func(string, any) (error, error)
@@ -34,6 +35,8 @@ func Extract(pipeRule string) RuleFunc {
 		return newRegexRuleFunc(rule)
 	case "unique":
 		return newUniqueRuleFunc(rule)
+	case "mixedCase":
+		return mixedCase
 	default:
 		return func(string, any) (error, error) { return nil, fmt.Errorf("unknown rule %s", rule[0]) }
 	}
@@ -59,7 +62,7 @@ func word(name string, value any) (error, error) {
 	match, err := regexp.MatchString("^[a-zA-Z]+$", value.(string))
 
 	if err != nil || !match {
-		return fmt.Errorf("The %s field be one word", name), nil
+		return fmt.Errorf("The %s field be one word, only containing letters", name), nil
 	}
 
 	return nil, nil
@@ -216,4 +219,24 @@ func newUniqueRuleFunc(rule []string) RuleFunc {
 
 		return nil, nil
 	}
+}
+
+func mixedCase(name string, value any) (error, error) {
+	hasLower := false
+	hasUpper := false
+
+	for _, char := range value.(string) {
+		if unicode.IsUpper(char) {
+			hasUpper = true
+		}
+		if unicode.IsLower(char) {
+			hasLower = true
+		}
+	}
+
+	if !(hasLower && hasUpper) {
+		return fmt.Errorf("The %s field must contain at least one uppercase and one lowercase letter", name), nil
+	}
+
+	return nil, nil
 }
