@@ -6,7 +6,7 @@ type ButtonProps = {
     label?: string
     className?: string
     icon?: string
-    onClick?: () => {}
+    onClick?: () => void
 }
 
 export default function Button({label, className, icon = "", onClick}: ButtonProps) {
