@@ -7,22 +7,23 @@ import (
 	"testing"
 )
 
-type Field struct {
+type ValidationTest struct {
 	Name  string
+	Field string
 	Value any
 }
 
-func AssertValidationSuccess[T any](field Field, t *testing.T) {
-	errorCount := getValidationErrorCount[T](field)
+func AssertValidationSuccess[T any](test ValidationTest, t *testing.T) {
+	errorCount := getValidationErrorCount[T](test)
 	if errorCount > 0 {
-		t.Errorf("%s: must success at value [%s]", field.Name, field.Value)
+		t.Errorf("Must success at value  ---  %s", test.Value)
 	}
 }
 
-func AssertValidationFail[T any](field Field, t *testing.T) {
-	errorCount := getValidationErrorCount[T](field)
+func AssertValidationFail[T any](test ValidationTest, t *testing.T) {
+	errorCount := getValidationErrorCount[T](test)
 	if errorCount == 0 {
-		t.Errorf("%s: must fail at value [%s] ", field.Name, field.Value)
+		t.Errorf("Must fail at value  ---  %s", test.Value)
 	}
 }
 
@@ -35,8 +36,8 @@ func getStructFieldByName[T any](name string) reflect.StructField {
 	panic("struct field not found: " + name)
 }
 
-func getValidationErrorCount[T any](field Field) int {
-	structField := getStructFieldByName[T](field.Name)
+func getValidationErrorCount[T any](test ValidationTest) int {
+	structField := getStructFieldByName[T](test.Field)
 
 	var ruleFuncs []rule.RuleFunc
 
@@ -52,7 +53,7 @@ func getValidationErrorCount[T any](field Field) int {
 	errorCount := 0
 
 	for _, ruleFunc := range ruleFuncs {
-		validationError, err := ruleFunc(field.Name, field.Value)
+		validationError, err := ruleFunc(test.Field, test.Value)
 		if err != nil {
 			panic(err)
 		}

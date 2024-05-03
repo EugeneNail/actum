@@ -141,37 +141,41 @@ func assertUserIsUntouched(user users.User, t *testing.T) {
 func TestLoginValidation(t *testing.T) {
 	env.Load()
 
-	successes := []test.Field{
-		{"email", "Twila_Braun-Bogisich@gmail.com"},
-		{"email", "Noemie16@gmail.com"},
-		{"email", "Catalina41@gmail.com"},
-		{"email", "Effie43@gmail.com"},
-		{"email", "Roxanne.Satterfield5@zoho.com"},
-		{"email", "Julio_Hackett@icloud.com"},
-		{"password", "65kYThD5"},
-		{"password", "B^H}i,o5:iJvco"},
-		{"password", "2J*LA5NxKnZ>1}g0Beu^:HR^Bn!6-H3izGF#o2!>"},
-		{"password", "_d=)21YWPX@%HHbV2et:D_,MH+Y0tV,+@:^]5Ne)!vgHH%@1Ls)M.BYb7bs3t~Py^5"},
+	successes := []test.ValidationTest{
+		{"Email 1", "email", "Twila_Braun-Bogisich@gmail.com"},
+		{"Email 2", "email", "Noemie16@gmail.com"},
+		{"Email 3", "email", "Catalina41@gmail.com"},
+		{"Email 4", "email", "Effie43@gmail.com"},
+		{"Email 5", "email", "Roxanne.Satterfield5@zoho.com"},
+		{"Email 6", "email", "Julio_Hackett@icloud.com"},
+		{"Password 1", "password", "65kYThD5"},
+		{"Password 2", "password", "B^H}i,o5:iJvco"},
+		{"Password 3", "password", "2J*LA5NxKnZ>1}g0Beu^:HR^Bn!6-H3izGF#o2!>"},
+		{"Password 4", "password", "_d=)21YWPX@%HHbV2et:D_,MH+Y0tV,+@:^]5Ne)!vgHH%@1Ls)M.BYb7bs3t~Py^5"},
 	}
-	for _, field := range successes {
-		test.AssertValidationSuccess[storeInput](field, t)
+	for _, tableTest := range successes {
+		t.Run(tableTest.Name, func(t *testing.T) {
+			test.AssertValidationSuccess[storeInput](tableTest, t)
+		})
 	}
 
-	fails := []test.Field{
-		{"email", ""},
-		{"email", "Enoch_Corwin@"},
-		{"email", "Guillermo_Haag-Goyette @aol.com"},
-		{"email", "Cleta_Schimmelicloud.com"},
-		{"email", "Triston77@outlook."},
-		{"password", ""},
-		{"password", "4Ot69f,"},
-		{"password", "27021375891235"},
-		{"password", "nrau}h9j1d1hux@h@_wd"},
-		{"password", "F9.F9#)30XJXM+WHW*VYJ"},
-		{"password", "n6K-N%acxa)om]oT= 8muHQ?Zs=s"},
-		{"password", "xMAUg>~WAu^Ep],e5m8R,~j?Pn__Cb@)#j_F~z*806QvUDERKKi8)T0-cH.Yh!3q+6uwK10yR!+r=4+kMRX5F9BcuvfzxT6>sdLEa"},
+	fails := []test.ValidationTest{
+		{"Empty email", "email", ""},
+		{"Email has no mail", "email", "Enoch_Corwin@"},
+		{"Email has no separator", "email", "Cleta_Schimmelicloud.com"},
+		{"Email has no domain", "email", "Triston77@outlook."},
+		{"Email has spaces", "email", "Guillermo_Haag-Goyette @aol.com"},
+		{"Empty password", "password", ""},
+		{"Too short password", "password", "4Ot69f,"},
+		{"Too long password", "password", "xMAUg>~WAu^Ep],e5m8R,~j?Pn__Cb@)#j_F~z*806QvUDERKKi8)T0-cH.Yh!3q+6uwK10yR!+r=4+kMRX5F9BcuvfzxT6>sdLEa"},
+		{"Password has only numbers", "password", "27021375891235"},
+		{"Password has only lowercase", "password", "nrau}h9j1d1hux@h@_wd"},
+		{"Password has only uppercase", "password", "F9.F9#)30XJXM+WHW*VYJ"},
+		{"Password has spaces", "password", "n6K-N%acxa)om]oT= 8muHQ?Zs=s"},
 	}
-	for _, field := range fails {
-		test.AssertValidationFail[storeInput](field, t)
+	for _, tableTest := range fails {
+		t.Run(tableTest.Name, func(t *testing.T) {
+			test.AssertValidationFail[storeInput](tableTest, t)
+		})
 	}
 }
