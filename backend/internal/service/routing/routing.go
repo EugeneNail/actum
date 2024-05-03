@@ -19,6 +19,14 @@ type contextKey string
 
 func Serve() http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
+		writer.Header().Set("Access-Control-Allow-Origin", "*")
+		writer.Header().Set("Access-Control-Allow-Methods", "*")
+		writer.Header().Set("Access-Control-Allow-Headers", "*")
+
+		if request.Method == "OPTIONS" {
+			return
+		}
+
 		var allowedMethods []string
 		for _, route := range routes {
 			matches := route.regex.FindStringSubmatch(request.URL.Path)
