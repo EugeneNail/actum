@@ -1,7 +1,7 @@
 import Icon from "../icon/icon.tsx";
 import classNames from "classnames";
 import "./field.sass"
-import {ChangeEvent, useState} from "react";
+import {ChangeEvent, useEffect, useState} from "react";
 
 type FieldProps = {
     icon?: string
@@ -15,6 +15,12 @@ type FieldProps = {
 
 export default function Field({icon = "", name, label, className, error, password, onChange}: FieldProps) {
     const [isVisible, setVisible] = useState(true)
+
+    useEffect(() => {
+        if (password) {
+            setVisible(false)
+        }
+    }, [])
 
     return (
         <div className="field-wrapper">
