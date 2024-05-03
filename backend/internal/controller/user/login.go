@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/EugeneNail/actum/internal/model/users"
 	"github.com/EugeneNail/actum/internal/service/controller"
+	"github.com/EugeneNail/actum/internal/service/log"
 	"github.com/EugeneNail/actum/internal/service/validation"
 	"net/http"
 )
@@ -20,12 +21,14 @@ func Login(writer http.ResponseWriter, request *http.Request) {
 
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusBadRequest)
+		log.Error(err)
 		return
 	}
 
 	validationErrors, err := validation.Perform(input)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		log.Error(err)
 		return
 	}
 
@@ -33,6 +36,7 @@ func Login(writer http.ResponseWriter, request *http.Request) {
 		writer.WriteHeader(http.StatusUnprocessableEntity)
 		if err := encoder.Encode(validationErrors); err != nil {
 			http.Error(writer, err.Error(), http.StatusInternalServerError)
+			log.Error(err)
 		}
 		return
 	}
@@ -41,6 +45,7 @@ func Login(writer http.ResponseWriter, request *http.Request) {
 
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		log.Error(err)
 		return
 	}
 
@@ -49,7 +54,10 @@ func Login(writer http.ResponseWriter, request *http.Request) {
 		err := encoder.Encode(map[string]string{"email": "Incorrect email address or password"})
 		if err != nil {
 			http.Error(writer, err.Error(), http.StatusInternalServerError)
+			log.Error(err)
 		}
 		return
 	}
+
+	log.Info("User", user.Id, "logged in")
 }
