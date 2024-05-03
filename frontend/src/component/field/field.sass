@@ -8,7 +8,8 @@
   width: 100%
   background: darken($secondary, 1%)
   border-radius: 8px 8px 0px 0px
-  display: flex
+  grid-template-columns: 50px 1fr 50px
+  display: grid
   place-items: center
 
   &:has(*:hover)
@@ -17,14 +18,6 @@
   &:has(&__input:focus)
     background: darken($secondary, 4%)
     border-bottom: 2px $accent solid
-
-  &__icon-container
-    width: 60px
-    display: grid
-    place-items: center
-
-  &__icon
-
 
   &__input-container
     position: relative
@@ -54,7 +47,12 @@
     font-size: 12px
     top: 8px
 
+  &__visibility
+    cursor: pointer
+    user-select: none
+
   &__error
     color: #ec0b00
-    font-size: 14px
-    padding: 10px
+    font-size: 12px
+    margin-top: 7px
+
