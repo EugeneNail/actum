@@ -72,7 +72,7 @@ func TestStoreInvalidData(t *testing.T) {
 	check(err)
 	for _, field := range []string{"name", "email", "password", "passwordConfirmation"} {
 		if _, exists := validationMessages[field]; !exists {
-			t.Errorf("expected validation error for the %s field to be present", field)
+			t.Errorf(`expected validation error for field "%s" to be present`, field)
 		}
 	}
 
@@ -122,7 +122,6 @@ func TestStoreDuplicateEmail(t *testing.T) {
 
 func TestStoreValidation(t *testing.T) {
 	env.Load()
-	t.Cleanup(cleanup)
 
 	successes := []test.Field{
 		{"name", "Joe"},
@@ -169,19 +168,4 @@ func TestStoreValidation(t *testing.T) {
 	for _, field := range fails {
 		test.AssertValidationFail[storeInput](field, t)
 	}
-}
-
-func check(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
-func cleanup() {
-	err := mysql.Truncate("users")
-	check(err)
-}
-
-func getUrl() string {
-	return "http://127.0.0.1:" + env.Get("APP_PORT") + "/api/users"
 }

@@ -12,7 +12,6 @@ func Parse[T any](writer http.ResponseWriter, request *http.Request) (T, error) 
 	err := decoder.Decode(input)
 
 	if err != nil {
-		http.Error(writer, err.Error(), http.StatusBadRequest)
 		return *input, err
 	}
 

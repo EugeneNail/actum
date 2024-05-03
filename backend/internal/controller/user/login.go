@@ -19,7 +19,7 @@ func Login(writer http.ResponseWriter, request *http.Request) {
 	input, err := controller.Parse[loginInput](writer, request)
 
 	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		http.Error(writer, err.Error(), http.StatusBadRequest)
 		return
 	}
 
