@@ -4,6 +4,7 @@ import {BrowserRouter, Route, Routes} from 'react-router-dom'
 import GuestLayout from "./layout/guest-layout.tsx";
 import SignupPage from "./page/guest/signup-page.tsx";
 import "./shared.sass"
+import LoginPage from "./page/guest/login-page.tsx";
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -11,6 +12,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <Routes>
             <Route element={<GuestLayout/>}>
                 <Route path="/signup" element={<SignupPage/>}/>
+                <Route path="/login" element={<LoginPage/>}/>
             </Route>
         </Routes>
     </BrowserRouter>
