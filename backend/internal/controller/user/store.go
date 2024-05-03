@@ -1,12 +1,9 @@
 package user
 
 import (
-	"crypto/sha256"
-	"encoding/base64"
 	"encoding/json"
 	"github.com/EugeneNail/actum/internal/model/users"
 	"github.com/EugeneNail/actum/internal/service/controller"
-	"github.com/EugeneNail/actum/internal/service/env"
 	"github.com/EugeneNail/actum/internal/service/log"
 	"github.com/EugeneNail/actum/internal/service/validation"
 	"net/http"
@@ -74,11 +71,4 @@ func Store(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 	log.Info("Created user", user.Id)
-}
-
-func hashPassword(password string) string {
-	bytes := []byte(env.Get("PASSWORD_SALT") + password)
-	hash := sha256.New().Sum(bytes)
-
-	return base64.StdEncoding.EncodeToString(hash)
 }

@@ -12,6 +12,7 @@ import (
 func main() {
 	env.Load()
 	routing.Post("/api/users", user.Store)
+	routing.Post("/api/users/login", user.Login)
 	go log.RotateFiles()
 	err := http.ListenAndServe(":"+os.Getenv("APP_PORT"), routing.Serve())
 

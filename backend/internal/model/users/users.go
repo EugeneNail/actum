@@ -35,6 +35,30 @@ func Find(id int) (User, error) {
 	return user, nil
 }
 
+func FindBy(column string, value any) (User, error) {
+	var user User
+	db, err := mysql.Connect()
+	defer db.Close()
+
+	if err != nil {
+		return user, fmt.Errorf("users.FindBy(): %w", err)
+	}
+
+	result, err := db.Query(`SELECT * FROM users WHERE `+column+` = ?`, value)
+	if err != nil {
+		return user, fmt.Errorf("users.FindBy(): %w", err)
+	}
+
+	for result.Next() {
+		err := result.Scan(&user.Id, &user.Name, &user.Email, &user.Password)
+		if err != nil {
+			return user, fmt.Errorf("users.FindBy(): %w", err)
+		}
+	}
+
+	return user, nil
+}
+
 func list() ([]User, error) {
 	panic("not implemented")
 }
