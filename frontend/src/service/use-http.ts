@@ -12,11 +12,11 @@ export function useHttp() {
     http.interceptors.response.use(
         (response) => response,
         (error) => {
-            if (error.response.status == 401 && window.location.href != "/login") {
+            if (error.response.status == 401 && window.location.pathname != "/login") {
                 window.location.href = "/login"
             }
 
-            if (error.response.status == 404 && window.location.href != "/not-found") {
+            if (error.response.status == 404 && window.location.pathname != "/not-found") {
                 window.location.href = "/not-found"
             }
 
