@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/EugeneNail/actum/internal/model/users"
 	"github.com/EugeneNail/actum/internal/service/controller"
+	"github.com/EugeneNail/actum/internal/service/jwt"
 	"github.com/EugeneNail/actum/internal/service/log"
 	"github.com/EugeneNail/actum/internal/service/validation"
 	"net/http"
@@ -58,5 +59,13 @@ func Login(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
+	token, err := jwt.Make(user)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		log.Error(err)
+		return
+	}
+
+	http.SetCookie(writer, &http.Cookie{Name: "Access-Token", Value: token, HttpOnly: true})
 	log.Info("User", user.Id, "logged in")
 }
