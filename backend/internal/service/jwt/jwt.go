@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/EugeneNail/actum/internal/model/users"
 	"github.com/EugeneNail/actum/internal/service/env"
+	"strings"
 	"time"
 )
 
@@ -79,4 +80,23 @@ func buildSignature(user users.User) (string, error) {
 		Sum([]byte(header + "." + payload))
 
 	return base64.URLEncoding.EncodeToString(signature), nil
+}
+
+func IsValid(token string) bool {
+	parts := strings.Split(token, ".")
+
+	if len(parts) != 3 {
+		return false
+	}
+
+	signatureBytes := hmac.
+		New(sha256.New, []byte(env.Get("JWT_SALT"))).
+		Sum([]byte(parts[0] + "." + parts[1]))
+	recreatedSignature := base64.URLEncoding.EncodeToString(signatureBytes)
+
+	if recreatedSignature != parts[2] {
+		return false
+	}
+
+	return true
 }
