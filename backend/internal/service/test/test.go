@@ -2,6 +2,7 @@ package test
 
 import (
 	"github.com/EugeneNail/actum/internal/service/validation/rule"
+	"net/http"
 	"reflect"
 	"strings"
 	"testing"
@@ -64,4 +65,26 @@ func getValidationErrorCount[T any](test ValidationTest) int {
 	}
 
 	return errorCount
+}
+
+func AssertHasToken(response *http.Response, t *testing.T) {
+	if !hasToken(response) {
+		t.Errorf("The response must have an Access-Token cookie")
+	}
+}
+
+func AssertHasNoToken(response *http.Response, t *testing.T) {
+	if hasToken(response) {
+		t.Errorf("The response must not have an Access-Token cookie")
+	}
+}
+
+func hasToken(response *http.Response) bool {
+	for _, cookie := range response.Cookies() {
+		if cookie.Name == "Access-Token" && len(cookie.Value) > 0 {
+			return true
+		}
+	}
+
+	return false
 }

@@ -13,10 +13,3 @@ func BuildPipeline(handler http.Handler, middlewares []Middleware) http.Handler 
 
 	return handler
 }
-
-func SetContentType(handler http.Handler) http.Handler {
-	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
-		writer.Header().Set("Content-Type", "application/json")
-		handler.ServeHTTP(writer, request)
-	})
-}

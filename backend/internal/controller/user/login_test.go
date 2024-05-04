@@ -26,6 +26,8 @@ func TestLoginValidData(t *testing.T) {
 	if response.StatusCode != http.StatusOK {
 		t.Errorf("expected status 200, got %d", response.StatusCode)
 	}
+
+	test.AssertHasToken(response, t)
 }
 
 func TestLoginInvalidData(t *testing.T) {
@@ -55,6 +57,7 @@ func TestLoginInvalidData(t *testing.T) {
 		}
 	}
 
+	test.AssertHasNoToken(response, t)
 	assertUserIsUntouched(user, t)
 }
 
@@ -83,6 +86,7 @@ func TestLoginIncorrectEmail(t *testing.T) {
 		t.Errorf(`expected validation error for field "email" to be present`)
 	}
 
+	test.AssertHasNoToken(response, t)
 	assertUserIsUntouched(user, t)
 }
 
@@ -111,6 +115,7 @@ func TestLoginIncorrectPassword(t *testing.T) {
 		t.Errorf(`expected validation error for field "email" to be present`)
 	}
 
+	test.AssertHasNoToken(response, t)
 	assertUserIsUntouched(user, t)
 }
 

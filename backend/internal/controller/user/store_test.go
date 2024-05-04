@@ -48,6 +48,8 @@ func TestStoreValidData(t *testing.T) {
 	if user.Password != hashedPassword {
 		t.Errorf("expected the password field %s, got %s", hashedPassword, user.Name)
 	}
+
+	test.AssertHasToken(response, t)
 }
 
 func TestStoreInvalidData(t *testing.T) {
@@ -82,6 +84,8 @@ func TestStoreInvalidData(t *testing.T) {
 		t.Errorf("expected no created rows, got %d", count)
 		return
 	}
+
+	test.AssertHasNoToken(response, t)
 }
 
 func TestStoreDuplicateEmail(t *testing.T) {
@@ -118,6 +122,8 @@ func TestStoreDuplicateEmail(t *testing.T) {
 	if count != 1 {
 		t.Errorf("expected 1 row, got %d", count)
 	}
+
+	test.AssertHasNoToken(response, t)
 }
 
 func TestStoreValidation(t *testing.T) {
