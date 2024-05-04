@@ -1,7 +1,7 @@
 import "./guest-page.sass"
 import Field from "../../component/field/field.tsx";
 import Button from "../../component/button/button.tsx";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {FormEvent} from "react";
 import {useHttp} from "../../service/use-http.ts";
 import {useFormState} from "../../service/use-form-state.ts";
@@ -19,7 +19,7 @@ class Errors {
 export default function LoginPage() {
     const http = useHttp()
     const {state, setField, errors, setErrors} = useFormState(new Payload(), new Errors())
-
+    const navigate = useNavigate()
 
     async function submit(event: FormEvent) {
         event.preventDefault()
@@ -29,6 +29,10 @@ export default function LoginPage() {
         if (status == 422 || status == 401) {
             setErrors(data)
             return
+        }
+
+        if (status == 200) {
+            navigate("/")
         }
     }
 
