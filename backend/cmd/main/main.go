@@ -18,7 +18,7 @@ func main() {
 	routing.Post("/api/users/login", user.Login)
 
 	handler := middleware.BuildPipeline(routing.Serve(), []middleware.Middleware{
-		middleware.SetContentType,
+		middleware.SetResponseHeaders,
 	})
 
 	err := http.ListenAndServe(":"+os.Getenv("APP_PORT"), handler)
