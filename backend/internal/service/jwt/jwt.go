@@ -17,7 +17,7 @@ type header struct {
 	Typ string `json:"typ"`
 }
 
-type payload struct {
+type Payload struct {
 	Id   int    `json:"id"`
 	Name string `json:"name"`
 	Exp  int64  `json:"exp"`
@@ -55,7 +55,7 @@ func buildHeader() (string, error) {
 
 func buildPayload(user users.User) (string, error) {
 	expires := time.Now().Add(time.Hour).Unix()
-	jsonPayload, err := json.Marshal(payload{user.Id, user.Name, expires})
+	jsonPayload, err := json.Marshal(Payload{user.Id, user.Name, expires})
 
 	if err != nil {
 		return "", fmt.Errorf("buildPayload(): %w", err)
@@ -99,4 +99,20 @@ func IsValid(token string) bool {
 	}
 
 	return true
+}
+
+func ExtractPayload(token string) (Payload, error) {
+	var payload Payload
+	base64Payload := strings.Split(token, ".")[1]
+
+	decoded, err := base64.URLEncoding.DecodeString(base64Payload)
+	if err != nil {
+		return payload, fmt.Errorf("jwt.ExtractPayload(): %w", err)
+	}
+
+	if err = json.Unmarshal(decoded, &payload); err != nil {
+		return payload, fmt.Errorf("jwt.ExtractPayload(): %w", err)
+	}
+
+	return payload, nil
 }

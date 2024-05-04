@@ -19,6 +19,7 @@ func main() {
 
 	handler := middleware.BuildPipeline(routing.Serve(), []middleware.Middleware{
 		middleware.SetResponseHeaders,
+		middleware.Authenticate,
 	})
 
 	err := http.ListenAndServe(":"+os.Getenv("APP_PORT"), handler)
