@@ -63,7 +63,6 @@ func Store(writer http.ResponseWriter, request *http.Request) {
 		log.Error(err)
 		return
 	}
-	writer.WriteHeader(http.StatusCreated)
 
 	token, err := jwt.Make(user)
 	if err != nil {
@@ -73,5 +72,6 @@ func Store(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	http.SetCookie(writer, &http.Cookie{Name: "Access-Token", Value: token, HttpOnly: true})
+	writer.WriteHeader(http.StatusCreated)
 	log.Info("Created user", user.Id)
 }
