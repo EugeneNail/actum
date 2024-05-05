@@ -2,11 +2,10 @@ package user
 
 import (
 	"encoding/json"
+	"github.com/EugeneNail/actum/internal/controller"
 	"github.com/EugeneNail/actum/internal/model/users"
-	"github.com/EugeneNail/actum/internal/service/controller"
 	"github.com/EugeneNail/actum/internal/service/jwt"
 	"github.com/EugeneNail/actum/internal/service/log"
-	"github.com/EugeneNail/actum/internal/service/validation"
 	"net/http"
 )
 
@@ -20,28 +19,9 @@ type storeInput struct {
 
 func Store(writer http.ResponseWriter, request *http.Request) {
 	encoder := json.NewEncoder(writer)
-	input, err := controller.Parse[storeInput](writer, request)
 
-	if err != nil {
-		http.Error(writer, err.Error(), http.StatusBadRequest)
-		log.Error(err)
-		return
-	}
-	validationErrors, err := validation.Perform(input)
-
-	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		log.Error(err)
-		return
-	}
-
-	if len(validationErrors) > 0 {
-		writer.WriteHeader(http.StatusUnprocessableEntity)
-
-		if err := encoder.Encode(validationErrors); err != nil {
-			http.Error(writer, err.Error(), http.StatusInternalServerError)
-			log.Error(err)
-		}
+	input, ok := controller.GetInput[storeInput](writer, request, encoder)
+	if !ok {
 		return
 	}
 
@@ -50,17 +30,14 @@ func Store(writer http.ResponseWriter, request *http.Request) {
 		err := encoder.Encode(map[string]string{"passwordConfirmation": "Passwords do not match"})
 
 		if err != nil {
-			http.Error(writer, err.Error(), http.StatusInternalServerError)
-			log.Error(err)
+			controller.WriteError(writer, err)
 		}
 		return
 	}
 
 	user := users.User{input.Id, input.Name, input.Email, hashPassword(input.Password)}
-
-	if err = user.Save(); err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		log.Error(err)
+	if err := user.Save(); err != nil {
+		controller.WriteError(writer, err)
 		return
 	}
 
