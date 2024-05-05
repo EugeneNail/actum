@@ -11,9 +11,16 @@ import (
 func TestLoginValidData(t *testing.T) {
 	env.Load()
 	t.Cleanup(cleanup)
-	createUser("jodame3394@agafx.com", "Strong123")
 
-	response := tests.Post("/api/users/login", t, `{
+	response := tests.Post("/api/users", t, `{
+		"name": "John",
+		"email": "jodame3394@agafx.com",
+		"password": "Strong123",
+		"passwordConfirmation": "Strong123"
+	}`)
+	response.AssertStatus(http.StatusCreated)
+
+	response = tests.Post("/api/users/login", t, `{
 		"email": "jodame3394@agafx.com",
 		"password": "Strong123"
 	}`)
@@ -25,7 +32,6 @@ func TestLoginValidData(t *testing.T) {
 func TestLoginInvalidData(t *testing.T) {
 	env.Load()
 	t.Cleanup(cleanup)
-	user := createUser("yibewek618@goulink.com", "v9&;43mV,>2BE^t")
 
 	response := tests.Post("/api/users/login", t, `{
 		"email": "yibewek618goulink.com",
@@ -35,13 +41,19 @@ func TestLoginInvalidData(t *testing.T) {
 	response.AssertStatus(http.StatusUnprocessableEntity)
 	response.AssertHasValidationErrors([]string{"email", "password"})
 	response.AssertHasNoToken()
-	tests.AssertUserIsUntouched(user, t)
 }
 
 func TestLoginIncorrectEmail(t *testing.T) {
 	env.Load()
 	t.Cleanup(cleanup)
-	user := createUser("doleya5976@agafx.com", "w24V,KY$f2YSIPQ")
+
+	tests.Post("/api/users", t, `{
+		"email": "doleya5976@agafx.com",
+		"password": "w24V,KY$f2YSIPQ"
+	}`)
+
+	user, err := users.Find(1)
+	tests.Check(err)
 
 	response := tests.Post("/api/users/login", t, `{
 		"email": "doley5976@agafx.com",
@@ -57,7 +69,13 @@ func TestLoginIncorrectEmail(t *testing.T) {
 func TestLoginIncorrectPassword(t *testing.T) {
 	env.Load()
 	t.Cleanup(cleanup)
-	user := createUser("pleonius@sentimentdate.com", "L00k@tmEImHer3")
+	tests.Post("/api/users", t, `{
+		"email": "pleonius@sentimentdate.com",
+		"password": "L00k@tmEImHer3"
+	}`)
+
+	user, err := users.Find(1)
+	tests.Check(err)
 
 	response := tests.Post("/api/users/login", t, `{
 		"email": "pleonius@sentimentdate.com",
@@ -68,14 +86,6 @@ func TestLoginIncorrectPassword(t *testing.T) {
 	response.AssertHasValidationErrors([]string{"email"})
 	response.AssertHasNoToken()
 	tests.AssertUserIsUntouched(user, t)
-}
-
-func createUser(email string, password string) users.User {
-	user := users.User{0, "John", email, hashPassword(password)}
-	err := user.Save()
-	tests.Check(err)
-
-	return user
 }
 
 func TestLoginValidation(t *testing.T) {

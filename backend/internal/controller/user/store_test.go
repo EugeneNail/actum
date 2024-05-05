@@ -1,8 +1,6 @@
 package user
 
 import (
-	"github.com/EugeneNail/actum/internal/database/mysql"
-	"github.com/EugeneNail/actum/internal/model/users"
 	"github.com/EugeneNail/actum/internal/service/env"
 	"github.com/EugeneNail/actum/internal/service/tests"
 	"net/http"
@@ -13,6 +11,7 @@ import (
 func TestStoreValidData(t *testing.T) {
 	env.Load()
 	t.Cleanup(cleanup)
+
 	response := tests.Post("/api/users", t, `{
 		"name": "John",
 		"email": "blank@gmail.com",
@@ -22,27 +21,11 @@ func TestStoreValidData(t *testing.T) {
 
 	response.AssertStatus(http.StatusCreated)
 
-	count, err := mysql.GetRowCount("users")
-	tests.Check(err)
-	if count != 1 {
-		t.Errorf("expected 1 row, got %d", count)
-		return
-	}
-
-	user, err := users.Find(1)
-	tests.Check(err)
-	if user.Name != "John" {
-		t.Errorf("expected the name field John, got %s", user.Name)
-	}
-
-	if user.Email != "blank@gmail.com" {
-		t.Errorf("expected the email field blank@gmail.com, got %s", user.Email)
-	}
-
-	hashedPassword := hashPassword("Strong123")
-	if user.Password != hashedPassword {
-		t.Errorf("expected the password field %s, got %s", hashedPassword, user.Name)
-	}
+	tests.AssertDatabaseHas("users", map[string]any{
+		"name":     "John",
+		"email":    "blank@gmail.com",
+		"password": hashPassword("Strong123"),
+	}, t)
 
 	response.AssertHasToken()
 }
@@ -50,6 +33,7 @@ func TestStoreValidData(t *testing.T) {
 func TestStoreInvalidData(t *testing.T) {
 	env.Load()
 	t.Cleanup(cleanup)
+
 	response := tests.Post("/api/users", t, `{
 		"name": "Jo",
 		"email": "blankgmail.com",
@@ -59,20 +43,14 @@ func TestStoreInvalidData(t *testing.T) {
 
 	response.AssertStatus(http.StatusUnprocessableEntity)
 	response.AssertHasValidationErrors([]string{"name", "email", "password", "passwordConfirmation"})
-
-	count, err := mysql.GetRowCount("users")
-	tests.Check(err)
-	if count != 0 {
-		t.Errorf("expected no created rows, got %d", count)
-		return
-	}
-
 	response.AssertHasNoToken()
+	tests.AssertTableIsEmpty("users", t)
 }
 
 func TestStoreDuplicateEmail(t *testing.T) {
 	env.Load()
 	t.Cleanup(cleanup)
+
 	input := `{
 		"name": "John",
 		"email": "blank@gmail.com",
@@ -84,13 +62,7 @@ func TestStoreDuplicateEmail(t *testing.T) {
 
 	response.AssertStatus(http.StatusUnprocessableEntity)
 	response.AssertHasValidationErrors([]string{"email"})
-
-	count, err := mysql.GetRowCount("users")
-	tests.Check(err)
-	if count != 1 {
-		t.Errorf("expected 1 row, got %d", count)
-	}
-
+	tests.AssertDatabaseCount("users", 1, t)
 	response.AssertHasNoToken()
 }
 

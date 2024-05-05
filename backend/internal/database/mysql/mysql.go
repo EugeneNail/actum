@@ -22,29 +22,6 @@ func GetDsn() string {
 	)
 }
 
-func GetRowCount(table string) (int, error) {
-	db, err := Connect()
-	defer db.Close()
-
-	if err != nil {
-		return -1, fmt.Errorf("can't connect: %w", err)
-	}
-	result, err := db.Query(`SELECT COUNT(*) FROM ` + table)
-
-	if err != nil {
-		return -1, fmt.Errorf("can't select count: %w", err)
-	}
-	var count int
-
-	for result.Next() {
-		if err := result.Scan(&count); err != nil {
-			return -1, fmt.Errorf("can't scan row count: %w", err)
-		}
-	}
-
-	return count, nil
-}
-
 func Truncate(table string) error {
 	db, err := Connect()
 	defer db.Close()
