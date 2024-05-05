@@ -66,6 +66,6 @@ func Login(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	http.SetCookie(writer, &http.Cookie{Name: "Access-Token", Value: token, HttpOnly: true})
+	http.SetCookie(writer, &http.Cookie{Name: "Access-Token", Value: token, HttpOnly: true, Path: "/"})
 	log.Info("User", user.Id, "logged in")
 }

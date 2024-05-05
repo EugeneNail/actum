@@ -15,7 +15,7 @@ type route struct {
 	handle func(http.ResponseWriter, *http.Request)
 }
 
-type contextKey string
+type CtxKey string
 
 func Serve() http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
@@ -28,8 +28,9 @@ func Serve() http.HandlerFunc {
 					allowedMethods = append(allowedMethods, route.method)
 					continue
 				}
-				context := context.WithValue(context.Background(), contextKey("variables"), matches[1:])
-				route.handle(writer, request.WithContext(context))
+
+				ctx := context.WithValue(request.Context(), CtxKey("variables"), matches[1:])
+				route.handle(writer, request.WithContext(ctx))
 				return
 			}
 		}
@@ -81,6 +82,6 @@ func validateMethod(method string) {
 }
 
 func GetVariable(request *http.Request, index int) string {
-	variables := request.Context().Value(contextKey("variables")).([]string)
+	variables := request.Context().Value(CtxKey("variables")).([]string)
 	return variables[index]
 }
