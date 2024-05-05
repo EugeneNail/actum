@@ -102,7 +102,7 @@ func TestStoreDuplicateEmail(t *testing.T) {
 func TestStoreValidation(t *testing.T) {
 	env.Load()
 
-	successes := []tests.ValidationTest{
+	tests.AssertValidationSuccess[storeInput](t, []tests.ValidationTest{
 		{"Name 1", "name", "Joe"},
 		{"Name 2", "name", "John"},
 		{"Name 3", "name", "William"},
@@ -118,14 +118,9 @@ func TestStoreValidation(t *testing.T) {
 		{"Password 2", "password", "VeryStrongP@ssw0rd32186"},
 		{"Password 3", "password", "J7<}9*G?a\\-0"},
 		{"Password 4", "password", "/Pb/>BX<82rQvW4tq!'9i1@0(e7Kzq/F?RnP<iq:ob;h#l,'%q"},
-	}
-	for _, tableTest := range successes {
-		t.Run(tableTest.Name, func(t *testing.T) {
-			tests.AssertValidationSuccess[storeInput](tableTest, t)
-		})
-	}
+	})
 
-	fails := []tests.ValidationTest{
+	tests.AssertValidationFail[storeInput](t, []tests.ValidationTest{
 		{"Empty name", "name", ""},
 		{"Too short name", "name", "Jo"},
 		{"Too long name", "name", strings.Repeat("Very", 5) + "LongName"},
@@ -145,10 +140,5 @@ func TestStoreValidation(t *testing.T) {
 		{"Password has only lowercase", "password", "nomixedcase"},
 		{"Password has only uppercase", "password", "NOMIXEDCASE"},
 		{"Password has spaces", "password", "With spaces"},
-	}
-	for _, tableTest := range fails {
-		t.Run(tableTest.Name, func(t *testing.T) {
-			tests.AssertValidationFail[storeInput](tableTest, t)
-		})
-	}
+	})
 }

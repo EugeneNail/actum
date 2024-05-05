@@ -90,7 +90,7 @@ func createUser(email string, password string) users.User {
 func TestLoginValidation(t *testing.T) {
 	env.Load()
 
-	successes := []tests.ValidationTest{
+	tests.AssertValidationSuccess[loginInput](t, []tests.ValidationTest{
 		{"Email 1", "email", "Twila_Braun-Bogisich@gmail.com"},
 		{"Email 2", "email", "Noemie16@gmail.com"},
 		{"Email 3", "email", "Catalina41@gmail.com"},
@@ -101,14 +101,9 @@ func TestLoginValidation(t *testing.T) {
 		{"Password 2", "password", "B^H}i,o5:iJvco"},
 		{"Password 3", "password", "2J*LA5NxKnZ>1}g0Beu^:HR^Bn!6-H3izGF#o2!>"},
 		{"Password 4", "password", "_d=)21YWPX@%HHbV2et:D_,MH+Y0tV,+@:^]5Ne)!vgHH%@1Ls)M.BYb7bs3t~Py^5"},
-	}
-	for _, tableTest := range successes {
-		t.Run(tableTest.Name, func(t *testing.T) {
-			tests.AssertValidationSuccess[storeInput](tableTest, t)
-		})
-	}
+	})
 
-	fails := []tests.ValidationTest{
+	tests.AssertValidationFail[loginInput](t, []tests.ValidationTest{
 		{"Empty email", "email", ""},
 		{"Email has no mail", "email", "Enoch_Corwin@"},
 		{"Email has no separator", "email", "Cleta_Schimmelicloud.com"},
@@ -121,10 +116,5 @@ func TestLoginValidation(t *testing.T) {
 		{"Password has only lowercase", "password", "nrau}h9j1d1hux@h@_wd"},
 		{"Password has only uppercase", "password", "F9.F9#)30XJXM+WHW*VYJ"},
 		{"Password has spaces", "password", "n6K-N%acxa)om]oT= 8muHQ?Zs=s"},
-	}
-	for _, tableTest := range fails {
-		t.Run(tableTest.Name, func(t *testing.T) {
-			tests.AssertValidationFail[storeInput](tableTest, t)
-		})
-	}
+	})
 }

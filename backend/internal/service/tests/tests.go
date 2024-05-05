@@ -23,30 +23,31 @@ func AssertStatus(response *http.Response, status int, t *testing.T) {
 	}
 }
 
-func AssertValidationSuccess[T any](test ValidationTest, t *testing.T) {
-	errorCount := getValidationErrorCount[T](test)
-	if errorCount > 0 {
-		t.Errorf("Must success at value  ---  %s", test.Value)
+func assertValidation[T any](mustSuccess bool, t *testing.T, validationTests []ValidationTest) {
+	for _, validationTest := range validationTests {
+		t.Run(validationTest.Name, func(t *testing.T) {
+			errorsCount := getValidationErrorsCount[T](validationTest)
+
+			if mustSuccess && errorsCount > 0 {
+				t.Errorf("Must success at value  ---  %s", validationTest.Value)
+			}
+
+			if !mustSuccess && errorsCount == 0 {
+				t.Errorf("Must fail at value  ---  %s", validationTest.Value)
+			}
+		})
 	}
 }
 
-func AssertValidationFail[T any](test ValidationTest, t *testing.T) {
-	errorCount := getValidationErrorCount[T](test)
-	if errorCount == 0 {
-		t.Errorf("Must fail at value  ---  %s", test.Value)
-	}
+func AssertValidationSuccess[T any](t *testing.T, validationTests []ValidationTest) {
+	assertValidation[T](true, t, validationTests)
 }
 
-func getStructFieldByName[T any](name string) reflect.StructField {
-	for _, structField := range reflect.VisibleFields(reflect.TypeOf(*new(T))) {
-		if structField.Tag.Get("json") == name {
-			return structField
-		}
-	}
-	panic("struct field not found: " + name)
+func AssertValidationFail[T any](t *testing.T, validationTests []ValidationTest) {
+	assertValidation[T](false, t, validationTests)
 }
 
-func getValidationErrorCount[T any](test ValidationTest) int {
+func getValidationErrorsCount[T any](test ValidationTest) int {
 	structField := getStructFieldByName[T](test.Field)
 
 	var ruleFuncs []rule.RuleFunc
@@ -72,6 +73,15 @@ func getValidationErrorCount[T any](test ValidationTest) int {
 	}
 
 	return errorCount
+}
+
+func getStructFieldByName[T any](name string) reflect.StructField {
+	for _, structField := range reflect.VisibleFields(reflect.TypeOf(*new(T))) {
+		if structField.Tag.Get("json") == name {
+			return structField
+		}
+	}
+	panic("struct field not found: " + name)
 }
 
 func AssertHasValidationErrors(response *http.Response, fields []string, t *testing.T) {
