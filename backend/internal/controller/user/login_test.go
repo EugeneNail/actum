@@ -21,7 +21,7 @@ func TestLoginValidData(t *testing.T) {
 		"email": "jodame3394@agafx.com",
 		"password": "Strong123"
 	}`))
-	check(err)
+	test.Check(err)
 
 	if response.StatusCode != http.StatusOK {
 		t.Errorf("expected status 200, got %d", response.StatusCode)
@@ -40,7 +40,7 @@ func TestLoginInvalidData(t *testing.T) {
 		"email": "yibewek618goulink.com",
 		"password": "v9"
 	}`))
-	check(err)
+	test.Check(err)
 
 	if response.StatusCode != http.StatusUnprocessableEntity {
 		t.Errorf("expected status 422, got %d", response.StatusCode)
@@ -48,9 +48,9 @@ func TestLoginInvalidData(t *testing.T) {
 
 	var validationErrors map[string]string
 	data, err := io.ReadAll(response.Body)
-	check(err)
+	test.Check(err)
 	err = json.Unmarshal(data, &validationErrors)
-	check(err)
+	test.Check(err)
 	for _, field := range []string{"email", "password"} {
 		if _, exists := validationErrors[field]; !exists {
 			t.Errorf(`expected validation error for field "%s" to be present`, field)
@@ -58,7 +58,7 @@ func TestLoginInvalidData(t *testing.T) {
 	}
 
 	test.AssertHasNoToken(response, t)
-	assertUserIsUntouched(user, t)
+	test.AssertUserIsUntouched(user, t)
 }
 
 func TestLoginIncorrectEmail(t *testing.T) {
@@ -71,7 +71,7 @@ func TestLoginIncorrectEmail(t *testing.T) {
 		"email": "doley5976@agafx.com",
 		"password": "w24V,KY$f2YSIPQ"
 	}`))
-	check(err)
+	test.Check(err)
 
 	if response.StatusCode != http.StatusUnauthorized {
 		t.Errorf("expected status 401, got %d", response.StatusCode)
@@ -79,15 +79,15 @@ func TestLoginIncorrectEmail(t *testing.T) {
 
 	var validationErrors map[string]string
 	data, err := io.ReadAll(response.Body)
-	check(err)
+	test.Check(err)
 	err = json.Unmarshal(data, &validationErrors)
-	check(err)
+	test.Check(err)
 	if _, exists := validationErrors["email"]; !exists {
 		t.Errorf(`expected validation error for field "email" to be present`)
 	}
 
 	test.AssertHasNoToken(response, t)
-	assertUserIsUntouched(user, t)
+	test.AssertUserIsUntouched(user, t)
 }
 
 func TestLoginIncorrectPassword(t *testing.T) {
@@ -100,7 +100,7 @@ func TestLoginIncorrectPassword(t *testing.T) {
 		"email": "pleonius@sentimentdate.com",
 		"password": "Lo0k@tmEImHer3"
 	}`))
-	check(err)
+	test.Check(err)
 
 	if response.StatusCode != http.StatusUnauthorized {
 		t.Errorf("expected status 401, got %d", response.StatusCode)
@@ -108,39 +108,23 @@ func TestLoginIncorrectPassword(t *testing.T) {
 
 	var validationErrors map[string]string
 	data, err := io.ReadAll(response.Body)
-	check(err)
+	test.Check(err)
 	err = json.Unmarshal(data, &validationErrors)
-	check(err)
+	test.Check(err)
 	if _, exists := validationErrors["email"]; !exists {
 		t.Errorf(`expected validation error for field "email" to be present`)
 	}
 
 	test.AssertHasNoToken(response, t)
-	assertUserIsUntouched(user, t)
+	test.AssertUserIsUntouched(user, t)
 }
 
 func createUser(email string, password string) users.User {
 	user := users.User{0, "John", email, hashPassword(password)}
 	err := user.Save()
-	check(err)
+	test.Check(err)
 
 	return user
-}
-
-func assertUserIsUntouched(user users.User, t *testing.T) {
-	dbUser, err := users.Find(1)
-	check(err)
-	if dbUser.Name != user.Name {
-		t.Errorf(`field "name" has been corrupted`)
-	}
-
-	if dbUser.Email != user.Email {
-		t.Errorf(`field "email" has been corrupted`)
-	}
-
-	if dbUser.Password != user.Password {
-		t.Errorf(`field "password" has been corrupted`)
-	}
 }
 
 func TestLoginValidation(t *testing.T) {

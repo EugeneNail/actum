@@ -1,6 +1,7 @@
 package test
 
 import (
+	"github.com/EugeneNail/actum/internal/model/users"
 	"github.com/EugeneNail/actum/internal/service/validation/rule"
 	"net/http"
 	"reflect"
@@ -55,9 +56,7 @@ func getValidationErrorCount[T any](test ValidationTest) int {
 
 	for _, ruleFunc := range ruleFuncs {
 		validationError, err := ruleFunc(test.Field, test.Value)
-		if err != nil {
-			panic(err)
-		}
+		Check(err)
 
 		if validationError != nil {
 			errorCount++
@@ -87,4 +86,26 @@ func hasToken(response *http.Response) bool {
 	}
 
 	return false
+}
+
+func AssertUserIsUntouched(user users.User, t *testing.T) {
+	dbUser, err := users.Find(1)
+	Check(err)
+	if dbUser.Name != user.Name {
+		t.Errorf(`field "name" has been corrupted`)
+	}
+
+	if dbUser.Email != user.Email {
+		t.Errorf(`field "email" has been corrupted`)
+	}
+
+	if dbUser.Password != user.Password {
+		t.Errorf(`field "password" has been corrupted`)
+	}
+}
+
+func Check(err error) {
+	if err != nil {
+		panic(err)
+	}
 }

@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"github.com/EugeneNail/actum/internal/database/mysql"
 	"github.com/EugeneNail/actum/internal/service/env"
+	"github.com/EugeneNail/actum/internal/service/test"
 )
 
 func hashPassword(password string) string {
@@ -14,15 +15,9 @@ func hashPassword(password string) string {
 	return base64.StdEncoding.EncodeToString(hash)
 }
 
-func check(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
 func cleanup() {
 	err := mysql.Truncate("users")
-	check(err)
+	test.Check(err)
 }
 
 func getUrl() string {

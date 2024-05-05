@@ -21,21 +21,21 @@ func TestStoreValidData(t *testing.T) {
 		"password": "Strong123",
 		"passwordConfirmation": "Strong123"
 	}`))
-	check(err)
+	test.Check(err)
 
 	if response.StatusCode != http.StatusCreated {
 		t.Errorf("expected status 201, got %d", response.StatusCode)
 	}
 
 	count, err := mysql.GetRowCount("users")
-	check(err)
+	test.Check(err)
 	if count != 1 {
 		t.Errorf("expected 1 row, got %d", count)
 		return
 	}
 
 	user, err := users.Find(1)
-	check(err)
+	test.Check(err)
 	if user.Name != "John" {
 		t.Errorf("expected the name field John, got %s", user.Name)
 	}
@@ -61,7 +61,7 @@ func TestStoreInvalidData(t *testing.T) {
 		"password": "String1",
 		"passwordConfirmation": ""
 	}`))
-	check(err)
+	test.Check(err)
 
 	if response.StatusCode != http.StatusUnprocessableEntity {
 		t.Errorf("expected status 422, got %d", response.StatusCode)
@@ -69,9 +69,9 @@ func TestStoreInvalidData(t *testing.T) {
 
 	var validationMessages map[string]string
 	data, err := io.ReadAll(response.Body)
-	check(err)
+	test.Check(err)
 	err = json.Unmarshal(data, &validationMessages)
-	check(err)
+	test.Check(err)
 	for _, field := range []string{"name", "email", "password", "passwordConfirmation"} {
 		if _, exists := validationMessages[field]; !exists {
 			t.Errorf(`expected validation error for field "%s" to be present`, field)
@@ -79,7 +79,7 @@ func TestStoreInvalidData(t *testing.T) {
 	}
 
 	count, err := mysql.GetRowCount("users")
-	check(err)
+	test.Check(err)
 	if count != 0 {
 		t.Errorf("expected no created rows, got %d", count)
 		return
@@ -99,9 +99,9 @@ func TestStoreDuplicateEmail(t *testing.T) {
 		"passwordConfirmation": "Strong123"
 	}`
 	_, err := http.Post(url, "application/json", strings.NewReader(input))
-	check(err)
+	test.Check(err)
 	response, err := http.Post(url, "application/json", strings.NewReader(input))
-	check(err)
+	test.Check(err)
 
 	if response.StatusCode != http.StatusUnprocessableEntity {
 		t.Errorf("expected status 422, got %d", response.StatusCode)
@@ -110,15 +110,15 @@ func TestStoreDuplicateEmail(t *testing.T) {
 
 	validationMessages := make(map[string]string)
 	data, err := io.ReadAll(response.Body)
-	check(err)
+	test.Check(err)
 	err = json.Unmarshal(data, &validationMessages)
-	check(err)
+	test.Check(err)
 	if _, exists := validationMessages["email"]; !exists {
 		t.Error("expected validation error for the email field to be present")
 	}
 
 	count, err := mysql.GetRowCount("users")
-	check(err)
+	test.Check(err)
 	if count != 1 {
 		t.Errorf("expected 1 row, got %d", count)
 	}
