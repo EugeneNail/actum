@@ -4,7 +4,7 @@ import (
 	"github.com/EugeneNail/actum/internal/database/mysql"
 	"github.com/EugeneNail/actum/internal/model/users"
 	"github.com/EugeneNail/actum/internal/service/env"
-	"github.com/EugeneNail/actum/internal/service/test"
+	"github.com/EugeneNail/actum/internal/service/tests"
 	"net/http"
 	"strings"
 	"testing"
@@ -19,19 +19,19 @@ func TestStoreValidData(t *testing.T) {
 		"password": "Strong123",
 		"passwordConfirmation": "Strong123"
 	}`))
-	test.Check(err)
+	tests.Check(err)
 
-	test.AssertStatus(response, http.StatusCreated, t)
+	tests.AssertStatus(response, http.StatusCreated, t)
 
 	count, err := mysql.GetRowCount("users")
-	test.Check(err)
+	tests.Check(err)
 	if count != 1 {
 		t.Errorf("expected 1 row, got %d", count)
 		return
 	}
 
 	user, err := users.Find(1)
-	test.Check(err)
+	tests.Check(err)
 	if user.Name != "John" {
 		t.Errorf("expected the name field John, got %s", user.Name)
 	}
@@ -45,7 +45,7 @@ func TestStoreValidData(t *testing.T) {
 		t.Errorf("expected the password field %s, got %s", hashedPassword, user.Name)
 	}
 
-	test.AssertHasToken(response, t)
+	tests.AssertHasToken(response, t)
 }
 
 func TestStoreInvalidData(t *testing.T) {
@@ -57,19 +57,19 @@ func TestStoreInvalidData(t *testing.T) {
 		"password": "String1",
 		"passwordConfirmation": ""
 	}`))
-	test.Check(err)
+	tests.Check(err)
 
-	test.AssertStatus(response, http.StatusUnprocessableEntity, t)
-	test.AssertHasValidationErrors(response, []string{"name", "email", "password", "passwordConfirmation"}, t)
+	tests.AssertStatus(response, http.StatusUnprocessableEntity, t)
+	tests.AssertHasValidationErrors(response, []string{"name", "email", "password", "passwordConfirmation"}, t)
 
 	count, err := mysql.GetRowCount("users")
-	test.Check(err)
+	tests.Check(err)
 	if count != 0 {
 		t.Errorf("expected no created rows, got %d", count)
 		return
 	}
 
-	test.AssertHasNoToken(response, t)
+	tests.AssertHasNoToken(response, t)
 }
 
 func TestStoreDuplicateEmail(t *testing.T) {
@@ -83,26 +83,26 @@ func TestStoreDuplicateEmail(t *testing.T) {
 		"passwordConfirmation": "Strong123"
 	}`
 	_, err := http.Post(url, "application/json", strings.NewReader(input))
-	test.Check(err)
+	tests.Check(err)
 	response, err := http.Post(url, "application/json", strings.NewReader(input))
-	test.Check(err)
+	tests.Check(err)
 
-	test.AssertStatus(response, http.StatusUnprocessableEntity, t)
-	test.AssertHasValidationErrors(response, []string{"email"}, t)
+	tests.AssertStatus(response, http.StatusUnprocessableEntity, t)
+	tests.AssertHasValidationErrors(response, []string{"email"}, t)
 
 	count, err := mysql.GetRowCount("users")
-	test.Check(err)
+	tests.Check(err)
 	if count != 1 {
 		t.Errorf("expected 1 row, got %d", count)
 	}
 
-	test.AssertHasNoToken(response, t)
+	tests.AssertHasNoToken(response, t)
 }
 
 func TestStoreValidation(t *testing.T) {
 	env.Load()
 
-	successes := []test.ValidationTest{
+	successes := []tests.ValidationTest{
 		{"Name 1", "name", "Joe"},
 		{"Name 2", "name", "John"},
 		{"Name 3", "name", "William"},
@@ -121,11 +121,11 @@ func TestStoreValidation(t *testing.T) {
 	}
 	for _, tableTest := range successes {
 		t.Run(tableTest.Name, func(t *testing.T) {
-			test.AssertValidationSuccess[storeInput](tableTest, t)
+			tests.AssertValidationSuccess[storeInput](tableTest, t)
 		})
 	}
 
-	fails := []test.ValidationTest{
+	fails := []tests.ValidationTest{
 		{"Empty name", "name", ""},
 		{"Too short name", "name", "Jo"},
 		{"Too long name", "name", strings.Repeat("Very", 5) + "LongName"},
@@ -148,7 +148,7 @@ func TestStoreValidation(t *testing.T) {
 	}
 	for _, tableTest := range fails {
 		t.Run(tableTest.Name, func(t *testing.T) {
-			test.AssertValidationFail[storeInput](tableTest, t)
+			tests.AssertValidationFail[storeInput](tableTest, t)
 		})
 	}
 }

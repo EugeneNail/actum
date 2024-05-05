@@ -5,7 +5,7 @@ import (
 	"encoding/base64"
 	"github.com/EugeneNail/actum/internal/database/mysql"
 	"github.com/EugeneNail/actum/internal/service/env"
-	"github.com/EugeneNail/actum/internal/service/test"
+	"github.com/EugeneNail/actum/internal/service/tests"
 )
 
 func hashPassword(password string) string {
@@ -17,7 +17,7 @@ func hashPassword(password string) string {
 
 func cleanup() {
 	err := mysql.Truncate("users")
-	test.Check(err)
+	tests.Check(err)
 }
 
 func getUrl() string {

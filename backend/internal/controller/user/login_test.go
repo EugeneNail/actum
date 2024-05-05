@@ -3,7 +3,7 @@ package user
 import (
 	"github.com/EugeneNail/actum/internal/model/users"
 	"github.com/EugeneNail/actum/internal/service/env"
-	"github.com/EugeneNail/actum/internal/service/test"
+	"github.com/EugeneNail/actum/internal/service/tests"
 	"net/http"
 	"strings"
 	"testing"
@@ -19,10 +19,10 @@ func TestLoginValidData(t *testing.T) {
 		"email": "jodame3394@agafx.com",
 		"password": "Strong123"
 	}`))
-	test.Check(err)
+	tests.Check(err)
 
-	test.AssertStatus(response, http.StatusOK, t)
-	test.AssertHasToken(response, t)
+	tests.AssertStatus(response, http.StatusOK, t)
+	tests.AssertHasToken(response, t)
 }
 
 func TestLoginInvalidData(t *testing.T) {
@@ -35,12 +35,12 @@ func TestLoginInvalidData(t *testing.T) {
 		"email": "yibewek618goulink.com",
 		"password": "v9"
 	}`))
-	test.Check(err)
+	tests.Check(err)
 
-	test.AssertStatus(response, http.StatusUnprocessableEntity, t)
-	test.AssertHasValidationErrors(response, []string{"email", "password"}, t)
-	test.AssertHasNoToken(response, t)
-	test.AssertUserIsUntouched(user, t)
+	tests.AssertStatus(response, http.StatusUnprocessableEntity, t)
+	tests.AssertHasValidationErrors(response, []string{"email", "password"}, t)
+	tests.AssertHasNoToken(response, t)
+	tests.AssertUserIsUntouched(user, t)
 }
 
 func TestLoginIncorrectEmail(t *testing.T) {
@@ -53,12 +53,12 @@ func TestLoginIncorrectEmail(t *testing.T) {
 		"email": "doley5976@agafx.com",
 		"password": "w24V,KY$f2YSIPQ"
 	}`))
-	test.Check(err)
+	tests.Check(err)
 
-	test.AssertStatus(response, http.StatusUnauthorized, t)
-	test.AssertHasValidationErrors(response, []string{"email"}, t)
-	test.AssertHasNoToken(response, t)
-	test.AssertUserIsUntouched(user, t)
+	tests.AssertStatus(response, http.StatusUnauthorized, t)
+	tests.AssertHasValidationErrors(response, []string{"email"}, t)
+	tests.AssertHasNoToken(response, t)
+	tests.AssertUserIsUntouched(user, t)
 }
 
 func TestLoginIncorrectPassword(t *testing.T) {
@@ -71,18 +71,18 @@ func TestLoginIncorrectPassword(t *testing.T) {
 		"email": "pleonius@sentimentdate.com",
 		"password": "Lo0k@tmEImHer3"
 	}`))
-	test.Check(err)
+	tests.Check(err)
 
-	test.AssertStatus(response, http.StatusUnauthorized, t)
-	test.AssertHasValidationErrors(response, []string{"email"}, t)
-	test.AssertHasNoToken(response, t)
-	test.AssertUserIsUntouched(user, t)
+	tests.AssertStatus(response, http.StatusUnauthorized, t)
+	tests.AssertHasValidationErrors(response, []string{"email"}, t)
+	tests.AssertHasNoToken(response, t)
+	tests.AssertUserIsUntouched(user, t)
 }
 
 func createUser(email string, password string) users.User {
 	user := users.User{0, "John", email, hashPassword(password)}
 	err := user.Save()
-	test.Check(err)
+	tests.Check(err)
 
 	return user
 }
@@ -90,7 +90,7 @@ func createUser(email string, password string) users.User {
 func TestLoginValidation(t *testing.T) {
 	env.Load()
 
-	successes := []test.ValidationTest{
+	successes := []tests.ValidationTest{
 		{"Email 1", "email", "Twila_Braun-Bogisich@gmail.com"},
 		{"Email 2", "email", "Noemie16@gmail.com"},
 		{"Email 3", "email", "Catalina41@gmail.com"},
@@ -104,11 +104,11 @@ func TestLoginValidation(t *testing.T) {
 	}
 	for _, tableTest := range successes {
 		t.Run(tableTest.Name, func(t *testing.T) {
-			test.AssertValidationSuccess[storeInput](tableTest, t)
+			tests.AssertValidationSuccess[storeInput](tableTest, t)
 		})
 	}
 
-	fails := []test.ValidationTest{
+	fails := []tests.ValidationTest{
 		{"Empty email", "email", ""},
 		{"Email has no mail", "email", "Enoch_Corwin@"},
 		{"Email has no separator", "email", "Cleta_Schimmelicloud.com"},
@@ -124,7 +124,7 @@ func TestLoginValidation(t *testing.T) {
 	}
 	for _, tableTest := range fails {
 		t.Run(tableTest.Name, func(t *testing.T) {
-			test.AssertValidationFail[storeInput](tableTest, t)
+			tests.AssertValidationFail[storeInput](tableTest, t)
 		})
 	}
 }
