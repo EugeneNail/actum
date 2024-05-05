@@ -2,11 +2,10 @@ package user
 
 import (
 	"encoding/json"
+	"github.com/EugeneNail/actum/internal/controller"
 	"github.com/EugeneNail/actum/internal/model/users"
-	"github.com/EugeneNail/actum/internal/service/controller"
 	"github.com/EugeneNail/actum/internal/service/jwt"
 	"github.com/EugeneNail/actum/internal/service/log"
-	"github.com/EugeneNail/actum/internal/service/validation"
 	"net/http"
 )
 
@@ -17,35 +16,15 @@ type loginInput struct {
 
 func Login(writer http.ResponseWriter, request *http.Request) {
 	encoder := json.NewEncoder(writer)
-	input, err := controller.Parse[loginInput](writer, request)
 
-	if err != nil {
-		http.Error(writer, err.Error(), http.StatusBadRequest)
-		log.Error(err)
-		return
-	}
-
-	validationErrors, err := validation.Perform(input)
-	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		log.Error(err)
-		return
-	}
-
-	if len(validationErrors) > 0 {
-		writer.WriteHeader(http.StatusUnprocessableEntity)
-		if err := encoder.Encode(validationErrors); err != nil {
-			http.Error(writer, err.Error(), http.StatusInternalServerError)
-			log.Error(err)
-		}
+	input, ok := controller.GetInput[loginInput](writer, request, encoder)
+	if !ok {
 		return
 	}
 
 	user, err := users.FindBy("email", input.Email)
-
 	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		log.Error(err)
+		controller.WriteError(writer, err)
 		return
 	}
 
@@ -53,16 +32,14 @@ func Login(writer http.ResponseWriter, request *http.Request) {
 		writer.WriteHeader(http.StatusUnauthorized)
 		err := encoder.Encode(map[string]string{"email": "Incorrect email address or password"})
 		if err != nil {
-			http.Error(writer, err.Error(), http.StatusInternalServerError)
-			log.Error(err)
+			controller.WriteError(writer, err)
 		}
 		return
 	}
 
 	token, err := jwt.Make(user)
 	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		log.Error(err)
+		controller.WriteError(writer, err)
 		return
 	}
 
