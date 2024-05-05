@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/EugeneNail/actum/internal/model/users"
 	"github.com/EugeneNail/actum/internal/service/env"
+	"net/http"
 	"strings"
 	"time"
 )
@@ -21,6 +22,12 @@ type Payload struct {
 	Id   int    `json:"id"`
 	Name string `json:"name"`
 	Exp  int64  `json:"exp"`
+}
+
+type CtxKey string
+
+func GetUser(request *http.Request) users.User {
+	return request.Context().Value(CtxKey("user")).(users.User)
 }
 
 func Make(user users.User) (string, error) {

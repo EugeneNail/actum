@@ -1,6 +1,9 @@
 package middleware
 
 import (
+	"context"
+	"fmt"
+	"github.com/EugeneNail/actum/internal/model/users"
 	"github.com/EugeneNail/actum/internal/service/jwt"
 	"net/http"
 	"time"
@@ -32,11 +35,17 @@ func Authenticate(next http.Handler) http.Handler {
 		token, err := request.Cookie("Access-Token")
 		if err != nil {
 			writer.WriteHeader(http.StatusUnauthorized)
+			if _, err := writer.Write([]byte(`"Access-Token cookie not present"`)); err != nil {
+				http.Error(writer, err.Error(), http.StatusInternalServerError)
+			}
 			return
 		}
 
 		if !jwt.IsValid(token.Value) {
 			writer.WriteHeader(http.StatusUnauthorized)
+			if _, err := writer.Write([]byte(`"Token is invalid"`)); err != nil {
+				http.Error(writer, err.Error(), http.StatusInternalServerError)
+			}
 			return
 		}
 
@@ -48,9 +57,28 @@ func Authenticate(next http.Handler) http.Handler {
 
 		if payload.Exp < time.Now().Unix() {
 			writer.WriteHeader(http.StatusUnauthorized)
+			if _, err := writer.Write([]byte(`"Token has expired"`)); err != nil {
+				http.Error(writer, err.Error(), http.StatusInternalServerError)
+			}
 			return
 		}
 
-		next.ServeHTTP(writer, request)
+		user, err := users.Find(payload.Id)
+		if err != nil {
+			http.Error(writer, err.Error(), http.StatusInternalServerError)
+		}
+
+		if user.Id == 0 {
+			writer.WriteHeader(http.StatusUnauthorized)
+			message := []byte(fmt.Sprintf(`"User %d not found"`, user.Id))
+
+			if _, err := writer.Write(message); err != nil {
+				http.Error(writer, err.Error(), http.StatusInternalServerError)
+			}
+			return
+		}
+
+		ctx := context.WithValue(request.Context(), jwt.CtxKey("user"), user)
+		next.ServeHTTP(writer, request.WithContext(ctx))
 	})
 }
