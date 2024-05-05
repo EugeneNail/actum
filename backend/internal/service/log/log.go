@@ -63,12 +63,12 @@ func getOutputFile() (file *os.File) {
 	)
 
 	if _, err := os.Stat(filename); os.IsNotExist(err) {
-		if os.MkdirAll(directory, 0666) != nil {
+		if os.MkdirAll(directory, 0755) != nil {
 			errorLogger.Println(err)
 		}
 		file, _ = os.Create(filename)
 	} else {
-		file, _ = os.OpenFile(filename, os.O_WRONLY|os.O_APPEND, 0666)
+		file, _ = os.OpenFile(filename, os.O_WRONLY|os.O_APPEND, 0755)
 	}
 
 	return
