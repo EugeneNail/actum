@@ -13,15 +13,14 @@ import (
 func TestStoreValidData(t *testing.T) {
 	env.Load()
 	t.Cleanup(cleanup)
-	response, err := http.Post(getUrl(), "application/json", strings.NewReader(`{
+	response := tests.Post("/api/users", t, `{
 		"name": "John",
 		"email": "blank@gmail.com",
 		"password": "Strong123",
 		"passwordConfirmation": "Strong123"
-	}`))
-	tests.Check(err)
+	}`)
 
-	tests.AssertStatus(response, http.StatusCreated, t)
+	response.AssertStatus(http.StatusCreated)
 
 	count, err := mysql.GetRowCount("users")
 	tests.Check(err)
@@ -45,22 +44,21 @@ func TestStoreValidData(t *testing.T) {
 		t.Errorf("expected the password field %s, got %s", hashedPassword, user.Name)
 	}
 
-	tests.AssertHasToken(response, t)
+	response.AssertHasToken()
 }
 
 func TestStoreInvalidData(t *testing.T) {
 	env.Load()
 	t.Cleanup(cleanup)
-	response, err := http.Post(getUrl(), "application/json", strings.NewReader(`{
+	response := tests.Post("/api/users", t, `{
 		"name": "Jo",
 		"email": "blankgmail.com",
 		"password": "String1",
 		"passwordConfirmation": ""
-	}`))
-	tests.Check(err)
+	}`)
 
-	tests.AssertStatus(response, http.StatusUnprocessableEntity, t)
-	tests.AssertHasValidationErrors(response, []string{"name", "email", "password", "passwordConfirmation"}, t)
+	response.AssertStatus(http.StatusUnprocessableEntity)
+	response.AssertHasValidationErrors([]string{"name", "email", "password", "passwordConfirmation"})
 
 	count, err := mysql.GetRowCount("users")
 	tests.Check(err)
@@ -69,26 +67,23 @@ func TestStoreInvalidData(t *testing.T) {
 		return
 	}
 
-	tests.AssertHasNoToken(response, t)
+	response.AssertHasNoToken()
 }
 
 func TestStoreDuplicateEmail(t *testing.T) {
 	env.Load()
 	t.Cleanup(cleanup)
-	url := getUrl()
 	input := `{
 		"name": "John",
 		"email": "blank@gmail.com",
 		"password": "Strong123",
 		"passwordConfirmation": "Strong123"
 	}`
-	_, err := http.Post(url, "application/json", strings.NewReader(input))
-	tests.Check(err)
-	response, err := http.Post(url, "application/json", strings.NewReader(input))
-	tests.Check(err)
+	tests.Post("/api/users", t, input)
+	response := tests.Post("/api/users", t, input)
 
-	tests.AssertStatus(response, http.StatusUnprocessableEntity, t)
-	tests.AssertHasValidationErrors(response, []string{"email"}, t)
+	response.AssertStatus(http.StatusUnprocessableEntity)
+	response.AssertHasValidationErrors([]string{"email"})
 
 	count, err := mysql.GetRowCount("users")
 	tests.Check(err)
@@ -96,7 +91,7 @@ func TestStoreDuplicateEmail(t *testing.T) {
 		t.Errorf("expected 1 row, got %d", count)
 	}
 
-	tests.AssertHasNoToken(response, t)
+	response.AssertHasNoToken()
 }
 
 func TestStoreValidation(t *testing.T) {

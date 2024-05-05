@@ -3,6 +3,7 @@ package tests
 import (
 	"encoding/json"
 	"github.com/EugeneNail/actum/internal/model/users"
+	"github.com/EugeneNail/actum/internal/service/env"
 	"github.com/EugeneNail/actum/internal/service/validation/rule"
 	"io"
 	"net/http"
@@ -17,13 +18,27 @@ type ValidationTest struct {
 	Value any
 }
 
-func AssertStatus(response *http.Response, status int, t *testing.T) {
+type Response struct {
+	*http.Response
+	t *testing.T
+}
+
+func (response *Response) AssertStatus(status int) {
 	if response.StatusCode != status {
-		t.Errorf("expected status %d, got %d", status, response.StatusCode)
+		response.t.Errorf("expected status %d, got %d", status, response.StatusCode)
 	}
 }
 
-func assertValidation[T any](mustSuccess bool, t *testing.T, validationTests []ValidationTest) {
+func Post(path string, t *testing.T, json string) Response {
+	url := "http://127.0.0.1:" + env.Get("APP_PORT") + path
+	body := strings.NewReader(json)
+	response, err := http.Post(url, "application/json", body)
+	Check(err)
+
+	return Response{response, t}
+}
+
+func AssertValidation[T any](mustSuccess bool, t *testing.T, validationTests []ValidationTest) {
 	for _, validationTest := range validationTests {
 		t.Run(validationTest.Name, func(t *testing.T) {
 			errorsCount := getValidationErrorsCount[T](validationTest)
@@ -40,11 +55,11 @@ func assertValidation[T any](mustSuccess bool, t *testing.T, validationTests []V
 }
 
 func AssertValidationSuccess[T any](t *testing.T, validationTests []ValidationTest) {
-	assertValidation[T](true, t, validationTests)
+	AssertValidation[T](true, t, validationTests)
 }
 
 func AssertValidationFail[T any](t *testing.T, validationTests []ValidationTest) {
-	assertValidation[T](false, t, validationTests)
+	AssertValidation[T](false, t, validationTests)
 }
 
 func getValidationErrorsCount[T any](test ValidationTest) int {
@@ -84,7 +99,7 @@ func getStructFieldByName[T any](name string) reflect.StructField {
 	panic("struct field not found: " + name)
 }
 
-func AssertHasValidationErrors(response *http.Response, fields []string, t *testing.T) {
+func (response *Response) AssertHasValidationErrors(fields []string) {
 	var errors map[string]string
 	data, err := io.ReadAll(response.Body)
 	Check(err)
@@ -93,20 +108,20 @@ func AssertHasValidationErrors(response *http.Response, fields []string, t *test
 
 	for _, field := range fields {
 		if _, exists := errors[field]; !exists {
-			t.Errorf(`expected validation error for field "%s" to be present`, field)
+			response.t.Errorf(`expected validation error for field "%s" to be present`, field)
 		}
 	}
 }
 
-func AssertHasToken(response *http.Response, t *testing.T) {
-	if !hasToken(response) {
-		t.Errorf("The response must have an Access-Token cookie")
+func (response *Response) AssertHasToken() {
+	if !hasToken(response.Response) {
+		response.t.Errorf("The response must have an Access-Token cookie")
 	}
 }
 
-func AssertHasNoToken(response *http.Response, t *testing.T) {
-	if hasToken(response) {
-		t.Errorf("The response must not have an Access-Token cookie")
+func (response *Response) AssertHasNoToken() {
+	if hasToken(response.Response) {
+		response.t.Errorf("The response must not have an Access-Token cookie")
 	}
 }
 

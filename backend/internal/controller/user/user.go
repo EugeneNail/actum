@@ -19,7 +19,3 @@ func cleanup() {
 	err := mysql.Truncate("users")
 	tests.Check(err)
 }
-
-func getUrl() string {
-	return "http://127.0.0.1:" + env.Get("APP_PORT") + "/api/users"
-}

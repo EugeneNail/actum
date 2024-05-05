@@ -5,77 +5,68 @@ import (
 	"github.com/EugeneNail/actum/internal/service/env"
 	"github.com/EugeneNail/actum/internal/service/tests"
 	"net/http"
-	"strings"
 	"testing"
 )
 
 func TestLoginValidData(t *testing.T) {
 	env.Load()
 	t.Cleanup(cleanup)
-	url := getUrl() + "/login"
 	createUser("jodame3394@agafx.com", "Strong123")
 
-	response, err := http.Post(url, "application/json", strings.NewReader(`{
+	response := tests.Post("/api/users/login", t, `{
 		"email": "jodame3394@agafx.com",
 		"password": "Strong123"
-	}`))
-	tests.Check(err)
+	}`)
 
-	tests.AssertStatus(response, http.StatusOK, t)
-	tests.AssertHasToken(response, t)
+	response.AssertStatus(http.StatusOK)
+	response.AssertHasToken()
 }
 
 func TestLoginInvalidData(t *testing.T) {
 	env.Load()
 	t.Cleanup(cleanup)
-	url := getUrl() + "/login"
 	user := createUser("yibewek618@goulink.com", "v9&;43mV,>2BE^t")
 
-	response, err := http.Post(url, "application/json", strings.NewReader(`{
+	response := tests.Post("/api/users/login", t, `{
 		"email": "yibewek618goulink.com",
 		"password": "v9"
-	}`))
-	tests.Check(err)
+	}`)
 
-	tests.AssertStatus(response, http.StatusUnprocessableEntity, t)
-	tests.AssertHasValidationErrors(response, []string{"email", "password"}, t)
-	tests.AssertHasNoToken(response, t)
+	response.AssertStatus(http.StatusUnprocessableEntity)
+	response.AssertHasValidationErrors([]string{"email", "password"})
+	response.AssertHasNoToken()
 	tests.AssertUserIsUntouched(user, t)
 }
 
 func TestLoginIncorrectEmail(t *testing.T) {
 	env.Load()
 	t.Cleanup(cleanup)
-	url := getUrl() + "/login"
 	user := createUser("doleya5976@agafx.com", "w24V,KY$f2YSIPQ")
 
-	response, err := http.Post(url, "application/json", strings.NewReader(`{
+	response := tests.Post("/api/users/login", t, `{
 		"email": "doley5976@agafx.com",
 		"password": "w24V,KY$f2YSIPQ"
-	}`))
-	tests.Check(err)
+	}`)
 
-	tests.AssertStatus(response, http.StatusUnauthorized, t)
-	tests.AssertHasValidationErrors(response, []string{"email"}, t)
-	tests.AssertHasNoToken(response, t)
+	response.AssertStatus(http.StatusUnauthorized)
+	response.AssertHasValidationErrors([]string{"email"})
+	response.AssertHasNoToken()
 	tests.AssertUserIsUntouched(user, t)
 }
 
 func TestLoginIncorrectPassword(t *testing.T) {
 	env.Load()
 	t.Cleanup(cleanup)
-	url := getUrl() + "/login"
 	user := createUser("pleonius@sentimentdate.com", "L00k@tmEImHer3")
 
-	response, err := http.Post(url, "application/json", strings.NewReader(`{
+	response := tests.Post("/api/users/login", t, `{
 		"email": "pleonius@sentimentdate.com",
 		"password": "Lo0k@tmEImHer3"
-	}`))
-	tests.Check(err)
+	}`)
 
-	tests.AssertStatus(response, http.StatusUnauthorized, t)
-	tests.AssertHasValidationErrors(response, []string{"email"}, t)
-	tests.AssertHasNoToken(response, t)
+	response.AssertStatus(http.StatusUnauthorized)
+	response.AssertHasValidationErrors([]string{"email"})
+	response.AssertHasNoToken()
 	tests.AssertUserIsUntouched(user, t)
 }
 
