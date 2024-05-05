@@ -1,12 +1,9 @@
 package user
 
 import (
-	"encoding/json"
-	"github.com/EugeneNail/actum/internal/database/mysql"
-	"github.com/EugeneNail/actum/internal/model/users"
 	"github.com/EugeneNail/actum/internal/service/env"
-	"github.com/EugeneNail/actum/internal/service/test"
-	"io"
+	"github.com/EugeneNail/actum/internal/service/tests"
+	"github.com/EugeneNail/actum/internal/service/tests/cleanup"
 	"net/http"
 	"strings"
 	"testing"
@@ -14,122 +11,66 @@ import (
 
 func TestStoreValidData(t *testing.T) {
 	env.Load()
-	t.Cleanup(cleanup)
-	response, err := http.Post(getUrl(), "application/json", strings.NewReader(`{
+	t.Cleanup(cleanup.StoreUsers)
+
+	response := tests.Post("/api/users", t, `{
 		"name": "John",
 		"email": "blank@gmail.com",
 		"password": "Strong123",
 		"passwordConfirmation": "Strong123"
-	}`))
-	check(err)
+	}`)
 
-	if response.StatusCode != http.StatusCreated {
-		t.Errorf("expected status 201, got %d", response.StatusCode)
-	}
+	response.AssertStatus(http.StatusCreated)
 
-	count, err := mysql.GetRowCount("users")
-	check(err)
-	if count != 1 {
-		t.Errorf("expected 1 row, got %d", count)
-		return
-	}
+	tests.AssertDatabaseHas("users", map[string]any{
+		"name":     "John",
+		"email":    "blank@gmail.com",
+		"password": hashPassword("Strong123"),
+	}, t)
 
-	user, err := users.Find(1)
-	check(err)
-	if user.Name != "John" {
-		t.Errorf("expected the name field John, got %s", user.Name)
-	}
-
-	if user.Email != "blank@gmail.com" {
-		t.Errorf("expected the email field blank@gmail.com, got %s", user.Email)
-	}
-
-	hashedPassword := hashPassword("Strong123")
-	if user.Password != hashedPassword {
-		t.Errorf("expected the password field %s, got %s", hashedPassword, user.Name)
-	}
-
-	test.AssertHasToken(response, t)
+	response.AssertHasToken()
 }
 
 func TestStoreInvalidData(t *testing.T) {
 	env.Load()
-	t.Cleanup(cleanup)
-	response, err := http.Post(getUrl(), "application/json", strings.NewReader(`{
+	t.Cleanup(cleanup.StoreUsers)
+
+	response := tests.Post("/api/users", t, `{
 		"name": "Jo",
 		"email": "blankgmail.com",
 		"password": "String1",
 		"passwordConfirmation": ""
-	}`))
-	check(err)
+	}`)
 
-	if response.StatusCode != http.StatusUnprocessableEntity {
-		t.Errorf("expected status 422, got %d", response.StatusCode)
-	}
-
-	var validationMessages map[string]string
-	data, err := io.ReadAll(response.Body)
-	check(err)
-	err = json.Unmarshal(data, &validationMessages)
-	check(err)
-	for _, field := range []string{"name", "email", "password", "passwordConfirmation"} {
-		if _, exists := validationMessages[field]; !exists {
-			t.Errorf(`expected validation error for field "%s" to be present`, field)
-		}
-	}
-
-	count, err := mysql.GetRowCount("users")
-	check(err)
-	if count != 0 {
-		t.Errorf("expected no created rows, got %d", count)
-		return
-	}
-
-	test.AssertHasNoToken(response, t)
+	response.AssertStatus(http.StatusUnprocessableEntity)
+	response.AssertHasValidationErrors([]string{"name", "email", "password", "passwordConfirmation"})
+	response.AssertHasNoToken()
+	tests.AssertTableIsEmpty("users", t)
 }
 
 func TestStoreDuplicateEmail(t *testing.T) {
 	env.Load()
-	t.Cleanup(cleanup)
-	url := getUrl()
+	t.Cleanup(cleanup.StoreUsers)
+
 	input := `{
 		"name": "John",
 		"email": "blank@gmail.com",
 		"password": "Strong123",
 		"passwordConfirmation": "Strong123"
 	}`
-	_, err := http.Post(url, "application/json", strings.NewReader(input))
-	check(err)
-	response, err := http.Post(url, "application/json", strings.NewReader(input))
-	check(err)
+	tests.Post("/api/users", t, input)
+	response := tests.Post("/api/users", t, input)
 
-	if response.StatusCode != http.StatusUnprocessableEntity {
-		t.Errorf("expected status 422, got %d", response.StatusCode)
-		return
-	}
-
-	validationMessages := make(map[string]string)
-	data, err := io.ReadAll(response.Body)
-	check(err)
-	err = json.Unmarshal(data, &validationMessages)
-	check(err)
-	if _, exists := validationMessages["email"]; !exists {
-		t.Error("expected validation error for the email field to be present")
-	}
-
-	count, err := mysql.GetRowCount("users")
-	check(err)
-	if count != 1 {
-		t.Errorf("expected 1 row, got %d", count)
-	}
-
-	test.AssertHasNoToken(response, t)
+	response.AssertStatus(http.StatusUnprocessableEntity)
+	response.AssertHasValidationErrors([]string{"email"})
+	tests.AssertDatabaseCount("users", 1, t)
+	response.AssertHasNoToken()
 }
 
 func TestStoreValidation(t *testing.T) {
 	env.Load()
 
-	successes := []test.ValidationTest{
+	tests.AssertValidationSuccess[storeInput](t, []tests.ValidationTest{
 		{"Name 1", "name", "Joe"},
 		{"Name 2", "name", "John"},
 		{"Name 3", "name", "William"},
@@ -145,14 +86,9 @@ func TestStoreValidation(t *testing.T) {
 		{"Password 2", "password", "VeryStrongP@ssw0rd32186"},
 		{"Password 3", "password", "J7<}9*G?a\\-0"},
 		{"Password 4", "password", "/Pb/>BX<82rQvW4tq!'9i1@0(e7Kzq/F?RnP<iq:ob;h#l,'%q"},
-	}
-	for _, tableTest := range successes {
-		t.Run(tableTest.Name, func(t *testing.T) {
-			test.AssertValidationSuccess[storeInput](tableTest, t)
-		})
-	}
+	})
 
-	fails := []test.ValidationTest{
+	tests.AssertValidationFail[storeInput](t, []tests.ValidationTest{
 		{"Empty name", "name", ""},
 		{"Too short name", "name", "Jo"},
 		{"Too long name", "name", strings.Repeat("Very", 5) + "LongName"},
@@ -172,10 +108,5 @@ func TestStoreValidation(t *testing.T) {
 		{"Password has only lowercase", "password", "nomixedcase"},
 		{"Password has only uppercase", "password", "NOMIXEDCASE"},
 		{"Password has spaces", "password", "With spaces"},
-	}
-	for _, tableTest := range fails {
-		t.Run(tableTest.Name, func(t *testing.T) {
-			test.AssertValidationFail[storeInput](tableTest, t)
-		})
-	}
+	})
 }

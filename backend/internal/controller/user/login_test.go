@@ -1,152 +1,99 @@
 package user
 
 import (
-	"encoding/json"
 	"github.com/EugeneNail/actum/internal/model/users"
 	"github.com/EugeneNail/actum/internal/service/env"
-	"github.com/EugeneNail/actum/internal/service/test"
-	"io"
+	"github.com/EugeneNail/actum/internal/service/tests"
+	"github.com/EugeneNail/actum/internal/service/tests/cleanup"
 	"net/http"
-	"strings"
 	"testing"
 )
 
 func TestLoginValidData(t *testing.T) {
 	env.Load()
-	t.Cleanup(cleanup)
-	url := getUrl() + "/login"
-	createUser("jodame3394@agafx.com", "Strong123")
+	t.Cleanup(cleanup.LoginUsers)
 
-	response, err := http.Post(url, "application/json", strings.NewReader(`{
+	response := tests.Post("/api/users", t, `{
+		"name": "John",
+		"email": "jodame3394@agafx.com",
+		"password": "Strong123",
+		"passwordConfirmation": "Strong123"
+	}`)
+	response.AssertStatus(http.StatusCreated)
+
+	response = tests.Post("/api/users/login", t, `{
 		"email": "jodame3394@agafx.com",
 		"password": "Strong123"
-	}`))
-	check(err)
+	}`)
 
-	if response.StatusCode != http.StatusOK {
-		t.Errorf("expected status 200, got %d", response.StatusCode)
-	}
-
-	test.AssertHasToken(response, t)
+	response.AssertStatus(http.StatusOK)
+	response.AssertHasToken()
 }
 
 func TestLoginInvalidData(t *testing.T) {
 	env.Load()
-	t.Cleanup(cleanup)
-	url := getUrl() + "/login"
-	user := createUser("yibewek618@goulink.com", "v9&;43mV,>2BE^t")
+	t.Cleanup(cleanup.LoginUsers)
 
-	response, err := http.Post(url, "application/json", strings.NewReader(`{
+	response := tests.Post("/api/users/login", t, `{
 		"email": "yibewek618goulink.com",
 		"password": "v9"
-	}`))
-	check(err)
+	}`)
 
-	if response.StatusCode != http.StatusUnprocessableEntity {
-		t.Errorf("expected status 422, got %d", response.StatusCode)
-	}
-
-	var validationErrors map[string]string
-	data, err := io.ReadAll(response.Body)
-	check(err)
-	err = json.Unmarshal(data, &validationErrors)
-	check(err)
-	for _, field := range []string{"email", "password"} {
-		if _, exists := validationErrors[field]; !exists {
-			t.Errorf(`expected validation error for field "%s" to be present`, field)
-		}
-	}
-
-	test.AssertHasNoToken(response, t)
-	assertUserIsUntouched(user, t)
+	response.AssertStatus(http.StatusUnprocessableEntity)
+	response.AssertHasValidationErrors([]string{"email", "password"})
+	response.AssertHasNoToken()
 }
 
 func TestLoginIncorrectEmail(t *testing.T) {
 	env.Load()
-	t.Cleanup(cleanup)
-	url := getUrl() + "/login"
-	user := createUser("doleya5976@agafx.com", "w24V,KY$f2YSIPQ")
+	t.Cleanup(cleanup.LoginUsers)
 
-	response, err := http.Post(url, "application/json", strings.NewReader(`{
+	tests.Post("/api/users", t, `{
+		"email": "doleya5976@agafx.com",
+		"password": "w24V,KY$f2YSIPQ"
+	}`)
+
+	user, err := users.Find(1)
+	tests.Check(err)
+
+	response := tests.Post("/api/users/login", t, `{
 		"email": "doley5976@agafx.com",
 		"password": "w24V,KY$f2YSIPQ"
-	}`))
-	check(err)
+	}`)
 
-	if response.StatusCode != http.StatusUnauthorized {
-		t.Errorf("expected status 401, got %d", response.StatusCode)
-	}
-
-	var validationErrors map[string]string
-	data, err := io.ReadAll(response.Body)
-	check(err)
-	err = json.Unmarshal(data, &validationErrors)
-	check(err)
-	if _, exists := validationErrors["email"]; !exists {
-		t.Errorf(`expected validation error for field "email" to be present`)
-	}
-
-	test.AssertHasNoToken(response, t)
-	assertUserIsUntouched(user, t)
+	response.AssertStatus(http.StatusUnauthorized)
+	response.AssertHasValidationErrors([]string{"email"})
+	response.AssertHasNoToken()
+	tests.AssertUserIsUntouched(user, t)
 }
 
 func TestLoginIncorrectPassword(t *testing.T) {
 	env.Load()
-	t.Cleanup(cleanup)
-	url := getUrl() + "/login"
-	user := createUser("pleonius@sentimentdate.com", "L00k@tmEImHer3")
+	t.Cleanup(cleanup.LoginUsers)
 
-	response, err := http.Post(url, "application/json", strings.NewReader(`{
+	tests.Post("/api/users", t, `{
+		"email": "pleonius@sentimentdate.com",
+		"password": "L00k@tmEImHer3"
+	}`)
+
+	user, err := users.Find(1)
+	tests.Check(err)
+
+	response := tests.Post("/api/users/login", t, `{
 		"email": "pleonius@sentimentdate.com",
 		"password": "Lo0k@tmEImHer3"
-	}`))
-	check(err)
+	}`)
 
-	if response.StatusCode != http.StatusUnauthorized {
-		t.Errorf("expected status 401, got %d", response.StatusCode)
-	}
-
-	var validationErrors map[string]string
-	data, err := io.ReadAll(response.Body)
-	check(err)
-	err = json.Unmarshal(data, &validationErrors)
-	check(err)
-	if _, exists := validationErrors["email"]; !exists {
-		t.Errorf(`expected validation error for field "email" to be present`)
-	}
-
-	test.AssertHasNoToken(response, t)
-	assertUserIsUntouched(user, t)
-}
-
-func createUser(email string, password string) users.User {
-	user := users.User{0, "John", email, hashPassword(password)}
-	err := user.Save()
-	check(err)
-
-	return user
-}
-
-func assertUserIsUntouched(user users.User, t *testing.T) {
-	dbUser, err := users.Find(1)
-	check(err)
-	if dbUser.Name != user.Name {
-		t.Errorf(`field "name" has been corrupted`)
-	}
-
-	if dbUser.Email != user.Email {
-		t.Errorf(`field "email" has been corrupted`)
-	}
-
-	if dbUser.Password != user.Password {
-		t.Errorf(`field "password" has been corrupted`)
-	}
+	response.AssertStatus(http.StatusUnauthorized)
+	response.AssertHasValidationErrors([]string{"email"})
+	response.AssertHasNoToken()
+	tests.AssertUserIsUntouched(user, t)
 }
 
 func TestLoginValidation(t *testing.T) {
 	env.Load()
 
-	successes := []test.ValidationTest{
+	tests.AssertValidationSuccess[loginInput](t, []tests.ValidationTest{
 		{"Email 1", "email", "Twila_Braun-Bogisich@gmail.com"},
 		{"Email 2", "email", "Noemie16@gmail.com"},
 		{"Email 3", "email", "Catalina41@gmail.com"},
@@ -157,14 +104,9 @@ func TestLoginValidation(t *testing.T) {
 		{"Password 2", "password", "B^H}i,o5:iJvco"},
 		{"Password 3", "password", "2J*LA5NxKnZ>1}g0Beu^:HR^Bn!6-H3izGF#o2!>"},
 		{"Password 4", "password", "_d=)21YWPX@%HHbV2et:D_,MH+Y0tV,+@:^]5Ne)!vgHH%@1Ls)M.BYb7bs3t~Py^5"},
-	}
-	for _, tableTest := range successes {
-		t.Run(tableTest.Name, func(t *testing.T) {
-			test.AssertValidationSuccess[storeInput](tableTest, t)
-		})
-	}
+	})
 
-	fails := []test.ValidationTest{
+	tests.AssertValidationFail[loginInput](t, []tests.ValidationTest{
 		{"Empty email", "email", ""},
 		{"Email has no mail", "email", "Enoch_Corwin@"},
 		{"Email has no separator", "email", "Cleta_Schimmelicloud.com"},
@@ -177,10 +119,5 @@ func TestLoginValidation(t *testing.T) {
 		{"Password has only lowercase", "password", "nrau}h9j1d1hux@h@_wd"},
 		{"Password has only uppercase", "password", "F9.F9#)30XJXM+WHW*VYJ"},
 		{"Password has spaces", "password", "n6K-N%acxa)om]oT= 8muHQ?Zs=s"},
-	}
-	for _, tableTest := range fails {
-		t.Run(tableTest.Name, func(t *testing.T) {
-			test.AssertValidationFail[storeInput](tableTest, t)
-		})
-	}
+	})
 }
