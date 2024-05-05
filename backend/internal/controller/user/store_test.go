@@ -1,12 +1,10 @@
 package user
 
 import (
-	"encoding/json"
 	"github.com/EugeneNail/actum/internal/database/mysql"
 	"github.com/EugeneNail/actum/internal/model/users"
 	"github.com/EugeneNail/actum/internal/service/env"
 	"github.com/EugeneNail/actum/internal/service/test"
-	"io"
 	"net/http"
 	"strings"
 	"testing"
@@ -61,18 +59,8 @@ func TestStoreInvalidData(t *testing.T) {
 	}`))
 	test.Check(err)
 
-
-	var validationMessages map[string]string
-	data, err := io.ReadAll(response.Body)
-	test.Check(err)
-	err = json.Unmarshal(data, &validationMessages)
-	test.Check(err)
-	for _, field := range []string{"name", "email", "password", "passwordConfirmation"} {
-		if _, exists := validationMessages[field]; !exists {
-			t.Errorf(`expected validation error for field "%s" to be present`, field)
-		}
-	}
 	test.AssertStatus(response, http.StatusUnprocessableEntity, t)
+	test.AssertHasValidationErrors(response, []string{"name", "email", "password", "passwordConfirmation"}, t)
 
 	count, err := mysql.GetRowCount("users")
 	test.Check(err)
@@ -99,16 +87,8 @@ func TestStoreDuplicateEmail(t *testing.T) {
 	response, err := http.Post(url, "application/json", strings.NewReader(input))
 	test.Check(err)
 
-
-	validationMessages := make(map[string]string)
-	data, err := io.ReadAll(response.Body)
-	test.Check(err)
-	err = json.Unmarshal(data, &validationMessages)
-	test.Check(err)
-	if _, exists := validationMessages["email"]; !exists {
-		t.Error("expected validation error for the email field to be present")
-	}
 	test.AssertStatus(response, http.StatusUnprocessableEntity, t)
+	test.AssertHasValidationErrors(response, []string{"email"}, t)
 
 	count, err := mysql.GetRowCount("users")
 	test.Check(err)

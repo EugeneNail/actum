@@ -1,11 +1,9 @@
 package user
 
 import (
-	"encoding/json"
 	"github.com/EugeneNail/actum/internal/model/users"
 	"github.com/EugeneNail/actum/internal/service/env"
 	"github.com/EugeneNail/actum/internal/service/test"
-	"io"
 	"net/http"
 	"strings"
 	"testing"
@@ -39,19 +37,8 @@ func TestLoginInvalidData(t *testing.T) {
 	}`))
 	test.Check(err)
 
-
-	var validationErrors map[string]string
-	data, err := io.ReadAll(response.Body)
-	test.Check(err)
-	err = json.Unmarshal(data, &validationErrors)
-	test.Check(err)
-	for _, field := range []string{"email", "password"} {
-		if _, exists := validationErrors[field]; !exists {
-			t.Errorf(`expected validation error for field "%s" to be present`, field)
-		}
-	}
-
 	test.AssertStatus(response, http.StatusUnprocessableEntity, t)
+	test.AssertHasValidationErrors(response, []string{"email", "password"}, t)
 	test.AssertHasNoToken(response, t)
 	test.AssertUserIsUntouched(user, t)
 }
@@ -68,17 +55,8 @@ func TestLoginIncorrectEmail(t *testing.T) {
 	}`))
 	test.Check(err)
 
-
-	var validationErrors map[string]string
-	data, err := io.ReadAll(response.Body)
-	test.Check(err)
-	err = json.Unmarshal(data, &validationErrors)
-	test.Check(err)
-	if _, exists := validationErrors["email"]; !exists {
-		t.Errorf(`expected validation error for field "email" to be present`)
-	}
-
 	test.AssertStatus(response, http.StatusUnauthorized, t)
+	test.AssertHasValidationErrors(response, []string{"email"}, t)
 	test.AssertHasNoToken(response, t)
 	test.AssertUserIsUntouched(user, t)
 }
@@ -95,17 +73,8 @@ func TestLoginIncorrectPassword(t *testing.T) {
 	}`))
 	test.Check(err)
 
-
-	var validationErrors map[string]string
-	data, err := io.ReadAll(response.Body)
-	test.Check(err)
-	err = json.Unmarshal(data, &validationErrors)
-	test.Check(err)
-	if _, exists := validationErrors["email"]; !exists {
-		t.Errorf(`expected validation error for field "email" to be present`)
-	}
-
 	test.AssertStatus(response, http.StatusUnauthorized, t)
+	test.AssertHasValidationErrors(response, []string{"email"}, t)
 	test.AssertHasNoToken(response, t)
 	test.AssertUserIsUntouched(user, t)
 }

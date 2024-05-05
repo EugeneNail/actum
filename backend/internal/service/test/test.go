@@ -1,8 +1,10 @@
 package test
 
 import (
+	"encoding/json"
 	"github.com/EugeneNail/actum/internal/model/users"
 	"github.com/EugeneNail/actum/internal/service/validation/rule"
+	"io"
 	"net/http"
 	"reflect"
 	"strings"
@@ -70,6 +72,20 @@ func getValidationErrorCount[T any](test ValidationTest) int {
 	}
 
 	return errorCount
+}
+
+func AssertHasValidationErrors(response *http.Response, fields []string, t *testing.T) {
+	var errors map[string]string
+	data, err := io.ReadAll(response.Body)
+	Check(err)
+	err = json.Unmarshal(data, &errors)
+	Check(err)
+
+	for _, field := range fields {
+		if _, exists := errors[field]; !exists {
+			t.Errorf(`expected validation error for field "%s" to be present`, field)
+		}
+	}
 }
 
 func AssertHasToken(response *http.Response, t *testing.T) {
