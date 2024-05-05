@@ -12,6 +12,7 @@ func Load() {
 	directory := getRootDirectory()
 	err := os.Setenv("APP_PATH", directory)
 	check(err)
+	err = os.Setenv("LOG_PATH", filepath.Join(directory, "logs"))
 	file, err := os.Open(filepath.Join(directory, ".env"))
 	check(err)
 	defer file.Close()

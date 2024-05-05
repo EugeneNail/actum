@@ -4,3 +4,4 @@ backend/.env
 backend/create
 backend/migrate
 backend/main
+/backend/logs
