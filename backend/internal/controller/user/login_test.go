@@ -4,13 +4,14 @@ import (
 	"github.com/EugeneNail/actum/internal/model/users"
 	"github.com/EugeneNail/actum/internal/service/env"
 	"github.com/EugeneNail/actum/internal/service/tests"
+	"github.com/EugeneNail/actum/internal/service/tests/cleanup"
 	"net/http"
 	"testing"
 )
 
 func TestLoginValidData(t *testing.T) {
 	env.Load()
-	t.Cleanup(cleanup)
+	t.Cleanup(cleanup.LoginUsers)
 
 	response := tests.Post("/api/users", t, `{
 		"name": "John",
@@ -31,7 +32,7 @@ func TestLoginValidData(t *testing.T) {
 
 func TestLoginInvalidData(t *testing.T) {
 	env.Load()
-	t.Cleanup(cleanup)
+	t.Cleanup(cleanup.LoginUsers)
 
 	response := tests.Post("/api/users/login", t, `{
 		"email": "yibewek618goulink.com",
@@ -45,7 +46,7 @@ func TestLoginInvalidData(t *testing.T) {
 
 func TestLoginIncorrectEmail(t *testing.T) {
 	env.Load()
-	t.Cleanup(cleanup)
+	t.Cleanup(cleanup.LoginUsers)
 
 	tests.Post("/api/users", t, `{
 		"email": "doleya5976@agafx.com",
@@ -68,7 +69,8 @@ func TestLoginIncorrectEmail(t *testing.T) {
 
 func TestLoginIncorrectPassword(t *testing.T) {
 	env.Load()
-	t.Cleanup(cleanup)
+	t.Cleanup(cleanup.LoginUsers)
+
 	tests.Post("/api/users", t, `{
 		"email": "pleonius@sentimentdate.com",
 		"password": "L00k@tmEImHer3"

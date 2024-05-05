@@ -3,6 +3,7 @@ package user
 import (
 	"github.com/EugeneNail/actum/internal/service/env"
 	"github.com/EugeneNail/actum/internal/service/tests"
+	"github.com/EugeneNail/actum/internal/service/tests/cleanup"
 	"net/http"
 	"strings"
 	"testing"
@@ -10,7 +11,7 @@ import (
 
 func TestStoreValidData(t *testing.T) {
 	env.Load()
-	t.Cleanup(cleanup)
+	t.Cleanup(cleanup.StoreUsers)
 
 	response := tests.Post("/api/users", t, `{
 		"name": "John",
@@ -32,7 +33,7 @@ func TestStoreValidData(t *testing.T) {
 
 func TestStoreInvalidData(t *testing.T) {
 	env.Load()
-	t.Cleanup(cleanup)
+	t.Cleanup(cleanup.StoreUsers)
 
 	response := tests.Post("/api/users", t, `{
 		"name": "Jo",
@@ -49,7 +50,7 @@ func TestStoreInvalidData(t *testing.T) {
 
 func TestStoreDuplicateEmail(t *testing.T) {
 	env.Load()
-	t.Cleanup(cleanup)
+	t.Cleanup(cleanup.StoreUsers)
 
 	input := `{
 		"name": "John",
