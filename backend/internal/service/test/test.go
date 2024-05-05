@@ -15,6 +15,12 @@ type ValidationTest struct {
 	Value any
 }
 
+func AssertStatus(response *http.Response, status int, t *testing.T) {
+	if response.StatusCode != status {
+		t.Errorf("expected status %d, got %d", status, response.StatusCode)
+	}
+}
+
 func AssertValidationSuccess[T any](test ValidationTest, t *testing.T) {
 	errorCount := getValidationErrorCount[T](test)
 	if errorCount > 0 {

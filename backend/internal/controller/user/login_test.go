@@ -23,10 +23,7 @@ func TestLoginValidData(t *testing.T) {
 	}`))
 	test.Check(err)
 
-	if response.StatusCode != http.StatusOK {
-		t.Errorf("expected status 200, got %d", response.StatusCode)
-	}
-
+	test.AssertStatus(response, http.StatusOK, t)
 	test.AssertHasToken(response, t)
 }
 
@@ -42,9 +39,6 @@ func TestLoginInvalidData(t *testing.T) {
 	}`))
 	test.Check(err)
 
-	if response.StatusCode != http.StatusUnprocessableEntity {
-		t.Errorf("expected status 422, got %d", response.StatusCode)
-	}
 
 	var validationErrors map[string]string
 	data, err := io.ReadAll(response.Body)
@@ -57,6 +51,7 @@ func TestLoginInvalidData(t *testing.T) {
 		}
 	}
 
+	test.AssertStatus(response, http.StatusUnprocessableEntity, t)
 	test.AssertHasNoToken(response, t)
 	test.AssertUserIsUntouched(user, t)
 }
@@ -73,9 +68,6 @@ func TestLoginIncorrectEmail(t *testing.T) {
 	}`))
 	test.Check(err)
 
-	if response.StatusCode != http.StatusUnauthorized {
-		t.Errorf("expected status 401, got %d", response.StatusCode)
-	}
 
 	var validationErrors map[string]string
 	data, err := io.ReadAll(response.Body)
@@ -86,6 +78,7 @@ func TestLoginIncorrectEmail(t *testing.T) {
 		t.Errorf(`expected validation error for field "email" to be present`)
 	}
 
+	test.AssertStatus(response, http.StatusUnauthorized, t)
 	test.AssertHasNoToken(response, t)
 	test.AssertUserIsUntouched(user, t)
 }
@@ -102,9 +95,6 @@ func TestLoginIncorrectPassword(t *testing.T) {
 	}`))
 	test.Check(err)
 
-	if response.StatusCode != http.StatusUnauthorized {
-		t.Errorf("expected status 401, got %d", response.StatusCode)
-	}
 
 	var validationErrors map[string]string
 	data, err := io.ReadAll(response.Body)
@@ -115,6 +105,7 @@ func TestLoginIncorrectPassword(t *testing.T) {
 		t.Errorf(`expected validation error for field "email" to be present`)
 	}
 
+	test.AssertStatus(response, http.StatusUnauthorized, t)
 	test.AssertHasNoToken(response, t)
 	test.AssertUserIsUntouched(user, t)
 }

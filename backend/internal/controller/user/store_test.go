@@ -23,9 +23,7 @@ func TestStoreValidData(t *testing.T) {
 	}`))
 	test.Check(err)
 
-	if response.StatusCode != http.StatusCreated {
-		t.Errorf("expected status 201, got %d", response.StatusCode)
-	}
+	test.AssertStatus(response, http.StatusCreated, t)
 
 	count, err := mysql.GetRowCount("users")
 	test.Check(err)
@@ -63,9 +61,6 @@ func TestStoreInvalidData(t *testing.T) {
 	}`))
 	test.Check(err)
 
-	if response.StatusCode != http.StatusUnprocessableEntity {
-		t.Errorf("expected status 422, got %d", response.StatusCode)
-	}
 
 	var validationMessages map[string]string
 	data, err := io.ReadAll(response.Body)
@@ -77,6 +72,7 @@ func TestStoreInvalidData(t *testing.T) {
 			t.Errorf(`expected validation error for field "%s" to be present`, field)
 		}
 	}
+	test.AssertStatus(response, http.StatusUnprocessableEntity, t)
 
 	count, err := mysql.GetRowCount("users")
 	test.Check(err)
@@ -103,10 +99,6 @@ func TestStoreDuplicateEmail(t *testing.T) {
 	response, err := http.Post(url, "application/json", strings.NewReader(input))
 	test.Check(err)
 
-	if response.StatusCode != http.StatusUnprocessableEntity {
-		t.Errorf("expected status 422, got %d", response.StatusCode)
-		return
-	}
 
 	validationMessages := make(map[string]string)
 	data, err := io.ReadAll(response.Body)
@@ -116,6 +108,7 @@ func TestStoreDuplicateEmail(t *testing.T) {
 	if _, exists := validationMessages["email"]; !exists {
 		t.Error("expected validation error for the email field to be present")
 	}
+	test.AssertStatus(response, http.StatusUnprocessableEntity, t)
 
 	count, err := mysql.GetRowCount("users")
 	test.Check(err)
