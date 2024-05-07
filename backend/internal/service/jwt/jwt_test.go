@@ -22,11 +22,11 @@ func TestBuildHeader(t *testing.T) {
 }
 
 func TestBuildPayload(t *testing.T) {
-	user := users.User{1, "John", "blank@mail.com", ""}
+	user := users.New("John", "blank@mail.com", "")
 	payload, err := buildPayload(user)
 	check(err)
 	expires := time.Now().Add(time.Hour).Unix()
-	json := fmt.Sprintf(`{"id":1,"name":"John","exp":%d}`, expires)
+	json := fmt.Sprintf(`{"id":0,"name":"John","exp":%d}`, expires)
 
 	encoded := base64.URLEncoding.EncodeToString([]byte(json))
 	if payload != encoded {
@@ -35,10 +35,10 @@ func TestBuildPayload(t *testing.T) {
 }
 
 func TestBuildSignature(t *testing.T) {
-	user := users.User{1, "John", "blank@mail.com", ""}
+	user := users.New("John", "blank@mail.com", "")
 	base64Header := base64.URLEncoding.EncodeToString([]byte(`{"alg":"SH256","typ":"JWT"}`))
 	expires := time.Now().Add(time.Hour).Unix()
-	jsonPayload := fmt.Sprintf(`{"id":1,"name":"John","exp":%d}`, expires)
+	jsonPayload := fmt.Sprintf(`{"id":0,"name":"John","exp":%d}`, expires)
 	base64Payload := base64.URLEncoding.EncodeToString([]byte(jsonPayload))
 	signature, err := buildSignature(user)
 	check(err)
@@ -56,7 +56,7 @@ func TestBuildSignature(t *testing.T) {
 func TestMake(t *testing.T) {
 	header := base64.URLEncoding.EncodeToString([]byte(`{"alg":"SH256","typ":"JWT"}`))
 	expires := time.Now().Add(time.Hour).Unix()
-	jsonPayload := fmt.Sprintf(`{"id":1,"name":"John","exp":%d}`, expires)
+	jsonPayload := fmt.Sprintf(`{"id":0,"name":"John","exp":%d}`, expires)
 	payload := base64.URLEncoding.EncodeToString([]byte(jsonPayload))
 
 	signatureBytes := hmac.
@@ -64,7 +64,8 @@ func TestMake(t *testing.T) {
 		Sum([]byte(header + "." + payload))
 	signature := base64.URLEncoding.EncodeToString(signatureBytes)
 
-	user := users.User{1, "John", "blank@mail.com", ""}
+	user := users.New("John", "blank@mail.com", "")
+
 	token, err := Make(user)
 	check(err)
 	parts := strings.Split(token, ".")
@@ -87,7 +88,7 @@ func TestMake(t *testing.T) {
 }
 
 func TestIsValid(t *testing.T) {
-	user := users.User{1, "John", "blank@mail.com", ""}
+	user := users.New("John", "blank@mail.com", "")
 
 	token := "header.payload,signature"
 	if IsValid(token) {
