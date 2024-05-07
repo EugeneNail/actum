@@ -126,7 +126,7 @@ func (user *User) Collections() ([]collections.Collection, error) {
 	for rows.Next() {
 		var collection collections.Collection
 
-		err := rows.Scan(collection.Id, collection.Name, collection.UserId)
+		err := rows.Scan(&collection.Id, &collection.Name, &collection.UserId)
 		if err != nil {
 			return user.collections, fmt.Errorf("user.Collections(): %w", err)
 		}
