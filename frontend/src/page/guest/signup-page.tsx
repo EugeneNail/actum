@@ -27,7 +27,7 @@ export default function SignupPage() {
 
     async function submit(event: FormEvent) {
         event.preventDefault()
-        const {status, data} = await http.post("/api/users", state)
+        const {status, data} = await http.post("/users", state)
         setErrors({})
 
         if (status == 422) {

@@ -23,7 +23,7 @@ export default function LoginPage() {
 
     async function submit(event: FormEvent) {
         event.preventDefault()
-        const {status, data} = await http.post("/api/users/login", state)
+        const {status, data} = await http.post("/users/login", state)
         setErrors({})
 
         if (status == 422 || status == 401) {
