@@ -6,6 +6,7 @@ import (
 	"github.com/EugeneNail/actum/internal/model/collections"
 	"github.com/EugeneNail/actum/internal/model/users"
 	"github.com/EugeneNail/actum/internal/service/jwt"
+	"github.com/EugeneNail/actum/internal/service/log"
 	"net/http"
 )
 
@@ -47,7 +48,10 @@ func Store(writer http.ResponseWriter, request *http.Request) {
 	writer.WriteHeader(http.StatusCreated)
 	if err := encoder.Encode(collection.Id); err != nil {
 		controller.WriteError(writer, err)
+		return
 	}
+
+	log.Info("User", user.Id, "created collection", collection.Id)
 }
 
 func hasDuplicateCollection(name string, user users.User) (bool, error) {
