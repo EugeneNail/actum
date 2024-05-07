@@ -54,7 +54,7 @@ func Post(path string, t *testing.T, token string, json string) Response {
 }
 
 func GetToken(t *testing.T) string {
-	response := Post("/users", t, "", `{
+	response := Post("/api/users", t, "", `{
 		"name": "John",
 		"email": "blank@gmail.com",
 		"password": "Strong123",
