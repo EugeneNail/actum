@@ -26,17 +26,17 @@ func Truncate(table string) error {
 	db, err := Connect()
 	defer db.Close()
 	if err != nil {
-		return fmt.Errorf("mysql.SafeTrucate(): %w", err)
+		return fmt.Errorf("mysql.Truncate(): %w", err)
 	}
 
 	_, err = db.Exec(`DELETE FROM ` + table)
 	if err != nil {
-		return fmt.Errorf("mysql.SafeTrucate(): %w", err)
+		return fmt.Errorf("mysql.Truncate(): %w", err)
 	}
 
 	_, err = db.Exec(fmt.Sprintf(`ALTER TABLE %s AUTO_INCREMENT = 0`, table))
 	if err != nil {
-		return fmt.Errorf("mysql.SafeTrucate(): %w", err)
+		return fmt.Errorf("mysql.Truncate(): %w", err)
 	}
 
 	return nil
