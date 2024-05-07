@@ -22,7 +22,8 @@ type ValidationTest struct {
 
 type Response struct {
 	*http.Response
-	t *testing.T
+	t     *testing.T
+	token string
 }
 
 func (response *Response) AssertStatus(status int) {
@@ -31,13 +32,38 @@ func (response *Response) AssertStatus(status int) {
 	}
 }
 
-func Post(path string, t *testing.T, json string) Response {
+func Post(path string, t *testing.T, token string, json string) Response {
 	url := "http://127.0.0.1:" + env.Get("APP_PORT") + path
 	body := strings.NewReader(json)
-	response, err := http.Post(url, "application/json", body)
+	request, err := http.NewRequest("POST", url, body)
+	Check(err)
+	request.Header.Set("Cookie", "Access-Token="+token)
+	client := &http.Client{}
+	response, err := client.Do(request)
 	Check(err)
 
-	return Response{response, t}
+	var responseToken string
+	for _, cookie := range response.Cookies() {
+		if cookie.Name == "Access-Token" {
+			responseToken = cookie.Value
+			break
+		}
+	}
+
+	return Response{response, t, responseToken}
+}
+
+func GetToken(t *testing.T) string {
+	response := Post("/users", t, "", `{
+		"name": "John",
+		"email": "blank@gmail.com",
+		"password": "Strong123",
+		"passwordConfirmation": "Strong123"
+	}`)
+
+	response.AssertStatus(http.StatusCreated)
+
+	return response.token
 }
 
 func AssertValidation[T any](mustSuccess bool, t *testing.T, validationTests []ValidationTest) {

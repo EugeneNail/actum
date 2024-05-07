@@ -13,7 +13,7 @@ func TestLoginValidData(t *testing.T) {
 	env.Load()
 	t.Cleanup(cleanup.LoginUsers)
 
-	response := tests.Post("/api/users", t, `{
+	response := tests.Post("/api/users", t, "", `{
 		"name": "John",
 		"email": "jodame3394@agafx.com",
 		"password": "Strong123",
@@ -21,7 +21,7 @@ func TestLoginValidData(t *testing.T) {
 	}`)
 	response.AssertStatus(http.StatusCreated)
 
-	response = tests.Post("/api/users/login", t, `{
+	response = tests.Post("/api/users/login", t, "", `{
 		"email": "jodame3394@agafx.com",
 		"password": "Strong123"
 	}`)
@@ -34,7 +34,7 @@ func TestLoginInvalidData(t *testing.T) {
 	env.Load()
 	t.Cleanup(cleanup.LoginUsers)
 
-	response := tests.Post("/api/users/login", t, `{
+	response := tests.Post("/api/users/login", t, "", `{
 		"email": "yibewek618goulink.com",
 		"password": "v9"
 	}`)
@@ -48,7 +48,7 @@ func TestLoginIncorrectEmail(t *testing.T) {
 	env.Load()
 	t.Cleanup(cleanup.LoginUsers)
 
-	tests.Post("/api/users", t, `{
+	tests.Post("/api/users", t, "", `{
 		"email": "doleya5976@agafx.com",
 		"password": "w24V,KY$f2YSIPQ"
 	}`)
@@ -56,7 +56,7 @@ func TestLoginIncorrectEmail(t *testing.T) {
 	user, err := users.Find(1)
 	tests.Check(err)
 
-	response := tests.Post("/api/users/login", t, `{
+	response := tests.Post("/api/users/login", t, "", `{
 		"email": "doley5976@agafx.com",
 		"password": "w24V,KY$f2YSIPQ"
 	}`)
@@ -71,7 +71,7 @@ func TestLoginIncorrectPassword(t *testing.T) {
 	env.Load()
 	t.Cleanup(cleanup.LoginUsers)
 
-	tests.Post("/api/users", t, `{
+	tests.Post("/api/users", t, "", `{
 		"email": "pleonius@sentimentdate.com",
 		"password": "L00k@tmEImHer3"
 	}`)
@@ -79,7 +79,7 @@ func TestLoginIncorrectPassword(t *testing.T) {
 	user, err := users.Find(1)
 	tests.Check(err)
 
-	response := tests.Post("/api/users/login", t, `{
+	response := tests.Post("/api/users/login", t, "", `{
 		"email": "pleonius@sentimentdate.com",
 		"password": "Lo0k@tmEImHer3"
 	}`)
