@@ -6,7 +6,8 @@ export function useHttp() {
         withCredentials: true,
         headers: {
             Accept: "application/json",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("Access-Token")
         }
     })
 
