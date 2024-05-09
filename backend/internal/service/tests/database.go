@@ -12,6 +12,11 @@ type Database struct {
 }
 
 func (database *Database) AssertEmpty(table string) {
+func NewDatabase(t *testing.T) Database {
+	return Database{t}
+}
+
+func (database *Database) AssertEmpty(table string) *Database {
 	db, err := mysql.Connect()
 	Check(err)
 	defer db.Close()
