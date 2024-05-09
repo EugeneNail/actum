@@ -18,6 +18,7 @@ func main() {
 	routing.Post("/api/users", user.Store)
 	routing.Post("/api/users/login", user.Login)
 	routing.Post("/api/collections", collection.Store)
+	routing.Put("/api/collections/:id", collection.Update)
 
 	handler := middleware.BuildPipeline([]middleware.Middleware{
 		middleware.SetHeaders,
