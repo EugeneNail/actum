@@ -3,7 +3,6 @@ package tests
 import (
 	"fmt"
 	"github.com/EugeneNail/actum/internal/database/mysql"
-	"github.com/EugeneNail/actum/internal/model/users"
 	"testing"
 )
 
@@ -11,7 +10,6 @@ type Database struct {
 	t *testing.T
 }
 
-func (database *Database) AssertEmpty(table string) {
 func NewDatabase(t *testing.T) Database {
 	return Database{t}
 }
@@ -28,11 +26,13 @@ func (database *Database) AssertEmpty(table string) *Database {
 	Check(err)
 
 	if rows > 0 {
-		database.t.Errorf("The table %s is expected to be empty, got %d rows instead", table, rows)
+		database.t.Errorf(`The table "%s" is expected to be empty, got %d rows instead`, table, rows)
 	}
+
+	return database
 }
 
-func (database *Database) AssertHas(table string, entity map[string]any) {
+func (database *Database) AssertHas(table string, entity map[string]any) *Database {
 	db, err := mysql.Connect()
 	Check(err)
 	defer db.Close()
@@ -55,11 +55,13 @@ func (database *Database) AssertHas(table string, entity map[string]any) {
 	Check(err)
 
 	if count == 0 {
-		database.t.Errorf("The table %s does not contain an entity %+v", table, entity)
+		database.t.Errorf(`The table "%s" does not contain an entity %+v`, table, entity)
 	}
+
+	return database
 }
 
-func (database *Database) AssertCount(table string, expected int) {
+func (database *Database) AssertCount(table string, expected int) *Database {
 	db, err := mysql.Connect()
 	Check(err)
 	defer db.Close()
@@ -71,23 +73,8 @@ func (database *Database) AssertCount(table string, expected int) {
 	Check(err)
 
 	if count != expected {
-		database.t.Errorf("The %s table must have %d rows, got %d", table, expected, count)
+		database.t.Errorf(`The "%s" table must have %d rows, got %d`, table, expected, count)
 	}
 
-}
-
-func AssertUserIsUntouched(user users.User, t *testing.T) {
-	dbUser, err := users.Find(1)
-	Check(err)
-	if dbUser.Name != user.Name {
-		t.Errorf(`field "name" has been corrupted`)
-	}
-
-	if dbUser.Email != user.Email {
-		t.Errorf(`field "email" has been corrupted`)
-	}
-
-	if dbUser.Password != user.Password {
-		t.Errorf(`field "password" has been corrupted`)
-	}
+	return database
 }

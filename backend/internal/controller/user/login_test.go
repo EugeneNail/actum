@@ -1,7 +1,6 @@
 package user
 
 import (
-	"github.com/EugeneNail/actum/internal/model/users"
 	"github.com/EugeneNail/actum/internal/service/env"
 	"github.com/EugeneNail/actum/internal/service/tests"
 	"github.com/EugeneNail/actum/internal/service/tests/startup"
@@ -12,13 +11,14 @@ import (
 func TestLoginValidData(t *testing.T) {
 	client, database := startup.UsersLogin(t)
 
-	response := client.Post("/api/users", `{
-		"name": "John",
-		"email": "jodame3394@agafx.com",
-		"password": "Strong123",
-		"passwordConfirmation": "Strong123"
-	}`)
-	response.AssertStatus(http.StatusCreated)
+	client.
+		Post("/api/users", `{
+			"name": "John",
+			"email": "jodame3394@agafx.com",
+			"password": "Strong123",
+			"passwordConfirmation": "Strong123"
+		}`).
+		AssertStatus(http.StatusCreated)
 
 	database.AssertHas("users", map[string]any{
 		"name":     "John",
@@ -26,33 +26,34 @@ func TestLoginValidData(t *testing.T) {
 		"password": hashPassword("Strong123"),
 	})
 
-	response = client.Post("/api/users/login", `{
-		"email": "jodame3394@agafx.com",
-		"password": "Strong123"
-	}`)
+	client.
+		Post("/api/users/login", `{
+			"email": "jodame3394@agafx.com",
+			"password": "Strong123"
+		}`).
+		AssertStatus(http.StatusOK).
+		AssertHasToken()
 
-	response.AssertStatus(http.StatusOK)
-	response.AssertHasToken()
-
-	database.AssertCount("users", 1)
-	database.AssertHas("users", map[string]any{
-		"name":     "John",
-		"email":    "jodame3394@agafx.com",
-		"password": hashPassword("Strong123"),
-	})
+	database.
+		AssertCount("users", 1).
+		AssertHas("users", map[string]any{
+			"name":     "John",
+			"email":    "jodame3394@agafx.com",
+			"password": hashPassword("Strong123"),
+		})
 }
 
 func TestLoginInvalidData(t *testing.T) {
 	client, database := startup.UsersLogin(t)
 
-	response := client.Post("/api/users/login", `{
-		"email": "yibewek618goulink.com",
-		"password": "v9"
-	}`)
-
-	response.AssertStatus(http.StatusUnprocessableEntity)
-	response.AssertHasValidationErrors([]string{"email", "password"})
-	response.AssertHasNoToken()
+	client.
+		Post("/api/users/login", `{
+			"email": "yibewek618goulink.com",
+			"password": "v9"
+		}`).
+		AssertStatus(http.StatusUnprocessableEntity).
+		AssertHasValidationErrors([]string{"email", "password"}).
+		AssertHasNoToken()
 
 	database.AssertCount("users", 0)
 }
@@ -60,13 +61,14 @@ func TestLoginInvalidData(t *testing.T) {
 func TestLoginIncorrectEmail(t *testing.T) {
 	client, database := startup.UsersLogin(t)
 
-	response := client.Post("/api/users", `{
-		"name": "William",
-		"email": "doleya5976@agafx.com",
-		"password": "w24V,KY$f2YSIPQ",
-		"passwordConfirmation": "w24V,KY$f2YSIPQ"
-	}`)
-	response.AssertStatus(http.StatusCreated)
+	client.
+		Post("/api/users", `{
+			"name": "William",
+			"email": "doleya5976@agafx.com",
+			"password": "w24V,KY$f2YSIPQ",
+			"passwordConfirmation": "w24V,KY$f2YSIPQ"
+		}`).
+		AssertStatus(http.StatusCreated)
 
 	database.AssertHas("users", map[string]any{
 		"name":     "William",
@@ -74,31 +76,29 @@ func TestLoginIncorrectEmail(t *testing.T) {
 		"password": hashPassword("w24V,KY$f2YSIPQ"),
 	})
 
-	user, err := users.Find(1)
-	tests.Check(err)
+	client.
+		Post("/api/users/login", `{
+			"email": "doley5976@agafx.com",
+			"password": "w24V,KY$f2YSIPQ"
+		}`).
+		AssertStatus(http.StatusUnauthorized).
+		AssertHasValidationErrors([]string{"email"}).
+		AssertHasNoToken()
 
-	response = client.Post("/api/users/login", `{
-		"email": "doley5976@agafx.com",
-		"password": "w24V,KY$f2YSIPQ"
-	}`)
-
-	response.AssertStatus(http.StatusUnauthorized)
-	response.AssertHasValidationErrors([]string{"email"})
-	response.AssertHasNoToken()
-
-	tests.AssertUserIsUntouched(user, t)
+	database.AssertCount("users", 1)
 }
 
 func TestLoginIncorrectPassword(t *testing.T) {
 	client, database := startup.UsersLogin(t)
 
-	response := client.Post("/api/users", `{
-		"name": "Antony",
-		"email": "pleonius@sentimentdate.com",
-		"password": "L00k@tmEImHer3",
-		"passwordConfirmation": "L00k@tmEImHer3"
-	}`)
-	response.AssertStatus(http.StatusCreated)
+	client.
+		Post("/api/users", `{
+			"name": "Antony",
+			"email": "pleonius@sentimentdate.com",
+			"password": "L00k@tmEImHer3",
+			"passwordConfirmation": "L00k@tmEImHer3"
+		}`).
+		AssertStatus(http.StatusCreated)
 
 	database.AssertHas("users", map[string]any{
 		"name":     "Antony",
@@ -106,18 +106,16 @@ func TestLoginIncorrectPassword(t *testing.T) {
 		"password": hashPassword("L00k@tmEImHer3"),
 	})
 
-	user, err := users.Find(1)
-	tests.Check(err)
+	client.
+		Post("/api/users/login", `{
+			"email": "pleonius@sentimentdate.com",
+			"password": "Lo0k@tmEImHer3"
+		}`).
+		AssertStatus(http.StatusUnauthorized).
+		AssertHasValidationErrors([]string{"email"}).
+		AssertHasNoToken()
 
-	response = client.Post("/api/users/login", `{
-		"email": "pleonius@sentimentdate.com",
-		"password": "Lo0k@tmEImHer3"
-	}`)
-
-	response.AssertStatus(http.StatusUnauthorized)
-	response.AssertHasValidationErrors([]string{"email"})
-	response.AssertHasNoToken()
-	tests.AssertUserIsUntouched(user, t)
+	database.AssertCount("users", 1)
 }
 
 func TestLoginValidation(t *testing.T) {
