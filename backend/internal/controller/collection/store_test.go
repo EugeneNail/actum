@@ -8,21 +8,21 @@ import (
 )
 
 func TestValidData(t *testing.T) {
-	client := startup.CollectionsStore(t)
+	client, database := startup.CollectionsStore(t)
 
 	response := client.Post("/api/collections", `{
 		"name": "Sport"	
 	}`)
 
 	response.AssertStatus(http.StatusCreated)
-	tests.AssertDatabaseCount("collections", 1, t)
-	tests.AssertDatabaseHas("collections", map[string]any{
+	database.AssertCount("collections", 1)
+	database.AssertHas("collections", map[string]any{
 		"name": "Sport",
-	}, t)
+	})
 }
 
 func TestStoreUnauthorized(t *testing.T) {
-	client := startup.CollectionsStore(t)
+	client, database := startup.CollectionsStore(t)
 	client.UnsetToken()
 
 	response := client.Post("/api/collections", `{
@@ -30,11 +30,11 @@ func TestStoreUnauthorized(t *testing.T) {
 	}`)
 
 	response.AssertStatus(http.StatusUnauthorized)
-	tests.AssertTableIsEmpty("collections", t)
+	database.AssertEmpty("collections")
 }
 
 func TestStoreInvalidData(t *testing.T) {
-	client := startup.CollectionsStore(t)
+	client, database := startup.CollectionsStore(t)
 
 	response := client.Post("/api/collections", `{
 		"name": "Sp"	
@@ -42,11 +42,11 @@ func TestStoreInvalidData(t *testing.T) {
 
 	response.AssertStatus(http.StatusUnprocessableEntity)
 	response.AssertHasValidationErrors([]string{"name"})
-	tests.AssertTableIsEmpty("collections", t)
+	database.AssertEmpty("collections")
 }
 
 func TestStoreDuplicate(t *testing.T) {
-	client := startup.CollectionsStore(t)
+	client, database := startup.CollectionsStore(t)
 
 	client.Post("/api/collections", `{
 		"name": "Sport"	
@@ -58,7 +58,7 @@ func TestStoreDuplicate(t *testing.T) {
 
 	response.AssertStatus(http.StatusConflict)
 	response.AssertHasValidationErrors([]string{"name"})
-	tests.AssertDatabaseCount("collections", 1, t)
+	database.AssertCount("collections", 1)
 }
 
 func TestStoreValidation(t *testing.T) {

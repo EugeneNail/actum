@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func UsersStore(t *testing.T) tests.Client {
+func UsersStore(t *testing.T) (tests.Client, tests.Database) {
 	env.Load()
 
 	t.Cleanup(func() {
@@ -15,10 +15,10 @@ func UsersStore(t *testing.T) tests.Client {
 		tests.Check(err)
 	})
 
-	return tests.NewClientWithoutAuth(t)
+	return tests.NewClientWithoutAuth(t), tests.Database{}
 }
 
-func UsersLogin(t *testing.T) tests.Client {
+func UsersLogin(t *testing.T) (tests.Client, tests.Database) {
 	env.Load()
 
 	t.Cleanup(func() {
@@ -26,5 +26,5 @@ func UsersLogin(t *testing.T) tests.Client {
 		tests.Check(err)
 	})
 
-	return tests.NewClientWithoutAuth(t)
+	return tests.NewClientWithoutAuth(t), tests.Database{}
 }

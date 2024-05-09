@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func CollectionsStore(t *testing.T) tests.Client {
+func CollectionsStore(t *testing.T) (tests.Client, tests.Database) {
 	env.Load()
 
 	t.Cleanup(func() {
@@ -17,5 +17,5 @@ func CollectionsStore(t *testing.T) tests.Client {
 		tests.Check(err)
 	})
 
-	return tests.NewClient(t)
+	return tests.NewClient(t), tests.Database{}
 }
