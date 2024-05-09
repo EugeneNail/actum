@@ -1,7 +1,6 @@
 package user
 
 import (
-	"encoding/json"
 	"github.com/EugeneNail/actum/internal/controller"
 	"github.com/EugeneNail/actum/internal/model/users"
 	"github.com/EugeneNail/actum/internal/service/jwt"
@@ -15,37 +14,30 @@ type loginInput struct {
 }
 
 func Login(writer http.ResponseWriter, request *http.Request) {
-	encoder := json.NewEncoder(writer)
+	controller := controller.New[loginInput](writer)
 
-	input, ok := controller.GetInput[loginInput](writer, request, encoder)
-	if !ok {
+	isValid := controller.Validate(request)
+	if !isValid {
 		return
 	}
 
-	user, err := users.FindBy("email", input.Email)
+	user, err := users.FindBy("email", controller.Input.Email)
 	if err != nil {
-		controller.WriteError(writer, err)
+		controller.Response(err, http.StatusInternalServerError)
 		return
 	}
 
-	if user.Id == 0 || user.Password != hashPassword(input.Password) {
-		writer.WriteHeader(http.StatusUnauthorized)
-		err := encoder.Encode(map[string]string{"email": "Incorrect email address or password"})
-		if err != nil {
-			controller.WriteError(writer, err)
-		}
+	if user.Id == 0 || user.Password != hashPassword(controller.Input.Password) {
+		controller.Response(map[string]string{"email": "Incorrect email address or password"}, http.StatusUnauthorized)
 		return
 	}
 
 	token, err := jwt.Make(user)
 	if err != nil {
-		controller.WriteError(writer, err)
+		controller.Response(err, http.StatusInternalServerError)
 		return
 	}
 
-	if err := encoder.Encode(token); err != nil {
-		controller.WriteError(writer, err)
-		return
-	}
+	controller.Response(token, http.StatusOK)
 	log.Info("User", user.Id, "logged in")
 }
