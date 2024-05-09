@@ -10,7 +10,7 @@ import (
 )
 
 func TestStoreValidData(t *testing.T) {
-	client := startup.UsersStore(t)
+	client, database := startup.UsersStore(t)
 
 	response := client.Post("/api/users", `{
 		"name": "John",
@@ -21,17 +21,17 @@ func TestStoreValidData(t *testing.T) {
 
 	response.AssertStatus(http.StatusCreated)
 
-	tests.AssertDatabaseHas("users", map[string]any{
+	database.AssertHas("users", map[string]any{
 		"name":     "John",
 		"email":    "blank@gmail.com",
 		"password": hashPassword("Strong123"),
-	}, t)
+	})
 
 	response.AssertHasToken()
 }
 
 func TestStoreInvalidData(t *testing.T) {
-	client := startup.UsersStore(t)
+	client, database := startup.UsersStore(t)
 
 	response := client.Post("/api/users", `{
 		"name": "Jo",
@@ -43,11 +43,11 @@ func TestStoreInvalidData(t *testing.T) {
 	response.AssertStatus(http.StatusUnprocessableEntity)
 	response.AssertHasValidationErrors([]string{"name", "email", "password", "passwordConfirmation"})
 	response.AssertHasNoToken()
-	tests.AssertTableIsEmpty("users", t)
+	database.AssertEmpty("users")
 }
 
 func TestStoreDuplicateEmail(t *testing.T) {
-	client := startup.UsersStore(t)
+	client, database := startup.UsersStore(t)
 
 	input := `{
 		"name": "John",
@@ -60,7 +60,7 @@ func TestStoreDuplicateEmail(t *testing.T) {
 
 	response.AssertStatus(http.StatusUnprocessableEntity)
 	response.AssertHasValidationErrors([]string{"email"})
-	tests.AssertDatabaseCount("users", 1, t)
+	database.AssertCount("users", 1)
 	response.AssertHasNoToken()
 }
 

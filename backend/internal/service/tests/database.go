@@ -7,23 +7,11 @@ import (
 	"testing"
 )
 
-func AssertUserIsUntouched(user users.User, t *testing.T) {
-	dbUser, err := users.Find(1)
-	Check(err)
-	if dbUser.Name != user.Name {
-		t.Errorf(`field "name" has been corrupted`)
-	}
-
-	if dbUser.Email != user.Email {
-		t.Errorf(`field "email" has been corrupted`)
-	}
-
-	if dbUser.Password != user.Password {
-		t.Errorf(`field "password" has been corrupted`)
-	}
+type Database struct {
+	t *testing.T
 }
 
-func AssertTableIsEmpty(table string, t *testing.T) {
+func (database *Database) AssertEmpty(table string) {
 	db, err := mysql.Connect()
 	Check(err)
 	defer db.Close()
@@ -35,11 +23,11 @@ func AssertTableIsEmpty(table string, t *testing.T) {
 	Check(err)
 
 	if rows > 0 {
-		t.Errorf("The table %s is expected to be empty, got %d rows instead", table, rows)
+		database.t.Errorf("The table %s is expected to be empty, got %d rows instead", table, rows)
 	}
 }
 
-func AssertDatabaseHas(table string, entity map[string]any, t *testing.T) {
+func (database *Database) AssertHas(table string, entity map[string]any) {
 	db, err := mysql.Connect()
 	Check(err)
 	defer db.Close()
@@ -62,11 +50,11 @@ func AssertDatabaseHas(table string, entity map[string]any, t *testing.T) {
 	Check(err)
 
 	if count == 0 {
-		t.Errorf("The table %s does not contain an entity %+v", table, entity)
+		database.t.Errorf("The table %s does not contain an entity %+v", table, entity)
 	}
 }
 
-func AssertDatabaseCount(table string, expected int, t *testing.T) {
+func (database *Database) AssertCount(table string, expected int) {
 	db, err := mysql.Connect()
 	Check(err)
 	defer db.Close()
@@ -78,7 +66,23 @@ func AssertDatabaseCount(table string, expected int, t *testing.T) {
 	Check(err)
 
 	if count != expected {
-		t.Errorf("The %s table must have %d rows, got %d", table, expected, count)
+		database.t.Errorf("The %s table must have %d rows, got %d", table, expected, count)
 	}
 
+}
+
+func AssertUserIsUntouched(user users.User, t *testing.T) {
+	dbUser, err := users.Find(1)
+	Check(err)
+	if dbUser.Name != user.Name {
+		t.Errorf(`field "name" has been corrupted`)
+	}
+
+	if dbUser.Email != user.Email {
+		t.Errorf(`field "email" has been corrupted`)
+	}
+
+	if dbUser.Password != user.Password {
+		t.Errorf(`field "password" has been corrupted`)
+	}
 }
