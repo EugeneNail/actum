@@ -33,18 +33,20 @@ func Authenticate(next http.Handler) http.Handler {
 			}
 		}
 
-		token := strings.Split(request.Header.Get("Authorization"), " ")[1]
-		if len(token) == 0 {
+		parts := strings.Split(request.Header.Get("Authorization"), " ")
+		if len(parts) < 2 {
 			writer.WriteHeader(http.StatusUnauthorized)
-			if _, err := writer.Write([]byte(`"Token not present"`)); err != nil {
+			if _, err := writer.Write([]byte(`"Bearer token is not present"`)); err != nil {
 				http.Error(writer, err.Error(), http.StatusInternalServerError)
 			}
 			return
 		}
 
+		token := parts[1]
+
 		if !jwt.IsValid(token) {
 			writer.WriteHeader(http.StatusUnauthorized)
-			if _, err := writer.Write([]byte(`"Token is invalid"`)); err != nil {
+			if _, err := writer.Write([]byte(`"Bearer token is invalid"`)); err != nil {
 				http.Error(writer, err.Error(), http.StatusInternalServerError)
 			}
 			return
@@ -58,7 +60,7 @@ func Authenticate(next http.Handler) http.Handler {
 
 		if payload.Exp < time.Now().Unix() {
 			writer.WriteHeader(http.StatusUnauthorized)
-			if _, err := writer.Write([]byte(`"Token has expired"`)); err != nil {
+			if _, err := writer.Write([]byte(`"Bearer token has expired"`)); err != nil {
 				http.Error(writer, err.Error(), http.StatusInternalServerError)
 			}
 			return

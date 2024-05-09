@@ -19,8 +19,7 @@ func TestStoreValidData(t *testing.T) {
 			"password": "Strong123",
 			"passwordConfirmation": "Strong123"
 		}`).
-		AssertStatus(http.StatusCreated).
-		AssertHasToken()
+		AssertStatus(http.StatusCreated)
 
 	database.AssertHas("users", map[string]any{
 		"name":     "John",
@@ -41,8 +40,7 @@ func TestStoreInvalidData(t *testing.T) {
 			"passwordConfirmation": ""
 		}`).
 		AssertStatus(http.StatusUnprocessableEntity).
-		AssertHasValidationErrors([]string{"name", "email", "password", "passwordConfirmation"}).
-		AssertHasNoToken()
+		AssertHasValidationErrors([]string{"name", "email", "password", "passwordConfirmation"})
 
 	database.AssertEmpty("users")
 }
@@ -64,8 +62,7 @@ func TestStoreDuplicateEmail(t *testing.T) {
 	client.
 		Post("/api/users", input).
 		AssertStatus(http.StatusUnprocessableEntity).
-		AssertHasValidationErrors([]string{"email"}).
-		AssertHasNoToken()
+		AssertHasValidationErrors([]string{"email"})
 
 	database.AssertCount("users", 1)
 

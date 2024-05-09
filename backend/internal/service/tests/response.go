@@ -35,29 +35,3 @@ func (response *Response) AssertHasValidationErrors(fields []string) *Response {
 
 	return response
 }
-
-func (response *Response) AssertHasToken() *Response {
-	if !hasToken(response.Response) {
-		response.t.Errorf("The response must have an Access-Token cookie")
-	}
-
-	return response
-}
-
-func (response *Response) AssertHasNoToken() *Response {
-	if hasToken(response.Response) {
-		response.t.Errorf("The response must not have an Access-Token cookie")
-	}
-
-	return response
-}
-
-func hasToken(response *http.Response) bool {
-	for _, cookie := range response.Cookies() {
-		if cookie.Name == "Access-Token" && len(cookie.Value) > 0 {
-			return true
-		}
-	}
-
-	return false
-}

@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/EugeneNail/actum/internal/service/env"
 	"math/rand/v2"
@@ -25,8 +26,17 @@ func NewClient(t *testing.T) (client Client) {
 	}`)
 
 	response.AssertStatus(http.StatusCreated)
+	client.setToken(response)
 
 	return
+}
+
+func (client *Client) setToken(response *Response) {
+	decoder := json.NewDecoder(response.Body)
+	var token string
+	err := decoder.Decode(&token)
+	Check(err)
+	client.token = "Bearer " + token
 }
 
 func NewClientWithoutAuth(t *testing.T) (client Client) {
@@ -39,17 +49,13 @@ func (client *Client) Post(path string, json string) *Response {
 	body := strings.NewReader(json)
 	request, err := http.NewRequest("POST", url, body)
 	Check(err)
-	request.Header.Set("Cookie", "Access-Token="+client.token)
+
+	if len(client.token) > 0 {
+		request.Header.Set("Authorization", client.token)
+	}
 	httpClient := &http.Client{}
 	response, err := httpClient.Do(request)
 	Check(err)
-
-	for _, cookie := range response.Cookies() {
-		if cookie.Name == "Access-Token" {
-			client.token = cookie.Value
-			break
-		}
-	}
 
 	return &Response{response, client.t}
 }
@@ -59,17 +65,12 @@ func (client *Client) Put(path string, json string) *Response {
 	body := strings.NewReader(json)
 	request, err := http.NewRequest("PUT", url, body)
 	Check(err)
-	request.Header.Set("Cookie", "Access-Token="+client.token)
+	if len(client.token) > 0 {
+		request.Header.Set("Authorization", client.token)
+	}
 	httpClient := &http.Client{}
 	response, err := httpClient.Do(request)
 	Check(err)
-
-	for _, cookie := range response.Cookies() {
-		if cookie.Name == "Access-Token" {
-			client.token = cookie.Value
-			break
-		}
-	}
 
 	return &Response{response, client.t}
 }
@@ -89,12 +90,8 @@ func (client *Client) ChangeUser() {
 		Post("/api/users", input).
 		AssertStatus(http.StatusCreated)
 
-	for _, cookie := range response.Cookies() {
-		if cookie.Name == "Access-Token" {
-			client.token = cookie.Value
-			break
-		}
-	}
+	client.setToken(response)
+
 }
 
 func (client *Client) UnsetToken() {

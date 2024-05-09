@@ -31,8 +31,7 @@ func TestLoginValidData(t *testing.T) {
 			"email": "jodame3394@agafx.com",
 			"password": "Strong123"
 		}`).
-		AssertStatus(http.StatusOK).
-		AssertHasToken()
+		AssertStatus(http.StatusOK)
 
 	database.
 		AssertCount("users", 1).
@@ -52,8 +51,7 @@ func TestLoginInvalidData(t *testing.T) {
 			"password": "v9"
 		}`).
 		AssertStatus(http.StatusUnprocessableEntity).
-		AssertHasValidationErrors([]string{"email", "password"}).
-		AssertHasNoToken()
+		AssertHasValidationErrors([]string{"email", "password"})
 
 	database.AssertCount("users", 0)
 }
@@ -82,8 +80,7 @@ func TestLoginIncorrectEmail(t *testing.T) {
 			"password": "w24V,KY$f2YSIPQ"
 		}`).
 		AssertStatus(http.StatusUnauthorized).
-		AssertHasValidationErrors([]string{"email"}).
-		AssertHasNoToken()
+		AssertHasValidationErrors([]string{"email"})
 
 	database.AssertCount("users", 1)
 }
@@ -112,8 +109,7 @@ func TestLoginIncorrectPassword(t *testing.T) {
 			"password": "Lo0k@tmEImHer3"
 		}`).
 		AssertStatus(http.StatusUnauthorized).
-		AssertHasValidationErrors([]string{"email"}).
-		AssertHasNoToken()
+		AssertHasValidationErrors([]string{"email"})
 
 	database.AssertCount("users", 1)
 }
