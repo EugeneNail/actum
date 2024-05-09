@@ -20,6 +20,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             </Route>
             <Route path="/collections" element={<CollectionsPage/>}>
                 <Route path="/collections/new" element={<SaveCollectionPage/>}/>
+                <Route path="/collections/:id" element={<SaveCollectionPage/>}/>
             </Route>
             <Route path="*" element={<Navigate to="/not-found"/>}/>
         </Routes>

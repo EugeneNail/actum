@@ -3,7 +3,6 @@ import axios from "axios";
 export function useHttp() {
     const http = axios.create({
         baseURL: "http://192.168.1.3:8080/api",
-        withCredentials: true,
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",

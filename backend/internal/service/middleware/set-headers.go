@@ -8,9 +8,8 @@ import (
 func SetHeaders(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 		writer.Header().Set("Content-Type", "application/json")
-		writer.Header().Set("Access-Control-Allow-Methods", "*")
+		writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 		writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-		writer.Header().Set("Access-Control-Allow-Credentials", "true")
 		setOrigin(writer, request)
 
 		if request.Method == "OPTIONS" {
