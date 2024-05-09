@@ -22,18 +22,18 @@ func Find(id int) (User, error) {
 	var user User
 	db, err := mysql.Connect()
 	defer db.Close()
-
-	if err != nil {
-		return user, fmt.Errorf("users.Find(): %w", err)
-	}
-	result, err := db.Query(`SELECT * FROM users WHERE id = ? LIMIT 1`, id)
-
 	if err != nil {
 		return user, fmt.Errorf("users.Find(): %w", err)
 	}
 
-	for result.Next() {
-		if err := result.Scan(&user.Id, &user.Name, &user.Email, &user.Password); err != nil {
+	rows, err := db.Query(`SELECT * FROM users WHERE id = ? LIMIT 1`, id)
+	defer rows.Close()
+	if err != nil {
+		return user, fmt.Errorf("users.Find(): %w", err)
+	}
+
+	for rows.Next() {
+		if err := rows.Scan(&user.Id, &user.Name, &user.Email, &user.Password); err != nil {
 			return user, fmt.Errorf("users.Find(): %w", err)
 		}
 	}
@@ -50,13 +50,14 @@ func FindBy(column string, value any) (User, error) {
 		return user, fmt.Errorf("users.FindBy(): %w", err)
 	}
 
-	result, err := db.Query(`SELECT * FROM users WHERE `+column+` = ?`, value)
+	rows, err := db.Query(`SELECT * FROM users WHERE `+column+` = ?`, value)
+	defer rows.Close()
 	if err != nil {
 		return user, fmt.Errorf("users.FindBy(): %w", err)
 	}
 
-	for result.Next() {
-		err := result.Scan(&user.Id, &user.Name, &user.Email, &user.Password)
+	for rows.Next() {
+		err := rows.Scan(&user.Id, &user.Name, &user.Email, &user.Password)
 		if err != nil {
 			return user, fmt.Errorf("users.FindBy(): %w", err)
 		}
@@ -119,6 +120,7 @@ func (user *User) Collections() ([]collections.Collection, error) {
 	}
 
 	rows, err := db.Query(`SELECT * FROM collections WHERE user_id = ?`, user.Id)
+	defer rows.Close()
 	if err != nil {
 		return user.collections, fmt.Errorf("user.Collections(): %w", err)
 	}

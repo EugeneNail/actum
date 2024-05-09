@@ -15,10 +15,10 @@ func Find(id int) (Collection, error) {
 	var collection Collection
 
 	db, err := mysql.Connect()
+	defer db.Close()
 	if err != nil {
 		return collection, fmt.Errorf("collection.Find(): %w", err)
 	}
-	defer db.Close()
 
 	err = db.
 		QueryRow("SELECT * FROM collections WHERE id = ?", id).
@@ -32,10 +32,10 @@ func Find(id int) (Collection, error) {
 
 func (collection *Collection) Save() error {
 	db, err := mysql.Connect()
+	defer db.Close()
 	if err != nil {
 		return fmt.Errorf("groups.Save(): %w", err)
 	}
-	defer db.Close()
 
 	result, err := db.Exec(`
 		INSERT INTO collections 
