@@ -11,9 +11,9 @@ import (
 func TestValidData(t *testing.T) {
 	env.Load()
 	t.Cleanup(cleanup.StoreCollections)
+	client := tests.NewClient(t)
 
-	token := tests.GetToken(t)
-	response := tests.Post("/api/collections", t, token, `{
+	response := client.Post("/api/collections", `{
 		"name": "Sport"	
 	}`)
 
@@ -27,8 +27,9 @@ func TestValidData(t *testing.T) {
 func TestStoreUnauthorized(t *testing.T) {
 	env.Load()
 	t.Cleanup(cleanup.StoreCollections)
+	client := tests.NewClientWithoutAuth(t)
 
-	response := tests.Post("/api/collections", t, "", `{
+	response := client.Post("/api/collections", `{
 		"name": "Sport"	
 	}`)
 
@@ -39,9 +40,9 @@ func TestStoreUnauthorized(t *testing.T) {
 func TestStoreInvalidData(t *testing.T) {
 	env.Load()
 	t.Cleanup(cleanup.StoreCollections)
+	client := tests.NewClient(t)
 
-	token := tests.GetToken(t)
-	response := tests.Post("/api/collections", t, token, `{
+	response := client.Post("/api/collections", `{
 		"name": "Sp"	
 	}`)
 
@@ -53,13 +54,13 @@ func TestStoreInvalidData(t *testing.T) {
 func TestStoreDuplicate(t *testing.T) {
 	env.Load()
 	t.Cleanup(cleanup.StoreCollections)
+	client := tests.NewClient(t)
 
-	token := tests.GetToken(t)
-	tests.Post("/api/collections", t, token, `{
+	client.Post("/api/collections", `{
 		"name": "Sport"	
 	}`)
 
-	response := tests.Post("/api/collections", t, token, `{
+	response := client.Post("/api/collections", `{
 		"name": "Sport"	
 	}`)
 
