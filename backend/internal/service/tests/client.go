@@ -51,3 +51,7 @@ func (client *Client) Post(path string, json string) Response {
 
 	return Response{response, client.t}
 }
+
+func (client *Client) UnsetToken() {
+	client.token = ""
+}
