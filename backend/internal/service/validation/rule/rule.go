@@ -199,14 +199,15 @@ func newUniqueRuleFunc(rule []string) RuleFunc {
 		}
 
 		query := fmt.Sprintf("SELECT COUNT(*) FROM %s WHERE %s = ?", table, column)
-		result, err := db.Query(query, value)
+		rows, err := db.Query(query, value)
+		defer rows.Close()
 		if err != nil {
 			return nil, fmt.Errorf("newUniqueRuleFunc(): %w", err)
 		}
 
 		var count int
-		for result.Next() {
-			err := result.Scan(&count)
+		for rows.Next() {
+			err := rows.Scan(&count)
 
 			if err != nil {
 				return nil, fmt.Errorf("newUniqueRuleFunc(): %w", err)
