@@ -4,16 +4,15 @@ import (
 	"github.com/EugeneNail/actum/internal/model/users"
 	"github.com/EugeneNail/actum/internal/service/env"
 	"github.com/EugeneNail/actum/internal/service/tests"
-	"github.com/EugeneNail/actum/internal/service/tests/cleanup"
+	"github.com/EugeneNail/actum/internal/service/tests/startup"
 	"net/http"
 	"testing"
 )
 
 func TestLoginValidData(t *testing.T) {
-	env.Load()
-	t.Cleanup(cleanup.LoginUsers)
+	client := startup.UsersLogin(t)
 
-	response := tests.Post("/api/users", t, "", `{
+	response := client.Post("/api/users", `{
 		"name": "John",
 		"email": "jodame3394@agafx.com",
 		"password": "Strong123",
@@ -21,7 +20,7 @@ func TestLoginValidData(t *testing.T) {
 	}`)
 	response.AssertStatus(http.StatusCreated)
 
-	response = tests.Post("/api/users/login", t, "", `{
+	response = client.Post("/api/users/login", `{
 		"email": "jodame3394@agafx.com",
 		"password": "Strong123"
 	}`)
@@ -31,10 +30,9 @@ func TestLoginValidData(t *testing.T) {
 }
 
 func TestLoginInvalidData(t *testing.T) {
-	env.Load()
-	t.Cleanup(cleanup.LoginUsers)
+	client := startup.UsersLogin(t)
 
-	response := tests.Post("/api/users/login", t, "", `{
+	response := client.Post("/api/users/login", `{
 		"email": "yibewek618goulink.com",
 		"password": "v9"
 	}`)
@@ -45,10 +43,9 @@ func TestLoginInvalidData(t *testing.T) {
 }
 
 func TestLoginIncorrectEmail(t *testing.T) {
-	env.Load()
-	t.Cleanup(cleanup.LoginUsers)
+	client := startup.UsersLogin(t)
 
-	tests.Post("/api/users", t, "", `{
+	client.Post("/api/users", `{
 		"email": "doleya5976@agafx.com",
 		"password": "w24V,KY$f2YSIPQ"
 	}`)
@@ -56,7 +53,7 @@ func TestLoginIncorrectEmail(t *testing.T) {
 	user, err := users.Find(1)
 	tests.Check(err)
 
-	response := tests.Post("/api/users/login", t, "", `{
+	response := client.Post("/api/users/login", `{
 		"email": "doley5976@agafx.com",
 		"password": "w24V,KY$f2YSIPQ"
 	}`)
@@ -68,10 +65,9 @@ func TestLoginIncorrectEmail(t *testing.T) {
 }
 
 func TestLoginIncorrectPassword(t *testing.T) {
-	env.Load()
-	t.Cleanup(cleanup.LoginUsers)
+	client := startup.UsersLogin(t)
 
-	tests.Post("/api/users", t, "", `{
+	client.Post("/api/users", `{
 		"email": "pleonius@sentimentdate.com",
 		"password": "L00k@tmEImHer3"
 	}`)
@@ -79,7 +75,7 @@ func TestLoginIncorrectPassword(t *testing.T) {
 	user, err := users.Find(1)
 	tests.Check(err)
 
-	response := tests.Post("/api/users/login", t, "", `{
+	response := client.Post("/api/users/login", `{
 		"email": "pleonius@sentimentdate.com",
 		"password": "Lo0k@tmEImHer3"
 	}`)

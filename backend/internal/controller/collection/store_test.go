@@ -1,19 +1,16 @@
 package collection
 
 import (
-	"github.com/EugeneNail/actum/internal/service/env"
 	"github.com/EugeneNail/actum/internal/service/tests"
-	"github.com/EugeneNail/actum/internal/service/tests/cleanup"
+	"github.com/EugeneNail/actum/internal/service/tests/startup"
 	"net/http"
 	"testing"
 )
 
 func TestValidData(t *testing.T) {
-	env.Load()
-	t.Cleanup(cleanup.StoreCollections)
+	client := startup.CollectionsStore(t)
 
-	token := tests.GetToken(t)
-	response := tests.Post("/api/collections", t, token, `{
+	response := client.Post("/api/collections", `{
 		"name": "Sport"	
 	}`)
 
@@ -25,10 +22,10 @@ func TestValidData(t *testing.T) {
 }
 
 func TestStoreUnauthorized(t *testing.T) {
-	env.Load()
-	t.Cleanup(cleanup.StoreCollections)
+	client := startup.CollectionsStore(t)
+	client.UnsetToken()
 
-	response := tests.Post("/api/collections", t, "", `{
+	response := client.Post("/api/collections", `{
 		"name": "Sport"	
 	}`)
 
@@ -37,11 +34,9 @@ func TestStoreUnauthorized(t *testing.T) {
 }
 
 func TestStoreInvalidData(t *testing.T) {
-	env.Load()
-	t.Cleanup(cleanup.StoreCollections)
+	client := startup.CollectionsStore(t)
 
-	token := tests.GetToken(t)
-	response := tests.Post("/api/collections", t, token, `{
+	response := client.Post("/api/collections", `{
 		"name": "Sp"	
 	}`)
 
@@ -51,15 +46,13 @@ func TestStoreInvalidData(t *testing.T) {
 }
 
 func TestStoreDuplicate(t *testing.T) {
-	env.Load()
-	t.Cleanup(cleanup.StoreCollections)
+	client := startup.CollectionsStore(t)
 
-	token := tests.GetToken(t)
-	tests.Post("/api/collections", t, token, `{
+	client.Post("/api/collections", `{
 		"name": "Sport"	
 	}`)
 
-	response := tests.Post("/api/collections", t, token, `{
+	response := client.Post("/api/collections", `{
 		"name": "Sport"	
 	}`)
 

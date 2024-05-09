@@ -3,17 +3,16 @@ package user
 import (
 	"github.com/EugeneNail/actum/internal/service/env"
 	"github.com/EugeneNail/actum/internal/service/tests"
-	"github.com/EugeneNail/actum/internal/service/tests/cleanup"
+	"github.com/EugeneNail/actum/internal/service/tests/startup"
 	"net/http"
 	"strings"
 	"testing"
 )
 
 func TestStoreValidData(t *testing.T) {
-	env.Load()
-	t.Cleanup(cleanup.StoreUsers)
+	client := startup.UsersStore(t)
 
-	response := tests.Post("/api/users", t, "", `{
+	response := client.Post("/api/users", `{
 		"name": "John",
 		"email": "blank@gmail.com",
 		"password": "Strong123",
@@ -32,10 +31,9 @@ func TestStoreValidData(t *testing.T) {
 }
 
 func TestStoreInvalidData(t *testing.T) {
-	env.Load()
-	t.Cleanup(cleanup.StoreUsers)
+	client := startup.UsersStore(t)
 
-	response := tests.Post("/api/users", t, "", `{
+	response := client.Post("/api/users", `{
 		"name": "Jo",
 		"email": "blankgmail.com",
 		"password": "String1",
@@ -49,8 +47,7 @@ func TestStoreInvalidData(t *testing.T) {
 }
 
 func TestStoreDuplicateEmail(t *testing.T) {
-	env.Load()
-	t.Cleanup(cleanup.StoreUsers)
+	client := startup.UsersStore(t)
 
 	input := `{
 		"name": "John",
@@ -58,8 +55,8 @@ func TestStoreDuplicateEmail(t *testing.T) {
 		"password": "Strong123",
 		"passwordConfirmation": "Strong123"
 	}`
-	tests.Post("/api/users", t, "", input)
-	response := tests.Post("/api/users", t, "", input)
+	client.Post("/api/users", input)
+	response := client.Post("/api/users", input)
 
 	response.AssertStatus(http.StatusUnprocessableEntity)
 	response.AssertHasValidationErrors([]string{"email"})
