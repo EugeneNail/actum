@@ -32,7 +32,7 @@ func NewClientWithoutAuth(t *testing.T) (client Client) {
 	return
 }
 
-func (client *Client) Post(path string, json string) Response {
+func (client *Client) Post(path string, json string) *Response {
 	url := "http://127.0.0.1:" + env.Get("APP_PORT") + path
 	body := strings.NewReader(json)
 	request, err := http.NewRequest("POST", url, body)
@@ -49,7 +49,7 @@ func (client *Client) Post(path string, json string) Response {
 		}
 	}
 
-	return Response{response, client.t}
+	return &Response{response, client.t}
 }
 
 func (client *Client) UnsetToken() {

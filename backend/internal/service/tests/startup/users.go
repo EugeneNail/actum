@@ -15,7 +15,7 @@ func UsersStore(t *testing.T) (tests.Client, tests.Database) {
 		tests.Check(err)
 	})
 
-	return tests.NewClientWithoutAuth(t), tests.Database{}
+	return tests.NewClientWithoutAuth(t), tests.NewDatabase(t)
 }
 
 func UsersLogin(t *testing.T) (tests.Client, tests.Database) {
@@ -26,5 +26,5 @@ func UsersLogin(t *testing.T) (tests.Client, tests.Database) {
 		tests.Check(err)
 	})
 
-	return tests.NewClientWithoutAuth(t), tests.Database{}
+	return tests.NewClientWithoutAuth(t), tests.NewDatabase(t)
 }

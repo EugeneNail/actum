@@ -17,5 +17,5 @@ func CollectionsStore(t *testing.T) (tests.Client, tests.Database) {
 		tests.Check(err)
 	})
 
-	return tests.NewClient(t), tests.Database{}
+	return tests.NewClient(t), tests.NewDatabase(t)
 }

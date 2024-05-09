@@ -10,54 +10,61 @@ import (
 func TestValidData(t *testing.T) {
 	client, database := startup.CollectionsStore(t)
 
-	response := client.Post("/api/collections", `{
-		"name": "Sport"	
-	}`)
+	client.
+		Post("/api/collections", `{
+			"name": "Sport"	
+		}`).
+		AssertStatus(http.StatusCreated)
 
-	response.AssertStatus(http.StatusCreated)
-	database.AssertCount("collections", 1)
-	database.AssertHas("collections", map[string]any{
-		"name": "Sport",
-	})
+	database.
+		AssertCount("collections", 1).
+		AssertHas("collections", map[string]any{
+			"name": "Sport",
+		})
 }
 
 func TestStoreUnauthorized(t *testing.T) {
 	client, database := startup.CollectionsStore(t)
 	client.UnsetToken()
 
-	response := client.Post("/api/collections", `{
-		"name": "Sport"	
-	}`)
+	client.
+		Post("/api/collections", `{
+			"name": "Sport"	
+		}`).
+		AssertStatus(http.StatusUnauthorized)
 
-	response.AssertStatus(http.StatusUnauthorized)
 	database.AssertEmpty("collections")
 }
 
 func TestStoreInvalidData(t *testing.T) {
 	client, database := startup.CollectionsStore(t)
 
-	response := client.Post("/api/collections", `{
-		"name": "Sp"	
-	}`)
+	client.
+		Post("/api/collections", `{
+			"name": "Sp"	
+		}`).
+		AssertStatus(http.StatusUnprocessableEntity).
+		AssertHasValidationErrors([]string{"name"})
 
-	response.AssertStatus(http.StatusUnprocessableEntity)
-	response.AssertHasValidationErrors([]string{"name"})
 	database.AssertEmpty("collections")
 }
 
 func TestStoreDuplicate(t *testing.T) {
 	client, database := startup.CollectionsStore(t)
 
-	client.Post("/api/collections", `{
-		"name": "Sport"	
-	}`)
+	client.
+		Post("/api/collections", `{
+			"name": "Sport"	
+		}`).
+		AssertStatus(http.StatusCreated)
 
-	response := client.Post("/api/collections", `{
-		"name": "Sport"	
-	}`)
+	client.
+		Post("/api/collections", `{
+			"name": "Sport"	
+		}`).
+		AssertStatus(http.StatusConflict).
+		AssertHasValidationErrors([]string{"name"})
 
-	response.AssertStatus(http.StatusConflict)
-	response.AssertHasValidationErrors([]string{"name"})
 	database.AssertCount("collections", 1)
 }
 

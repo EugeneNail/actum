@@ -12,13 +12,15 @@ type Response struct {
 	t *testing.T
 }
 
-func (response *Response) AssertStatus(status int) {
+func (response *Response) AssertStatus(status int) *Response {
 	if response.StatusCode != status {
 		response.t.Errorf("expected status %d, got %d", status, response.StatusCode)
 	}
+
+	return response
 }
 
-func (response *Response) AssertHasValidationErrors(fields []string) {
+func (response *Response) AssertHasValidationErrors(fields []string) *Response {
 	var errors map[string]string
 	data, err := io.ReadAll(response.Body)
 	Check(err)
@@ -30,18 +32,24 @@ func (response *Response) AssertHasValidationErrors(fields []string) {
 			response.t.Errorf(`expected validation error for field "%s" to be present`, field)
 		}
 	}
+
+	return response
 }
 
-func (response *Response) AssertHasToken() {
+func (response *Response) AssertHasToken() *Response {
 	if !hasToken(response.Response) {
 		response.t.Errorf("The response must have an Access-Token cookie")
 	}
+
+	return response
 }
 
-func (response *Response) AssertHasNoToken() {
+func (response *Response) AssertHasNoToken() *Response {
 	if hasToken(response.Response) {
 		response.t.Errorf("The response must not have an Access-Token cookie")
 	}
+
+	return response
 }
 
 func hasToken(response *http.Response) bool {
