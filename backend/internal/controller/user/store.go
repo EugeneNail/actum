@@ -1,7 +1,6 @@
 package user
 
 import (
-	"encoding/json"
 	"github.com/EugeneNail/actum/internal/controller"
 	"github.com/EugeneNail/actum/internal/model/users"
 	"github.com/EugeneNail/actum/internal/service/jwt"
@@ -17,40 +16,34 @@ type storeInput struct {
 }
 
 func Store(writer http.ResponseWriter, request *http.Request) {
-	encoder := json.NewEncoder(writer)
+	controller := controller.New[storeInput](writer)
 
-	input, ok := controller.GetInput[storeInput](writer, request, encoder)
-	if !ok {
+	isValid := controller.Validate(request)
+	if !isValid {
 		return
 	}
 
-	if input.Password != input.PasswordConfirmation {
-		writer.WriteHeader(http.StatusUnprocessableEntity)
-		err := encoder.Encode(map[string]string{"passwordConfirmation": "Passwords do not match"})
-
-		if err != nil {
-			controller.WriteError(writer, err)
-		}
+	if controller.Input.Password != controller.Input.PasswordConfirmation {
+		controller.Response(map[string]string{"passwordConfirmation": "Passwords do not match"}, http.StatusUnprocessableEntity)
 		return
 	}
 
-	user := users.New(input.Name, input.Email, hashPassword(input.Password))
+	user := users.New(
+		controller.Input.Name,
+		controller.Input.Email,
+		hashPassword(controller.Input.Password),
+	)
 	if err := user.Save(); err != nil {
-		controller.WriteError(writer, err)
+		controller.Response(err, http.StatusUnprocessableEntity)
 		return
 	}
 
 	token, err := jwt.Make(user)
 	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		log.Error(err)
+		controller.Response(err, http.StatusInternalServerError)
 		return
 	}
 
-	writer.WriteHeader(http.StatusCreated)
-	if err := encoder.Encode(token); err != nil {
-		controller.WriteError(writer, err)
-		return
-	}
+	controller.Response(token, http.StatusCreated)
 	log.Info("Created user", user.Id)
 }

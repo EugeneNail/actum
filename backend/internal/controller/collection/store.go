@@ -1,7 +1,6 @@
 package collection
 
 import (
-	"encoding/json"
 	"github.com/EugeneNail/actum/internal/controller"
 	"github.com/EugeneNail/actum/internal/model/collections"
 	"github.com/EugeneNail/actum/internal/model/users"
@@ -15,42 +14,32 @@ type storeInput struct {
 }
 
 func Store(writer http.ResponseWriter, request *http.Request) {
-	encoder := json.NewEncoder(writer)
+	controller := controller.New[storeInput](writer)
 
-	input, ok := controller.GetInput[storeInput](writer, request, encoder)
-	if !ok {
+	isValid := controller.Validate(request)
+	if !isValid {
 		return
 	}
 
 	user := jwt.GetUser(request)
-	hasDuplicateCollection, err := hasDuplicateCollection(input.Name, user)
+	hasDuplicateCollection, err := hasDuplicateCollection(controller.Input.Name, user)
 	if err != nil {
-		controller.WriteError(writer, err)
+		controller.Response(err, http.StatusInternalServerError)
 		return
 	}
 
 	if hasDuplicateCollection {
-		writer.WriteHeader(http.StatusConflict)
-
-		err := encoder.Encode(map[string]string{"name": "Collection already exists"})
-		if err != nil {
-			controller.WriteError(writer, err)
-		}
+		controller.Response(map[string]string{"name": "Collection already exists"}, http.StatusConflict)
 		return
 	}
 
-	collection := collections.Collection{0, input.Name, user.Id}
+	collection := collections.Collection{0, controller.Input.Name, user.Id}
 	if err := collection.Save(); err != nil {
-		controller.WriteError(writer, err)
+		controller.Response(err, http.StatusInternalServerError)
 		return
 	}
 
-	writer.WriteHeader(http.StatusCreated)
-	if err := encoder.Encode(collection.Id); err != nil {
-		controller.WriteError(writer, err)
-		return
-	}
-
+	controller.Response(collection.Id, http.StatusCreated)
 	log.Info("User", user.Id, "created collection", collection.Id)
 }
 

@@ -1,7 +1,6 @@
 package collection
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/EugeneNail/actum/internal/controller"
 	"github.com/EugeneNail/actum/internal/model/collections"
@@ -17,50 +16,42 @@ type updateInput struct {
 }
 
 func Update(writer http.ResponseWriter, request *http.Request) {
-	encoder := json.NewEncoder(writer)
+	controller := controller.New[updateInput](writer)
 
 	id, err := strconv.Atoi(routing.GetVariable(request, 0))
 	if err != nil {
-		http.Error(writer, err.Error(), http.StatusBadRequest)
-		log.Error(err)
+		controller.Response(err, http.StatusBadRequest)
 		return
 	}
 
 	collection, err := collections.Find(id)
 	if err != nil {
-		controller.WriteError(writer, err)
+		controller.Response(err, http.StatusInternalServerError)
 		return
 	}
 
 	if collection.Id == 0 {
-		writer.WriteHeader(http.StatusNotFound)
-		message := fmt.Sprintf("Collection %d not found", id)
-		if err := encoder.Encode(message); err != nil {
-			controller.WriteError(writer, err)
-		}
+		controller.Response(fmt.Sprintf("Collection %d not found", id), http.StatusNotFound)
 		return
 	}
 
 	user := jwt.GetUser(request)
 	if user.Id != collection.UserId {
-		writer.WriteHeader(http.StatusForbidden)
-		if err := encoder.Encode("You are not allowed to manage other people's collections"); err != nil {
-			controller.WriteError(writer, err)
-		}
+		controller.Response("You are not allowed to manage other people's collections", http.StatusForbidden)
 		return
 	}
 
-	input, ok := controller.GetInput[updateInput](writer, request, encoder)
-	if !ok {
+	isValid := controller.Validate(request)
+	if !isValid {
 		return
 	}
 
-	collection.Name = input.Name
+	collection.Name = controller.Input.Name
 	if err := collection.Save(); err != nil {
-		controller.WriteError(writer, err)
+		controller.Response(err, http.StatusInternalServerError)
 		return
 	}
 
 	writer.WriteHeader(http.StatusNoContent)
-	log.Info("User", user.Id, "changed the name of collection", collection.Id, "to", fmt.Sprintf(`"%s"`, input.Name))
+	log.Info("User", user.Id, "changed the name of collection", collection.Id, "to", fmt.Sprintf(`"%s"`, controller.Input.Name))
 }
