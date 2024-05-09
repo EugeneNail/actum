@@ -20,11 +20,17 @@ func Find(id int) (Collection, error) {
 		return collection, fmt.Errorf("collection.Find(): %w", err)
 	}
 
-	err = db.
-		QueryRow("SELECT * FROM collections WHERE id = ?", id).
-		Scan(&collection.Id, &collection.Name, &collection.UserId)
+	rows, err := db.Query(`SELECT * FROM collections WHERE id = ?`, id)
+	defer rows.Close()
 	if err != nil {
 		return collection, fmt.Errorf("collection.Find(): %w", err)
+	}
+
+	for rows.Next() {
+		err := rows.Scan(&collection.Id, &collection.Name, &collection.UserId)
+		if err != nil {
+			return collection, fmt.Errorf("collection.Find(): %w", err)
+		}
 	}
 
 	return collection, nil
