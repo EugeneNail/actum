@@ -6,7 +6,7 @@ import (
 	"github.com/EugeneNail/actum/internal/service/env"
 	"github.com/EugeneNail/actum/internal/service/log"
 	"github.com/EugeneNail/actum/internal/service/middleware"
-	"github.com/EugeneNail/actum/internal/service/routing"
+	"github.com/EugeneNail/actum/internal/service/middleware/routing"
 	"net/http"
 	"os"
 )
@@ -19,9 +19,10 @@ func main() {
 	routing.Post("/api/users/login", user.Login)
 	routing.Post("/api/collections", collection.Store)
 
-	handler := middleware.BuildPipeline(routing.Serve(), []middleware.Middleware{
+	handler := middleware.BuildPipeline([]middleware.Middleware{
 		middleware.SetHeaders,
 		middleware.Authenticate,
+		routing.Middleware,
 	})
 
 	err := http.ListenAndServe(":"+os.Getenv("APP_PORT"), handler)

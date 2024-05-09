@@ -17,8 +17,8 @@ type route struct {
 
 type CtxKey string
 
-func Serve() http.HandlerFunc {
-	return func(writer http.ResponseWriter, request *http.Request) {
+func Middleware(_ http.Handler) http.Handler {
+	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 		var allowedMethods []string
 		for _, route := range routes {
 			matches := route.regex.FindStringSubmatch(request.URL.Path)
@@ -36,12 +36,13 @@ func Serve() http.HandlerFunc {
 		}
 
 		if len(allowedMethods) > 0 {
+			message := "Method not allowed. Allowed methods: " + strings.Join(allowedMethods, ", ")
 			writer.Header().Set("Allow", strings.Join(allowedMethods, ", "))
-			http.Error(writer, "Method not allowed", http.StatusMethodNotAllowed)
+			http.Error(writer, message, http.StatusMethodNotAllowed)
 			return
 		}
 		http.NotFound(writer, request)
-	}
+	})
 }
 
 func Get(pattern string, handlerFunction func(http.ResponseWriter, *http.Request)) {
