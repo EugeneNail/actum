@@ -69,7 +69,7 @@ func word(name string, value any) (error, error) {
 }
 
 func sentence(name string, value any) (error, error) {
-	match, err := regexp.MatchString("^[a-zA-Z0-9 -/]+$", value.(string))
+	match, err := regexp.MatchString("^[a-zA-Z0-9 -]+$", value.(string))
 
 	if err != nil {
 		return nil, fmt.Errorf("sentence(): %w", err)

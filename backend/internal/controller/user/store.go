@@ -10,7 +10,6 @@ import (
 )
 
 type storeInput struct {
-	Id                   int    `json:"id"`
 	Name                 string `json:"name" rules:"required|word|min:3|max:20"`
 	Email                string `json:"email" rules:"required|email|max:100|unique:users,email"`
 	Password             string `json:"password" rules:"required|min:8|max:100|mixedCase|regex:^\\S+$"`
@@ -35,7 +34,7 @@ func Store(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	user := users.User{input.Id, input.Name, input.Email, hashPassword(input.Password)}
+	user := users.New(input.Name, input.Email, hashPassword(input.Password))
 	if err := user.Save(); err != nil {
 		controller.WriteError(writer, err)
 		return

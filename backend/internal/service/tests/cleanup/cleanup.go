@@ -14,3 +14,9 @@ func StoreUsers() {
 	err := mysql.Truncate("users")
 	tests.Check(err)
 }
+func StoreCollections() {
+	err := mysql.Truncate("users")
+	tests.Check(err)
+	err = mysql.Truncate("collections")
+	tests.Check(err)
+}

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/EugeneNail/actum/internal/controller/collection"
 	"github.com/EugeneNail/actum/internal/controller/user"
 	"github.com/EugeneNail/actum/internal/service/env"
 	"github.com/EugeneNail/actum/internal/service/log"
@@ -16,6 +17,7 @@ func main() {
 
 	routing.Post("/api/users", user.Store)
 	routing.Post("/api/users/login", user.Login)
+	routing.Post("/api/collections", collection.Store)
 
 	handler := middleware.BuildPipeline(routing.Serve(), []middleware.Middleware{
 		middleware.SetHeaders,

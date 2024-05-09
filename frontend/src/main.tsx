@@ -6,6 +6,8 @@ import SignupPage from "./page/guest/signup-page.tsx";
 import "./shared.sass"
 import LoginPage from "./page/guest/login-page.tsx";
 import NotFoundPage from "./page/not-found-page/not-found-page.tsx";
+import CollectionsPage from "./page/collection/collections-page/collections-page.tsx";
+import SaveCollectionPage from "./page/collection/save-collection-page/save-collection-page.tsx";
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -15,6 +17,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <Route element={<GuestLayout/>}>
                 <Route path="/signup" element={<SignupPage/>}/>
                 <Route path="/login" element={<LoginPage/>}/>
+            </Route>
+            <Route path="/collections" element={<CollectionsPage/>}>
+                <Route path="/collections/new" element={<SaveCollectionPage/>}/>
             </Route>
             <Route path="*" element={<Navigate to="/not-found"/>}/>
         </Routes>

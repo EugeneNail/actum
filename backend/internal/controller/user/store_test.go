@@ -13,7 +13,7 @@ func TestStoreValidData(t *testing.T) {
 	env.Load()
 	t.Cleanup(cleanup.StoreUsers)
 
-	response := tests.Post("/api/users", t, `{
+	response := tests.Post("/api/users", t, "", `{
 		"name": "John",
 		"email": "blank@gmail.com",
 		"password": "Strong123",
@@ -35,7 +35,7 @@ func TestStoreInvalidData(t *testing.T) {
 	env.Load()
 	t.Cleanup(cleanup.StoreUsers)
 
-	response := tests.Post("/api/users", t, `{
+	response := tests.Post("/api/users", t, "", `{
 		"name": "Jo",
 		"email": "blankgmail.com",
 		"password": "String1",
@@ -58,8 +58,8 @@ func TestStoreDuplicateEmail(t *testing.T) {
 		"password": "Strong123",
 		"passwordConfirmation": "Strong123"
 	}`
-	tests.Post("/api/users", t, input)
-	response := tests.Post("/api/users", t, input)
+	tests.Post("/api/users", t, "", input)
+	response := tests.Post("/api/users", t, "", input)
 
 	response.AssertStatus(http.StatusUnprocessableEntity)
 	response.AssertHasValidationErrors([]string{"email"})

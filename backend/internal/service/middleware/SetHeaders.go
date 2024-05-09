@@ -1,14 +1,17 @@
 package middleware
 
-import "net/http"
+import (
+	"net/http"
+	"strings"
+)
 
 func SetHeaders(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 		writer.Header().Set("Content-Type", "application/json")
-		writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
 		writer.Header().Set("Access-Control-Allow-Methods", "*")
 		writer.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 		writer.Header().Set("Access-Control-Allow-Credentials", "true")
+		setOrigin(writer, request)
 
 		if request.Method == "OPTIONS" {
 			writer.WriteHeader(200)
@@ -17,4 +20,11 @@ func SetHeaders(handler http.Handler) http.Handler {
 
 		handler.ServeHTTP(writer, request)
 	})
+}
+
+func setOrigin(writer http.ResponseWriter, request *http.Request) {
+	origin := request.Header.Get("Origin")
+	if strings.Contains(origin, "192.168.") || strings.Contains(origin, "localhost") {
+		writer.Header().Set("Access-Control-Allow-Origin", origin)
+	}
 }
