@@ -36,6 +36,7 @@ export default function SignupPage() {
         }
 
         if (status == 201) {
+            localStorage.setItem("Access-Token", data)
             navigate("/")
         }
     }

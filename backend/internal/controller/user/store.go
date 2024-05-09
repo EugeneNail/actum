@@ -47,7 +47,10 @@ func Store(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	http.SetCookie(writer, &http.Cookie{Name: "Access-Token", Value: token, HttpOnly: true, Path: "/"})
 	writer.WriteHeader(http.StatusCreated)
+	if err := encoder.Encode(token); err != nil {
+		controller.WriteError(writer, err)
+		return
+	}
 	log.Info("Created user", user.Id)
 }

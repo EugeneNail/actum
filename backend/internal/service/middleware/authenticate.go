@@ -6,6 +6,7 @@ import (
 	"github.com/EugeneNail/actum/internal/model/users"
 	"github.com/EugeneNail/actum/internal/service/jwt"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -32,16 +33,16 @@ func Authenticate(next http.Handler) http.Handler {
 			}
 		}
 
-		token, err := request.Cookie("Access-Token")
-		if err != nil {
+		token := strings.Split(request.Header.Get("Authorization"), " ")[1]
+		if len(token) == 0 {
 			writer.WriteHeader(http.StatusUnauthorized)
-			if _, err := writer.Write([]byte(`"Access-Token cookie not present"`)); err != nil {
+			if _, err := writer.Write([]byte(`"Token not present"`)); err != nil {
 				http.Error(writer, err.Error(), http.StatusInternalServerError)
 			}
 			return
 		}
 
-		if !jwt.IsValid(token.Value) {
+		if !jwt.IsValid(token) {
 			writer.WriteHeader(http.StatusUnauthorized)
 			if _, err := writer.Write([]byte(`"Token is invalid"`)); err != nil {
 				http.Error(writer, err.Error(), http.StatusInternalServerError)
@@ -49,7 +50,7 @@ func Authenticate(next http.Handler) http.Handler {
 			return
 		}
 
-		payload, err := jwt.ExtractPayload(token.Value)
+		payload, err := jwt.ExtractPayload(token)
 		if err != nil {
 			http.Error(writer, err.Error(), http.StatusBadRequest)
 			return
