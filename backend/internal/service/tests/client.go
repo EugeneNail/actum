@@ -44,6 +44,21 @@ func NewClientWithoutAuth(t *testing.T) (client Client) {
 	return
 }
 
+func (client *Client) Get(path string) *Response {
+	url := "http://127.0.0.1:" + env.Get("APP_PORT") + path
+	request, err := http.NewRequest("GET", url, nil)
+	Check(err)
+
+	if len(client.token) > 0 {
+		request.Header.Set("Authorization", client.token)
+	}
+	httpClient := &http.Client{}
+	response, err := httpClient.Do(request)
+	Check(err)
+
+	return &Response{response, client.t}
+}
+
 func (client *Client) Post(path string, json string) *Response {
 	url := "http://127.0.0.1:" + env.Get("APP_PORT") + path
 	body := strings.NewReader(json)

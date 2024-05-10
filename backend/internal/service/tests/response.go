@@ -12,6 +12,14 @@ type Response struct {
 	t *testing.T
 }
 
+func (response *Response) ReadData(reference any) *Response {
+	decoder := json.NewDecoder(response.Body)
+	err := decoder.Decode(reference)
+	Check(err)
+
+	return response
+}
+
 func (response *Response) AssertStatus(status int) *Response {
 	if response.StatusCode != status {
 		response.t.Errorf("expected status %d, got %d", status, response.StatusCode)
