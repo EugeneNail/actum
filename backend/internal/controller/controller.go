@@ -36,7 +36,7 @@ func (controller *Controller[anyType]) Response(data any, status int) {
 }
 
 func (controller *Controller[anyType]) Validate(request *http.Request) (ok bool) {
-	err := controller.Parse(request)
+	err := controller.parse(request)
 
 	if err != nil {
 		http.Error(controller.writer, err.Error(), http.StatusBadRequest)
@@ -58,12 +58,7 @@ func (controller *Controller[anyType]) Validate(request *http.Request) (ok bool)
 	return true
 }
 
-func WriteError(writer http.ResponseWriter, err error) {
-	http.Error(writer, err.Error(), http.StatusBadRequest)
-	log.Error(err)
-}
-
-func (controller *Controller[anyType]) Parse(request *http.Request) error {
+func (controller *Controller[anyType]) parse(request *http.Request) error {
 	decoder := json.NewDecoder(request.Body)
 	decoder.DisallowUnknownFields()
 	err := decoder.Decode(&controller.Input)
@@ -73,45 +68,4 @@ func (controller *Controller[anyType]) Parse(request *http.Request) error {
 	}
 
 	return nil
-}
-
-func Pars[T any](request *http.Request) (T, error) {
-	input := new(T)
-	decoder := json.NewDecoder(request.Body)
-	decoder.DisallowUnknownFields()
-	err := decoder.Decode(input)
-
-	if err != nil {
-		return *input, err
-	}
-
-	return *input, nil
-}
-
-func GetInpu[T any](writer http.ResponseWriter, request *http.Request, encoder *json.Encoder) (input T, ok bool) {
-	input, err := Pars[T](request)
-
-	if err != nil {
-		http.Error(writer, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	validationErrors, err := validation.Perform(input)
-	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		log.Error(err)
-		return
-	}
-
-	if len(validationErrors) > 0 {
-		writer.WriteHeader(http.StatusUnprocessableEntity)
-		if err := encoder.Encode(validationErrors); err != nil {
-			http.Error(writer, err.Error(), http.StatusInternalServerError)
-			log.Error(err)
-		}
-		return
-	}
-
-	ok = true
-	return
 }
