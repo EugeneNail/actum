@@ -10,7 +10,7 @@ import (
 )
 
 type storeInput struct {
-	Name string `json:"name" rules:"required|min:3|max:50|sentence"`
+	Name string `json:"name" rules:"required|min:3|max:20|sentence"`
 }
 
 func Store(writer http.ResponseWriter, request *http.Request) {
@@ -25,6 +25,17 @@ func Store(writer http.ResponseWriter, request *http.Request) {
 	hasDuplicateCollection, err := hasDuplicateCollection(controller.Input.Name, user)
 	if err != nil {
 		controller.Response(err, http.StatusInternalServerError)
+		return
+	}
+
+	currentCollections, err := user.Collections()
+	if err != nil {
+		controller.Response(err, http.StatusInternalServerError)
+		return
+	}
+
+	if len(currentCollections) >= 15 {
+		controller.Response("You can have only 15 collections", http.StatusConflict)
 		return
 	}
 
