@@ -69,3 +69,19 @@ func (collection *Collection) Save() error {
 
 	return nil
 }
+
+func (collection *Collection) Delete() error {
+	db, err := mysql.Connect()
+	defer db.Close()
+	if err != nil {
+		return fmt.Errorf("collections.Delete(): %w", err)
+	}
+
+	_, err = db.Exec(`DELETE FROM collections WHERE id = ?`, collection.Id)
+
+	if err != nil {
+		return fmt.Errorf("collections.Delete(): %w", err)
+	}
+
+	return nil
+}
