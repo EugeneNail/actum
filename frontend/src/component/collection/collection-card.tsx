@@ -12,13 +12,24 @@ type Props = {
 export default function CollectionCard({collection}: Props) {
     const navigate = useNavigate()
 
+    function openDeletePage() {
+        navigate(`/settings/collections/${collection.id}/delete`, {
+            state: {
+                icon: "category",
+                name: collection.name,
+                message: `Deleting "${collection.name}" will cause this collection and all of its activities to disappear from all of your records. The collection can be edited by simply clicking on the pencil icon.`,
+                previousRoute: "/settings/collections"
+            }
+        })
+    }
+
     return (
         <div className="collection-card">
             <div className="collection-card__header">
                 <Icon className="collection-card__icon" name="category"/>
                 <p className="collection-card__label">{collection.name}</p>
-                <Button className="collection-card__edit-button" icon="edit" negative onClick={() => navigate(`/collections/${collection.id}`)}/>
-                <Button className="collection-card__delete-button" icon="delete" negative onClick={() => {}}/>
+                <Button className="collection-card__edit-button" icon="edit" negative onClick={() => navigate(`/settings/collections/${collection.id}`)}/>
+                <Button className="collection-card__delete-button" icon="delete" negative onClick={openDeletePage}/>
             </div>
             <div className="collection-card__activities">
                 {[...Array(Math.floor(Math.random() * 10))].map(() => <ActivityCard/>)}

@@ -40,7 +40,7 @@ export default function SaveCollectionPage() {
             return
         }
 
-        navigate("/collections")
+        navigate("/settings/collections")
     }
 
     async function edit() {
@@ -51,7 +51,7 @@ export default function SaveCollectionPage() {
             return
         }
 
-        navigate("/collections")
+        navigate("/settings/collections")
     }
 
     return (
