@@ -33,6 +33,22 @@ func (database *Database) AssertEmpty(table string) *Database {
 }
 
 func (database *Database) AssertHas(table string, entity map[string]any) *Database {
+	if getMappedCount(table, entity) == 0 {
+		database.t.Errorf(`The table "%s" does not contain entity %+v`, table, entity)
+	}
+
+	return database
+}
+
+func (database *Database) AssertLacks(table string, entity map[string]any) *Database {
+	if getMappedCount(table, entity) != 0 {
+		database.t.Errorf(`The table "%s" contains entity %+v`, table, entity)
+	}
+
+	return database
+}
+
+func getMappedCount(table string, entity map[string]any) (count int) {
 	db, err := mysql.Connect()
 	Check(err)
 	defer db.Close()
@@ -48,17 +64,12 @@ func (database *Database) AssertHas(table string, entity map[string]any) *Databa
 		query += fmt.Sprintf(` AND %s = '%v'`, column, value)
 	}
 
-	var count int
 	err = db.
 		QueryRow(query).
 		Scan(&count)
 	Check(err)
 
-	if count == 0 {
-		database.t.Errorf(`The table "%s" does not contain an entity %+v`, table, entity)
-	}
-
-	return database
+	return
 }
 
 func (database *Database) AssertCount(table string, expected int) *Database {
