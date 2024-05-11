@@ -4,6 +4,7 @@ import {useEffect, useState} from "react";
 import Collection from "../../../model/collection.ts";
 import {useHttp} from "../../../service/use-http.ts";
 import CollectionCard from "../../../component/collection/collection-card.tsx";
+import NewCollection from "../../../component/new-collection/new-collection.tsx";
 
 export default function CollectionsPage() {
     const [collections, setCollections] = useState<Collection[]>([])
@@ -22,6 +23,7 @@ export default function CollectionsPage() {
             {collections?.length > 0 && collections.map(collection =>
                 <CollectionCard collection={collection}/>
             )}
+            <NewCollection/>
         </div>
     )
 }
