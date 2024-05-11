@@ -28,12 +28,15 @@
   &.negative
     background: $secondary
 
+    &:hover
+      background: darken($accent, 35%)
+
     &  *
       color: $accent
 
   & > *,
   &__icon
-    color: white
+    color: $secondary
 
   &__icon-container
 

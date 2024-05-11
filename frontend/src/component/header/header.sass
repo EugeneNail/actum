@@ -1,0 +1,111 @@
+@import ../../variables
+
+.header
+  grid-area: header
+  display: flex
+  position: fixed
+  left: 0
+
+  @media screen and (orientation: landscape)
+    top: 0
+    min-height: 100vh
+    background: $primary
+    width: 300px
+    gap: 10px
+    flex-direction: column
+    padding: 30px 20px
+
+    &__logo-container
+      display: flex
+      align-items: center
+      margin-bottom: 30px
+
+    &__logo-img
+      height: 30px
+      width: 40px
+      margin-left: 10px
+
+    &__logo-text
+      margin-left: 20px
+      font-size: 26px
+      color: $font-strong
+
+    &__placeholder
+      display: none
+
+    &__new-record-button
+      display: none
+
+  @media screen and (orientation: portrait)
+    bottom: 0
+    align-items: center
+    justify-content: space-between
+    background: $accent
+    width: 100%
+    flex-direction: row
+    padding: 3px 5%
+
+    &__logo-container
+      display: none
+
+    &__placeholder
+      width: 50px
+
+    &__new-record-button
+      border: 2px solid $secondary
+      position: absolute
+      top: -15px
+      left: 50%
+      transform: translateX(-50%)
+      display: block
+      height: 60px
+      box-shadow: 0 0 5px #00000088
+
+      & *
+        font-size: 30px
+
+
+.header-link
+  display: flex
+  align-items: center
+
+  @media screen and (orientation: landscape)
+    gap: 15px
+    padding: 5px 5px 5px 15px
+    border-radius: 5px
+    transition: 0.3s
+
+    &.active
+      border-radius: 0
+      padding: 0 0 0 10px
+      border: 5px solid transparent
+      border-right: 3px solid $accent
+      pointer-events: none
+
+    &:hover
+      padding-left: 30px
+
+    &__icon
+      font-size: 30px
+      color: $accent
+
+    &__label
+      color: $font-strong
+
+  @media screen and (orientation: portrait)
+    flex-direction: column
+
+    &.active
+      & *
+        color: $secondary
+
+    &:hover
+
+    &__icon
+      font-size: 29px
+      color: transparentize($secondary, 0.5)
+
+    &__label
+      margin-top: 2px
+      color: transparentize($secondary, 0.5)
+      font-size: 11px
