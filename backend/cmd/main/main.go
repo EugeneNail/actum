@@ -20,6 +20,7 @@ func main() {
 	routing.Post("/api/collections", collection.Store)
 	routing.Put("/api/collections/:id", collection.Update)
 	routing.Get("/api/collections", collection.Index)
+	routing.Delete("/api/collections/:id", collection.Destroy)
 
 	handler := middleware.BuildPipeline([]middleware.Middleware{
 		middleware.SetHeaders,

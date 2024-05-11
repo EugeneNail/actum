@@ -34,6 +34,20 @@
     &  *
       color: $accent
 
+  &.pill
+    background: lighten($primary, 15%)
+    color: $accent
+    border-radius: 1000px
+    height: 40px
+
+    &:hover
+      background: lighten($primary, 13%)
+
+    &  *
+      font-weight: bold
+      color: $accent
+
+
   & > *,
   &__icon
     color: $secondary

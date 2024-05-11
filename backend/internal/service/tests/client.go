@@ -90,6 +90,21 @@ func (client *Client) Put(path string, json string) *Response {
 	return &Response{response, client.t}
 }
 
+func (client *Client) Delete(path string) *Response {
+	url := "http://127.0.0.1:" + env.Get("APP_PORT") + path
+	body := strings.NewReader("")
+	request, err := http.NewRequest("DELETE", url, body)
+	Check(err)
+	if len(client.token) > 0 {
+		request.Header.Set("Authorization", client.token)
+	}
+	httpClient := &http.Client{}
+	response, err := httpClient.Do(request)
+	Check(err)
+
+	return &Response{response, client.t}
+}
+
 func (client *Client) ChangeUser() {
 	names := []string{"Sara", "John", "Sam", "Donald", "William"}
 	emails := []string{"blank@mail.com", "hackerman106@gmail.com", "abcdefg@108list.org", "name.surname@bing.xorg", "jaja@yahoo.cc"}
