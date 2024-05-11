@@ -127,12 +127,12 @@ func TestUpdateValidation(t *testing.T) {
 		{"Numbers", "name", "From 8 to 9"},
 		{"Only numbers", "name", "234 4524"},
 		{"Dash", "name", "Too long-short"},
-		{"Long", "name", "Making my act look fabulous"},
+		{"Long", "name", "Making my cat nice"},
 	})
 
 	tests.AssertValidationFail[storeInput](t, []tests.ValidationTest{
 		{"Too short", "name", "Mb"},
-		{"Too long", "name", "The quick brown fox jumps over the lazy dog under the old oak"},
+		{"Too long", "name", "The quick brown fox jumps"},
 		{"Has comma", "name", "Eating, sleeping and working"},
 		{"Has period", "name", "Today is today. Tomorrow is tomorrow"},
 		{"Has other symbols", "name", "@'!?;"},

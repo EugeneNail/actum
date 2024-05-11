@@ -12,7 +12,7 @@ import (
 )
 
 type updateInput struct {
-	Name string `json:"name" rules:"required|min:3|max:50|sentence"`
+	Name string `json:"name" rules:"required|min:3|max:20|sentence"`
 }
 
 func Update(writer http.ResponseWriter, request *http.Request) {
