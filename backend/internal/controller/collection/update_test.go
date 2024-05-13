@@ -85,6 +85,25 @@ func TestUpdateNotFound(t *testing.T) {
 		})
 }
 
+func TestUpdateDuplicate(t *testing.T) {
+	client, database := startup.CollectionsUpdate(t)
+
+	client.
+		Post("/api/collections", `{
+			"name": "sport"	
+		}`).
+		AssertStatus(http.StatusCreated)
+
+	client.
+		Put("/api/collections/1", `{
+			"name": "SpOrt"	
+		}`).
+		AssertStatus(http.StatusConflict).
+		AssertHasValidationErrors([]string{"name"})
+
+	database.AssertCount("collections", 1)
+}
+
 func TestUpdateSomeoneElsesCollection(t *testing.T) {
 	client, database := startup.CollectionsUpdate(t)
 

@@ -61,7 +61,7 @@ func TestStoreDuplicate(t *testing.T) {
 
 	client.
 		Post("/api/collections", `{
-			"name": "Sport"	
+			"name": "SpOrt"	
 		}`).
 		AssertStatus(http.StatusConflict).
 		AssertHasValidationErrors([]string{"name"})

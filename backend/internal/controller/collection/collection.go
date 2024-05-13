@@ -1,6 +1,9 @@
 package collection
 
-import "github.com/EugeneNail/actum/internal/model/users"
+import (
+	"github.com/EugeneNail/actum/internal/model/users"
+	"strings"
+)
 
 func hasDuplicateCollection(name string, user users.User) (bool, error) {
 	collections, err := user.Collections()
@@ -9,7 +12,7 @@ func hasDuplicateCollection(name string, user users.User) (bool, error) {
 	}
 
 	for _, collection := range collections {
-		if collection.Name == name {
+		if strings.ToLower(collection.Name) == strings.ToLower(name) {
 			return true, nil
 		}
 	}
