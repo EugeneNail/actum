@@ -3,7 +3,6 @@ package collection
 import (
 	"github.com/EugeneNail/actum/internal/controller"
 	"github.com/EugeneNail/actum/internal/model/collections"
-	"github.com/EugeneNail/actum/internal/model/users"
 	"github.com/EugeneNail/actum/internal/service/jwt"
 	"github.com/EugeneNail/actum/internal/service/log"
 	"net/http"
@@ -52,19 +51,4 @@ func Store(writer http.ResponseWriter, request *http.Request) {
 
 	controller.Response(collection.Id, http.StatusCreated)
 	log.Info("User", user.Id, "created collection", collection.Id)
-}
-
-func hasDuplicateCollection(name string, user users.User) (bool, error) {
-	collections, err := user.Collections()
-	if err != nil {
-		return false, err
-	}
-
-	for _, collection := range collections {
-		if collection.Name == name {
-			return true, nil
-		}
-	}
-
-	return false, nil
 }

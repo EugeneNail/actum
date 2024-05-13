@@ -46,6 +46,17 @@ func Update(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
+	hasDuplicateCollection, err := hasDuplicateCollection(controller.Input.Name, user)
+	if err != nil {
+		controller.Response(err, http.StatusInternalServerError)
+		return
+	}
+
+	if hasDuplicateCollection {
+		controller.Response(map[string]string{"name": "Collection already exists"}, http.StatusConflict)
+		return
+	}
+
 	collection.Name = controller.Input.Name
 	if err := collection.Save(); err != nil {
 		controller.Response(err, http.StatusInternalServerError)
