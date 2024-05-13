@@ -14,7 +14,7 @@ func TestLoginValidData(t *testing.T) {
 	client.
 		Post("/api/users", `{
 			"name": "John",
-			"email": "jodame3394@agafx.com",
+			"email": "JODAME3394@agafx.com",
 			"password": "Strong123",
 			"passwordConfirmation": "Strong123"
 		}`).
@@ -28,7 +28,7 @@ func TestLoginValidData(t *testing.T) {
 
 	client.
 		Post("/api/users/login", `{
-			"email": "jodame3394@agafx.com",
+			"email": "jodAME3394@agafx.com",
 			"password": "Strong123"
 		}`).
 		AssertStatus(http.StatusOK)

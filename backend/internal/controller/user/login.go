@@ -6,6 +6,7 @@ import (
 	"github.com/EugeneNail/actum/internal/service/jwt"
 	"github.com/EugeneNail/actum/internal/service/log"
 	"net/http"
+	"strings"
 )
 
 type loginInput struct {
@@ -21,7 +22,7 @@ func Login(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	user, err := users.FindBy("email", controller.Input.Email)
+	user, err := users.FindBy("email", strings.ToLower(controller.Input.Email))
 	if err != nil {
 		controller.Response(err, http.StatusInternalServerError)
 		return

@@ -6,6 +6,7 @@ import (
 	"github.com/EugeneNail/actum/internal/service/jwt"
 	"github.com/EugeneNail/actum/internal/service/log"
 	"net/http"
+	"strings"
 )
 
 type storeInput struct {
@@ -30,7 +31,7 @@ func Store(writer http.ResponseWriter, request *http.Request) {
 
 	user := users.New(
 		controller.Input.Name,
-		controller.Input.Email,
+		strings.ToLower(controller.Input.Email),
 		hashPassword(controller.Input.Password),
 	)
 	if err := user.Save(); err != nil {
