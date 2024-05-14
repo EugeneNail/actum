@@ -33,7 +33,7 @@ export default function LoginPage() {
 
         if (status == 200) {
             localStorage.setItem("Access-Token", data)
-            navigate("/")
+            navigate("/settings/collections")
         }
     }
 

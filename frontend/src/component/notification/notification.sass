@@ -1,0 +1,87 @@
+@import ../../variables
+
+.notification
+  background: $primary
+  box-shadow: 0 0 10px black
+  border-radius: 10px
+  left: 50%
+  transform: translateX(-50%)
+  padding: 20px 30px
+  width: min(400px, 95%)
+  z-index: 2
+  position: fixed
+  display: grid
+  grid-template-columns: auto 1fr
+  grid-template-rows: auto auto
+  grid-template-areas: "icon level" "icon message"
+  gap: 5px 15px
+  align-items: center
+  animation: pop 0.5s ease-out
+
+  &__level
+    font-size: 13px
+
+  &__icon-container
+    grid-area: icon
+    border-radius: 50%
+    aspect-ratio: 1 / 1
+    display: grid
+    place-items: center
+    background: #ef8c19
+    width: 40px
+
+  &__icon
+    font-size: 24px
+    margin-bottom: 5px
+
+  &__message
+    font-size: 13px
+
+  &__timer
+    position: absolute
+    animation: shrink 5s linear infinite
+    background: lighten($primary, 5%)
+    left: 50%
+    transform: translateX(-50%)
+    height: 3px
+
+@keyframes shrink
+  0%
+    width: 93%
+
+  100%
+    width: 0
+
+
+@media screen and (orientation: landscape)
+  .notification
+    bottom: 10px
+
+    &__timer
+      bottom: 0
+      border-radius: 5px 5px 0 0
+
+  @keyframes pop
+    0%
+      bottom: 0
+
+    100%
+      bottom: 10px
+
+
+
+@media screen and (orientation: portrait)
+  .notification
+    top: 10px
+
+    &__timer
+      top: 0
+      border-radius: 0 0 5px 5px
+
+  @keyframes pop
+    0%
+      top: 0
+    100%
+      top: 10px
+
+
