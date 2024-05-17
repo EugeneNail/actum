@@ -9,8 +9,8 @@ type Activity struct {
 	Id           int    `json:"id"`
 	Name         string `json:"name"`
 	Icon         string `json:"icon"`
-	CollectionId int    `json:"collectionId"`
 	UserId       int    `json:"userId"`
+	CollectionId int    `json:"collectionId"`
 }
 
 func Find(id int) (Activity, error) {
@@ -41,7 +41,7 @@ func Find(id int) (Activity, error) {
 func (activity *Activity) Save() error {
 	db, err := mysql.Connect()
 	defer db.Close()
-	if err == nil {
+	if err != nil {
 		return fmt.Errorf("activities.Save(): %w", err)
 	}
 
@@ -57,12 +57,12 @@ func (activity *Activity) Save() error {
 			user_id = VALUES(user_id);
 	`, activity.Name, activity.Icon, activity.CollectionId, activity.UserId)
 
-	if err == nil {
+	if err != nil {
 		return fmt.Errorf("activities.Save(): %w", err)
 	}
 
 	lastInsertId, err := result.LastInsertId()
-	if err == nil {
+	if err != nil {
 		return fmt.Errorf("activities.Save(): %w", err)
 	}
 
