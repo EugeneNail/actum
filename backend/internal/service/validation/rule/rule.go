@@ -1,6 +1,7 @@
 package rule
 
 import (
+	"errors"
 	"fmt"
 	"github.com/EugeneNail/actum/internal/database/mysql"
 	"regexp"
@@ -35,6 +36,8 @@ func Extract(pipeRule string) RuleFunc {
 		return newRegexRuleFunc(rule)
 	case "unique":
 		return newUniqueRuleFunc(rule)
+	case "exists":
+		return newExistsRuleFunc(rule)
 	case "mixedCase":
 		return mixedCase
 	default:
@@ -240,4 +243,47 @@ func mixedCase(name string, value any) (error, error) {
 	}
 
 	return nil, nil
+}
+
+func newExistsRuleFunc(rule []string) RuleFunc {
+	table, column := "", ""
+
+	if len(rule) == 2 {
+		args := strings.Split(rule[1], ",")
+		switch len(args) {
+		case 1:
+			table, column = args[0], ""
+		case 2:
+			table, column = args[0], args[1]
+		}
+	}
+
+	return func(name string, value any) (error, error) {
+		db, err := mysql.Connect()
+		defer db.Close()
+		if err != nil {
+			return nil, fmt.Errorf("newExistsRuleFunc(): %w", err)
+		}
+
+		var count int
+		query := fmt.Sprintf("SELECT COUNT(*) FROM %s WHERE %s = ?", table, column)
+		rows, err := db.Query(query, value)
+		defer rows.Close()
+		if err != nil {
+			return nil, fmt.Errorf("newExistsRuleFunc(): %w", err)
+		}
+
+		for rows.Next() {
+			err := rows.Scan(&count)
+			if err != nil {
+				return nil, fmt.Errorf("newExistsRuleFunc(): %w", err)
+			}
+		}
+
+		if count < 1 {
+			return errors.New("The selected value is not found"), nil
+		}
+
+		return nil, nil
+	}
 }
