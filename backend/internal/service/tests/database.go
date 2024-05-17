@@ -16,8 +16,8 @@ func NewDatabase(t *testing.T) Database {
 
 func (database *Database) AssertEmpty(table string) *Database {
 	db, err := mysql.Connect()
-	Check(err)
 	defer db.Close()
+	Check(err)
 
 	var rows int
 	err = db.
@@ -50,8 +50,8 @@ func (database *Database) AssertLacks(table string, entity map[string]any) *Data
 
 func getMappedCount(table string, entity map[string]any) (count int) {
 	db, err := mysql.Connect()
-	Check(err)
 	defer db.Close()
+	Check(err)
 
 	query := fmt.Sprintf(`SELECT COUNT(*) FROM %s WHERE`, table)
 	isFirstElement := true
@@ -74,8 +74,8 @@ func getMappedCount(table string, entity map[string]any) (count int) {
 
 func (database *Database) AssertCount(table string, expected int) *Database {
 	db, err := mysql.Connect()
-	Check(err)
 	defer db.Close()
+	Check(err)
 
 	var count int
 	err = db.
