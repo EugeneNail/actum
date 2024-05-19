@@ -1,8 +1,8 @@
 import "./save-activity-page.sass"
 import {useFormState} from "../../../service/use-form-state.ts";
-import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {useHttp} from "../../../service/use-http.ts";
-import {FormEvent, useEffect} from "react";
+import {FormEvent} from "react";
 import Field from "../../../component/field/field.tsx";
 import Button from "../../../component/button/button.tsx";
 import IconsList from "./icons-list.tsx";

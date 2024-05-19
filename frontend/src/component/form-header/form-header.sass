@@ -1,0 +1,36 @@
+@import ../../variables
+
+.form-header
+  overflow: hidden
+  border-radius: 20px
+  position: relative
+
+  &__background
+    position: absolute
+    background: darken($accent, 10%)
+    height: 90px
+    width: 100%
+
+  &__icon-container
+    background: $secondary
+    position: absolute
+    aspect-ratio: 1 / 1
+    border-radius: 50%
+    display: grid
+    place-items: center
+    width: 120px
+    bottom: -65%
+    left: 50%
+    transform: translateX(-50%)
+
+  &__icon
+    color: $accent
+    font-size: 80px
+    margin-bottom: 10px
+
+  &__title
+    font-weight: normal
+    color: $font-strong
+    text-align: center
+    font-size: 1.96em
+    margin: 180px 30px 0

@@ -5,6 +5,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {FormEvent, useEffect} from "react";
 import Field from "../../../component/field/field.tsx";
 import Button from "../../../component/button/button.tsx";
+import FormHeader from "../../../component/form-header/form-header.tsx";
 
 class Payload {
     name = ""
@@ -78,8 +79,11 @@ export default function SaveCollectionPage() {
     return (
         <div className="save-collection-page">
             <form className="collection-form" method="POST" onSubmit={submit}>
-                <Field value={state.name} className="collection-form__field" name="name" label="Name" onChange={setField} error={errors.name} icon="category"/>
-                <Button className="collection-form__button" icon={willCreate ? "add" : "edit"} label={willCreate ? "Create collection" : "Rename collection"}/>
+                <FormHeader icon="category" title={willCreate ? "Add collection" : "Rename collection"}/>
+                <div className="collection-form__content">
+                    <Field value={state.name} className="collection-form__field" name="name" label="Name" onChange={setField} error={errors.name} icon="category"/>
+                    <Button className="collection-form__button" label={willCreate ? "Add" : "Rename"} pill/>
+                </div>
             </form>
         </div>
     )
