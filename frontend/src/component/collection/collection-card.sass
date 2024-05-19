@@ -38,3 +38,21 @@
 
     & *
       font-size: 20px
+
+
+  &__new-activity-container
+    width: 50px
+    height: 50px
+    display: grid
+    place-items: center
+    border-radius: 50%
+    aspect-ratio: 1 / 1
+    background: $secondary
+    cursor: pointer
+
+    &:hover
+      background: lighten($secondary, 5%)
+
+  &__new-activity-icon
+    font-size: 30px
+    color: $accent
