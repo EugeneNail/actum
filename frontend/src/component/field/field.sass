@@ -6,17 +6,17 @@
 .field
   border-bottom: 1px #aaa solid
   width: 100%
-  background: darken($secondary, 1%)
+  background: darken($field-bg, 1%)
   border-radius: 8px 8px 0px 0px
   grid-template-columns: 50px 1fr 50px
   display: grid
   place-items: center
 
   &:has(*:hover)
-    background: darken($secondary, 2%)
+    background: darken($field-bg, 2%)
 
   &:has(&__input:focus)
-    background: darken($secondary, 4%)
+    background: darken($field-bg, 4%)
     border-bottom: 2px $accent solid
 
   &__input-container
