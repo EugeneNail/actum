@@ -48,10 +48,10 @@ export default function SignupPage() {
                     <div className="guest-form__logo"></div>
                 </div>
                 <h1 className="guest-form__title">Signup</h1>
-                <Field name="name" label="Name" icon="face" onChange={setField} error={errors.name}/>
-                <Field name="email" label="Email" icon="mail" onChange={setField} error={errors.email}/>
-                <Field name="password" label="Password" icon="key" password onChange={setField} error={errors.password}/>
-                <Field name="passwordConfirmation" label="Confirm password" icon="key" password onChange={setField} error={errors.passwordConfirmation}/>
+                <Field value={state.name} name="name" label="Name" icon="face" onChange={setField} error={errors.name}/>
+                <Field value={state.email} name="email" label="Email" icon="mail" onChange={setField} error={errors.email}/>
+                <Field value={state.password} name="password" label="Password" icon="key" password onChange={setField} error={errors.password}/>
+                <Field value={state.passwordConfirmation} name="passwordConfirmation" label="Confirm password" icon="key" password onChange={setField} error={errors.passwordConfirmation}/>
                 <Button label="Sign up" className="guest-form__button"/>
                 <p className="guest-form__redirect">Already have an account? <Link className="guest-form__link"                                                            to="/login">Login</Link></p>
             </form>

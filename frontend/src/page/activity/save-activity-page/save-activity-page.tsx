@@ -66,7 +66,7 @@ export default function SaveActivityPage() {
                 </div>
                 <h3 className="form__title">Add activity to collection "{location.state.collectionName}"</h3>
                 <div className="form__content">
-                    <Field name="name" label="Name" icon="label" error={errors.name} onChange={setField}/>
+                    <Field value={state.name} name="name" label="Name" icon="label" error={errors.name} onChange={setField}/>
                         <IconsList currentIcon={state.icon} label="People" icons={icons.people} onSelect={setIcon}/>
                         <IconsList currentIcon={state.icon} label="Nature" icons={icons.nature} onSelect={setIcon}/>
                         <IconsList currentIcon={state.icon} label="Food" icons={icons.food} onSelect={setIcon}/>

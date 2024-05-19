@@ -57,7 +57,7 @@ export default function SaveCollectionPage() {
     return (
         <div className="save-collection-page">
             <form className="collection-form" method="POST" onSubmit={submit}>
-                <Field className="collection-form__field" name="name" label="Name" onChange={setField}
+                <Field value={state.name} className="collection-form__field" name="name" label="Name" onChange={setField}
                        error={errors.name} icon="category"/>
                 <Button className="collection-form__button" icon={willCreate ? "add" : "edit"} label={willCreate ? "Create collection" : "Rename collection"}/>
             </form>
