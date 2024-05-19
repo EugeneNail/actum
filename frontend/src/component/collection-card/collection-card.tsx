@@ -12,7 +12,7 @@ export default function CollectionCard({collection}: Props) {
     const navigate = useNavigate()
 
     function addActivity() {
-        navigate("/settings/collections/activities/new", {
+        navigate("./activities/new", {
             state: {
                 collectionId: collection.id,
                 collectionName: collection.name
@@ -25,8 +25,8 @@ export default function CollectionCard({collection}: Props) {
             <div className="collection-card__header">
                 <Icon className="collection-card__icon" name="category"/>
                 <p className="collection-card__label">{collection.name}</p>
-                <Button className="collection-card__edit-button" icon="edit" negative onClick={() => navigate(`/settings/collections/${collection.id}`)}/>
-                <Button className="collection-card__delete-button" icon="delete" negative onClick={() => navigate(`/settings/collections/${collection.id}/delete`)}/>
+                <Button className="collection-card__edit-button" icon="edit" negative onClick={() => navigate(`./${collection.id}`)}/>
+                <Button className="collection-card__delete-button" icon="delete" negative onClick={() => navigate(`./${collection.id}/delete`)}/>
             </div>
             <div className="collection-card__activities">
                 <Button className="collection-card__new-activity" icon="add" negative onClick={addActivity}/>

@@ -3,7 +3,7 @@ import "./collections-page.sass"
 import {useEffect, useState} from "react";
 import Collection from "../../../model/collection.ts";
 import {useHttp} from "../../../service/use-http.ts";
-import CollectionCard from "../../../component/collection/collection-card.tsx";
+import CollectionCard from "../../../component/collection-card/collection-card.tsx";
 import NewCollection from "../../../component/new-collection/new-collection.tsx";
 
 export default function CollectionsPage() {

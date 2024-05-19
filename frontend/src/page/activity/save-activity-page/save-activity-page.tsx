@@ -2,7 +2,7 @@ import "./save-activity-page.sass"
 import {useFormState} from "../../../service/use-form-state.ts";
 import {useLocation, useNavigate} from "react-router-dom";
 import {useHttp} from "../../../service/use-http.ts";
-import {FormEvent} from "react";
+import {FormEvent, useEffect} from "react";
 import Field from "../../../component/field/field.tsx";
 import Button from "../../../component/button/button.tsx";
 import IconsList from "./icons-list.tsx";
@@ -17,7 +17,7 @@ class Payload {
 
 class Errors {
     name: string = ""
-    icon: string = "man"
+    icon: string = ""
     collectionId: string = ""
 }
 
@@ -26,6 +26,10 @@ export default function SaveActivityPage() {
     const http = useHttp()
     const navigate = useNavigate()
     const location = useLocation()
+
+    useEffect(() => {
+        setIcon("Man")
+    }, [])
 
     function setIcon(icon: string) {
         setState({
@@ -41,8 +45,6 @@ export default function SaveActivityPage() {
             collectionId: location.state.collectionId
         })
 
-        console.log(state)
-
         const {data, status} = await http.post("/activities", state)
 
         if (status == 422) {
@@ -51,13 +53,13 @@ export default function SaveActivityPage() {
         }
 
         if (status == 201) {
-            navigate("/settings/collections")
+            navigate("/collections")
         }
     }
 
     return (
         <div className="save-activity-page">
-            <div className="cover" onClick={() => navigate("/settings/collections")}/>
+            <div className="cover" onClick={() => navigate("/collections")}/>
             <form className="form" onSubmit={submit}>
                 <div className="form__cover">
                     <div className="form__icon-container">

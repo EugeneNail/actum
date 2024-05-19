@@ -33,7 +33,7 @@ export default function Header() {
             <div className="header__placeholder"/>
             <Button className="header__new-record-button" icon="add" label={isPortrait ? "" : "New record"} onClick={() => navigate("/records/new")}/>
             <HeaderLink to="/calendar" icon="calendar_month" label="Calendar"/>
-            <HeaderLink to="/settings" icon="settings" label="Settings"/>
+            <HeaderLink to="/collections" icon="category" label="Collections"/>
         </header>
     )
 }

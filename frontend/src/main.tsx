@@ -24,11 +24,11 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                     <Route path="/login" element={<LoginPage/>}/>
                 </Route>
                 <Route element={<DefaultLayout/>}>
-                    <Route path="/settings/collections" element={<CollectionsPage/>}>
-                        <Route path="/settings/collections/new" element={<SaveCollectionPage/>}/>
-                        <Route path="/settings/collections/:id" element={<SaveCollectionPage/>}/>
-                        <Route path="/settings/collections/:id/delete" element={<DeleteCollectionPage/>}/>
-                        <Route path="/settings/collections/activities/new" element={<SaveActivityPage/>}/>
+                    <Route path="/collections" element={<CollectionsPage/>}>
+                        <Route path="/collections/new" element={<SaveCollectionPage/>}/>
+                        <Route path="/collections/:id" element={<SaveCollectionPage/>}/>
+                        <Route path="/collections/:id/delete" element={<DeleteCollectionPage/>}/>
+                        <Route path="/collections/activities/new" element={<SaveActivityPage/>}/>
                     </Route>
                 </Route>
                 <Route path="*" element={<Navigate to="/not-found"/>}/>

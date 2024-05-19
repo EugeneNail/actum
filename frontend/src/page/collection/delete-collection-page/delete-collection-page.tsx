@@ -19,7 +19,7 @@ export function DeleteCollectionPage() {
         const {data, status} = await http.get(`/collections/${id}`)
 
         if (status == 403) {
-            navigate("/settings/collections")
+            navigate("/collections")
             return
         }
 
@@ -31,18 +31,18 @@ export function DeleteCollectionPage() {
 
     async function confirm() {
         await http.delete(`/collections/${id}`)
-        navigate("/settings/collections")
+        navigate("/collections")
     }
 
     return (
         <div className="delete-collection-page" onSubmit={e => e.preventDefault()}>
-            <div className="cover" onClick={() => navigate("/settings/collections")}/>
+            <div className="cover" onClick={() => navigate("/collections")}/>
             <form className="delete-collection-page__form">
                 <FormHeader icon="category" title={`Delete "${state.name}"?`}/>
                 <p className="delete-collection-page__message">{state?.message}</p>
                 <div className="delete-collection-page__button-container">
                     <Button className="delete-collection-page__delete-button" label="Delete" pill onClick={confirm}/>
-                    <Button className="delete-collection-page__cancel-button" label="Cancel" pill onClick={() => navigate("/settings/collections")}/>
+                    <Button className="delete-collection-page__cancel-button" label="Cancel" pill onClick={() => navigate("/collections")}/>
                 </div>
             </form>
         </div>

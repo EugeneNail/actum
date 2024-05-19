@@ -33,7 +33,7 @@ export default function SaveCollectionPage() {
         const {data, status} = await http.get("/collections/" + id)
 
         if (status == 403) {
-            navigate("/settings/collections")
+            navigate("/collections")
             return
         }
 
@@ -51,7 +51,7 @@ export default function SaveCollectionPage() {
             return
         }
 
-        navigate("/settings/collections")
+        navigate("/collections")
     }
 
     async function edit() {
@@ -62,19 +62,19 @@ export default function SaveCollectionPage() {
             return
         }
 
-        navigate("/settings/collections")
+        navigate("/collections")
     }
 
     return (
         <div className="save-collection-page">
-            <div className="cover" onClick={() => navigate("/settings/collections")}/>
+            <div className="cover" onClick={() => navigate("/collections")}/>
             <form className="collection-form" method="POST" onClick={e => e.preventDefault()}>
                 <FormHeader icon="category" title={willCreate ? "Add collection" : "Rename collection"}/>
                 <div className="collection-form__content">
                     <Field value={state.name} className="collection-form__field" name="name" label="Name" onChange={setField} error={errors.name} icon="category"/>
                     <div className="collection-form__button-container">
                         <Button className="collection-form__button" label={willCreate ? "Add" : "Rename"} pill accent onClick={() => willCreate ? create() : edit()}/>
-                        <Button className="collection-form__button cancel" label="Cancel" pill onClick={() => navigate("/settings/collections")}/>
+                        <Button className="collection-form__button cancel" label="Cancel" pill onClick={() => navigate("/collections")}/>
                     </div>
                 </div>
 
