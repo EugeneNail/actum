@@ -10,6 +10,7 @@ var names []string
 var addresses []string
 var servers []string
 var domains []string
+var icons []string
 
 const COMMA_CHANCE = 0.1
 
@@ -42,10 +43,33 @@ func init() {
 
 	domains = []string{".com", ".eu", ".net", ".ru", ".org", ".cc", ".co", ".us"}
 
+	icons = []string{
+		"Man", "Woman", "Wc", "Family_Restroom", "Escalator_Warning", "Hail", "Accessibility", "Accessible", "Directions_Run", "Airline_Seat_Recline_Normal", "Nature_People", "Bathtub", "Hot_Tub", "Baby_Changing_Station",
+		"Supervisor_Account", "Record_Voice_Over", "Pregnant_Woman", "Groups", "People", "Engineering", "Emoji_People", "Self_Improvement", "Connect_Without_Contact", "Hiking", "Reduce_Capacity", "Diversity_3", "Elderly",
+		"Personal_Injury", "Diversity_1", "Hotel", "Sports_Gymnastics", "Sports_Kabaddi", "Kayaking", "Skateboarding", "Snowshoeing", "Pool", "Rowing", "Surfing", "Sports_Handball", "Paragliding", "Downhill_Skiing",
+		"Sports_Martial_Arts", "Wb_Sunny", "Nightlight_Round", "Nights_Stay", "Filter_Drama", "Thunderstorm", "Snowing", "Ac_Unit", "Wb_Twilight", "Spa", "Grass", "Park", "Local_Florist", "Forest", "Terrain", "Home",
+		"Chair_Alt", "Door_Sliding", "Table_Bar", "Shelves", "Wind_Power", "Roller_Shades", "Countertops", "Bed", "Shower", "Light", "Meeting_Room", "Checkroom", "Kitchen", "Local_Laundry_Service", "Headphones", "Keyboard",
+		"Tv", "Mouse", "Router", "King_Bed", "Tablet_Mac", "Pedal_Bike", "Agriculture", "Two_Wheeler", "Directions_Car", "Directions_Bus_Filled", "Train", "Tram", "Sailing", "Directions_Boat", "Flight_Takeoff", "Fire_Truck",
+		"Snowmobile", "Rocket_Launch", "House", "Maps_Home_Work", "Apartment", "Location_City", "Domain", "Emoji_Transportation", "Factory", "Store_Mall_Directory", "Festival", "Church", "Castle", "Storefront", "Account_Balance",
+		"Store", "Delete", "Visibility", "Favorite", "Description", "Lock", "Schedule", "Language", "Thumb_Up", "Filter_Alt", "Event", "Dashboard", "Paid", "Question_Answer", "Article", "Lightbulb", "Credit_Card", "History",
+		"Trending_Up", "Fact_Check", "Account_Balance_Wallet", "Build", "Analytics", "Receipt", "Explore", "Pending_Actions", "Leaderboard", "Thumb_Up_Off_Alt", "Card_Giftcard", "View_In_Ar", "Timeline", "Stars", "Dns",
+		"Space_Dashboard", "Alarm", "Bug_Report", "Gavel", "Pan_Tool", "Extension", "Hourglass_Empty", "Thumb_Down", "Support", "Loyalty", "Euro_Symbol", "Table_View", "Track_Changes", "Perm_Media", "Backup", "File_Present",
+		"Trending_Down", "Percent", "Shopping_Cart", "Shopping_Bag", "Swipe", "Work", "Print", "Room", "Translate", "Book_Online", "Perm_Phone_Msg", "G_Translate", "Aspect_Ratio", "Thumbs_Up_Down", "Theaters", "Tour", "Mark_As_Unread",
+		"Settings_Input_Antenna", "Balance", "View_Carousel", "All_Inbox", "Settings_Remote", "Settings_Voice", "Online_Prediction", "Camera_Enhance", "Fax", "Satellite_Alt", "Settings_Cell", "App_Blocking", "Barcode_Reader",
+		"Payments", "Share", "School", "Public", "Emoji_Events", "Notifications_Active", "Construction", "Psychology", "Health_And_Safety", "Water_Drop", "Notifications_None", "Sports_Esports", "Workspace_Premium",
+		"Precision_Manufacturing", "Military_Tech", "Science", "History_Edu", "Handshake", "Coronavirus", "Sports_Soccer", "Recycling", "Waving_Hand", "Luggage", "Vaccines", "Interests", "Sports_Basketball", "Sports",
+		"Heart_Broken", "Sports_Tennis", "Deck", "Scale", "Sports_Motorsports", "Sanitizer", "Sports_Baseball", "Party_Mode", "Mail", "Flag", "Push_Pin", "Create", "Photo_Camera", "Image", "Tune", "Auto_Stories", "Palette",
+		"Music_Note", "Healing", "Vpn_Key", "Stay_Current_Portrait", "Map", "Restaurant", "Local_Fire_Department", "Volunteer_Activism", "Celebration", "Local_Police", "Local_Gas_Station", "Electrical_Services", "Traffic",
+		"Theater_Comedy", "Mic", "Volume_Up", "Imagesearch_Roller", "Memory", "Fitness_Center", "Business_Center", "Beach_Access", "Casino", "Vaping_Rooms",
+	}
 }
 
 func getRandomItem(array []string) string {
 	return array[rand.IntN(len(array))]
+}
+
+func Icon() string {
+	return getRandomItem(icons)
 }
 
 func Name() string {

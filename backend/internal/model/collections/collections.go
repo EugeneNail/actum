@@ -3,6 +3,7 @@ package collections
 import (
 	"fmt"
 	"github.com/EugeneNail/actum/internal/database/mysql"
+	"github.com/EugeneNail/actum/internal/model/activities"
 )
 
 type Collection struct {
@@ -84,4 +85,31 @@ func (collection *Collection) Delete() error {
 	}
 
 	return nil
+}
+
+func (collection *Collection) Activities() ([]activities.Activity, error) {
+	var result []activities.Activity
+
+	db, err := mysql.Connect()
+	defer db.Close()
+	if err != nil {
+		return result, fmt.Errorf("collections.Activities(): %w", err)
+	}
+
+	rows, err := db.Query(`SELECT * FROM activities WHERE collection_id = ?`, collection.Id)
+	defer rows.Close()
+	if err != nil {
+		return result, fmt.Errorf("collections.Activities(): %w", err)
+	}
+
+	for rows.Next() {
+		var activity activities.Activity
+		err := rows.Scan(&activity.Id, &activity.Name, &activity.Icon, &activity.UserId, &activity.CollectionId)
+		if err != nil {
+			return result, fmt.Errorf("collections.Activities(): %w", err)
+		}
+		result = append(result, activity)
+	}
+
+	return result, nil
 }

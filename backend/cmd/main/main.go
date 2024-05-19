@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/EugeneNail/actum/internal/controller/activity"
 	"github.com/EugeneNail/actum/internal/controller/collection"
 	"github.com/EugeneNail/actum/internal/controller/user"
 	"github.com/EugeneNail/actum/internal/service/env"
@@ -21,6 +22,7 @@ func main() {
 	routing.Put("/api/collections/:id", collection.Update)
 	routing.Get("/api/collections", collection.Index)
 	routing.Delete("/api/collections/:id", collection.Destroy)
+	routing.Post("/api/activities", activity.Store)
 
 	handler := middleware.BuildPipeline([]middleware.Middleware{
 		middleware.SetHeaders,

@@ -16,5 +16,5 @@ export function useFormState<D, E>(initial: D, initialErrors: E) {
         _setErrors(errors)
     }
 
-    return {state, setField, errors, setErrors}
+    return {state, setField, setState, errors, setErrors}
 }

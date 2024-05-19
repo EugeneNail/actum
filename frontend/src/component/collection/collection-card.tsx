@@ -23,6 +23,15 @@ export default function CollectionCard({collection}: Props) {
         })
     }
 
+    function addActivity() {
+        navigate("/settings/collections/activities/new", {
+            state: {
+                collectionId: collection.id,
+                collectionName: collection.name
+            }
+        })
+    }
+
     return (
         <div className="collection-card">
             <div className="collection-card__header">
@@ -32,7 +41,7 @@ export default function CollectionCard({collection}: Props) {
                 <Button className="collection-card__delete-button" icon="delete" negative onClick={openDeletePage}/>
             </div>
             <div className="collection-card__activities">
-                {[...Array(Math.floor(Math.random() * 10))].map(() => <ActivityCard/>)}
+                <Button className="collection-card__new-activity" icon="add" negative onClick={addActivity}/>
             </div>
         </div>
     )
