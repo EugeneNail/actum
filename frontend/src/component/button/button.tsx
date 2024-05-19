@@ -9,11 +9,12 @@ type ButtonProps = {
     onClick?: () => void
     negative?: boolean
     pill?: boolean
+    accent?: boolean
 }
 
-export default function Button({label, className, icon = "", negative, pill, onClick}: ButtonProps) {
+export default function Button({label, className, icon = "", negative, pill, accent, onClick}: ButtonProps) {
     return (
-        <button className={classNames("button", className, {round: icon && !label}, {negative: negative}, {pill: pill})} onClick={onClick}>
+        <button className={classNames("button", className, {round: icon && !label}, {negative: negative}, {pill: pill}, {accent: accent})} onClick={onClick}>
             {icon &&
                 <div className="button__icon-container">
                     <Icon className="button__icon" name={icon} filled/>

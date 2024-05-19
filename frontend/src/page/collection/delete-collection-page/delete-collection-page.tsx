@@ -1,9 +1,9 @@
 import "./delete-collection-page.sass"
 import {useNavigate, useParams} from "react-router-dom";
 import Button from "../../../component/button/button.tsx";
-import Icon from "../../../component/icon/icon.tsx";
 import {useHttp} from "../../../service/use-http.ts";
-import {FormEvent, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
+import FormHeader from "../../../component/form-header/form-header.tsx";
 
 export function DeleteCollectionPage() {
     const {id} = useParams<string>()
@@ -29,21 +29,16 @@ export function DeleteCollectionPage() {
         })
     }
 
-    async function confirm(event: FormEvent) {
-        event.preventDefault()
+    async function confirm() {
         await http.delete(`/collections/${id}`)
         navigate("/settings/collections")
     }
 
     return (
-        <div className="delete-collection-page">
+        <div className="delete-collection-page" onSubmit={e => e.preventDefault()}>
+            <div className="cover" onClick={() => navigate("/settings/collections")}/>
             <form className="delete-collection-page__form">
-                <div className="delete-collection-page__cover">
-                    <div className="delete-collection-page__icon-container">
-                        <Icon name="category" className="delete-collection-page__icon"/>
-                    </div>
-                </div>
-                <h3 className="delete-collection-page__disclaimer">Delete "{state?.name}"?</h3>
+                <FormHeader icon="category" title={`Delete "${state.name}"?`}/>
                 <p className="delete-collection-page__message">{state?.message}</p>
                 <div className="delete-collection-page__button-container">
                     <Button className="delete-collection-page__delete-button" label="Delete" pill onClick={confirm}/>
