@@ -47,6 +47,18 @@
       font-weight: bold
       color: $accent
 
+    &.accent
+      background: $accent
+
+      &:hover
+        background: darken($accent, 5%)
+
+      &:active
+        background: darken($accent, 3%)
+
+      & *
+        color: $font-strong
+
 
   & > *,
   &__icon

@@ -20,11 +20,6 @@ const StateContext = createContext({
 })
 
 export default function Notification({children} : Props) {
-    const test = {
-        level: "Warning",
-        message: "You are not allowed to manage other people's collections",
-        isError: false
-    }
     const [notification, setNotification] = useState<Notification|null>()
 
     function pop(message: string) {

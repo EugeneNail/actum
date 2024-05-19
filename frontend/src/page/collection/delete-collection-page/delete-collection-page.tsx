@@ -36,6 +36,7 @@ export function DeleteCollectionPage() {
 
     return (
         <div className="delete-collection-page" onSubmit={e => e.preventDefault()}>
+            <div className="cover" onClick={() => navigate("/settings/collections")}/>
             <form className="delete-collection-page__form">
                 <FormHeader icon="category" title={`Delete "${state.name}"?`}/>
                 <p className="delete-collection-page__message">{state?.message}</p>

@@ -74,7 +74,7 @@ export default function SaveActivityPage() {
                         <IconsList currentIcon={state.icon} label="Transport" icons={icons.transport} onSelect={setIcon}/>
                         <IconsList currentIcon={state.icon} label="Buildings" icons={icons.buildings} onSelect={setIcon}/>
                         <IconsList currentIcon={state.icon} label="Activities" icons={icons.activities} onSelect={setIcon}/>
-                    <Button className="form__button" pill label="Add activity"/>
+                    <Button className="form__button" pill accent label="Add activity"/>
                 </div>
             </form>
         </div>
