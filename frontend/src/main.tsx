@@ -11,6 +11,7 @@ import SaveCollectionPage from "./page/collection/save-collection-page/save-coll
 import DefaultLayout from "./layout/default-layout.tsx";
 import {DeletePage} from "./page/delete-page/delete-page.tsx";
 import Notification from "./component/notification/notification.tsx";
+import SaveActivityPage from "./page/activity/save-activity-page/save-activity-page.tsx";
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -27,6 +28,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                         <Route path="/settings/collections/new" element={<SaveCollectionPage/>}/>
                         <Route path="/settings/collections/:id" element={<SaveCollectionPage/>}/>
                         <Route path="/settings/collections/:id/delete" element={<DeletePage/>}/>
+                        <Route path="/settings/collections/activities/new" element={<SaveActivityPage/>}/>
                     </Route>
                 </Route>
                 <Route path="*" element={<Navigate to="/not-found"/>}/>

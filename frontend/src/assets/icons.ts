@@ -19,7 +19,6 @@ export const icons: Icons = {
         "Accessibility",
         "Accessible",
         "Directions_Run",
-        "Airline_Seat_Recline_Normal",
         "Nature_People",
         "Bathtub",
         "Hot_Tub",
