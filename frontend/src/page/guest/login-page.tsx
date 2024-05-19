@@ -44,8 +44,8 @@ export default function LoginPage() {
                     <div className="guest-form__logo"></div>
                 </div>
                 <h1 className="guest-form__title">Login</h1>
-                <Field name="email" label="Email" icon="mail" onChange={setField} error={errors.email}/>
-                <Field name="password" label="Password" icon="key" password onChange={setField} error={errors.password}/>
+                <Field value={state.email} name="email" label="Email" icon="mail" onChange={setField} error={errors.email}/>
+                <Field value={state.password} name="password" label="Password" icon="key" password onChange={setField} error={errors.password}/>
                 <Button label="Login" className="guest-form__button"/>
                 <p className="guest-form__redirect">Don't have an account? <Link className="guest-form__link" to="/signup">Sign up</Link></p>
             </form>

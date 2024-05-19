@@ -4,6 +4,7 @@ import "./field.sass"
 import {ChangeEvent, useEffect, useState} from "react";
 
 type FieldProps = {
+    value: string
     icon?: string
     name: string
     label: string
@@ -13,7 +14,7 @@ type FieldProps = {
     onChange: (event: ChangeEvent<HTMLInputElement>) => void
 }
 
-export default function Field({icon = "", name, label, className, error, password, onChange}: FieldProps) {
+export default function Field({value, icon = "", name, label, className, error, password, onChange}: FieldProps) {
     const [isVisible, setVisible] = useState(true)
 
     useEffect(() => {
@@ -27,7 +28,7 @@ export default function Field({icon = "", name, label, className, error, passwor
             <div className={classNames("field", className)}>
                 <Icon name={icon}/>
                 <div className="field__input-container">
-                    <input placeholder="" type={isVisible ? "text" : "password"} id={name} name={name} className="field__input" onChange={onChange}/>
+                    <input value={value} placeholder="" type={isVisible ? "text" : "password"} id={name} name={name} className="field__input" onChange={onChange}/>
                     <label htmlFor={name} className="field__label">{label}</label>
                 </div>
                 {password && <Icon className="field__visibility" name={isVisible ? "visibility_off" : "visibility"} onClick={() => setVisible(!isVisible)}/>}

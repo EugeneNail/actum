@@ -15,11 +15,32 @@ class Errors {
 }
 
 export default function SaveCollectionPage() {
-    const {state, setField, errors, setErrors} = useFormState(new Payload(), new Errors())
+    const {state, setState, setField, errors, setErrors} = useFormState(new Payload(), new Errors())
     const {id} = useParams<string>()
     const http = useHttp()
     const navigate = useNavigate()
     const willCreate = window.location.pathname.includes("/new")
+
+    useEffect(() => {
+        if (willCreate) {
+            return
+        }
+        fetchCollection()
+    }, [])
+
+    async function fetchCollection() {
+        const {data, status} = await http.get("/collections/" + id)
+
+        if (status == 403) {
+            navigate("/settings/collections")
+            return
+        }
+
+        setState({
+            ...state,
+            name: data.name
+        })
+    }
 
     async function submit(event: FormEvent) {
         event.preventDefault()
@@ -57,8 +78,7 @@ export default function SaveCollectionPage() {
     return (
         <div className="save-collection-page">
             <form className="collection-form" method="POST" onSubmit={submit}>
-                <Field className="collection-form__field" name="name" label="Name" onChange={setField}
-                       error={errors.name} icon="category"/>
+                <Field value={state.name} className="collection-form__field" name="name" label="Name" onChange={setField} error={errors.name} icon="category"/>
                 <Button className="collection-form__button" icon={willCreate ? "add" : "edit"} label={willCreate ? "Create collection" : "Rename collection"}/>
             </form>
         </div>
