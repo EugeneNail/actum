@@ -36,3 +36,18 @@ func ActivitiesShow(t *testing.T) (tests.Client, tests.Database) {
 
 	return tests.NewClient(t), tests.NewDatabase(t)
 }
+
+func ActivitiesUpdate(t *testing.T) (tests.Client, tests.Database) {
+	env.Load()
+
+	t.Cleanup(func() {
+		err := mysql.Truncate("activities")
+		tests.Check(err)
+		err = mysql.Truncate("collections")
+		tests.Check(err)
+		err = mysql.Truncate("users")
+		tests.Check(err)
+	})
+
+	return tests.NewClient(t), tests.NewDatabase(t)
+}
