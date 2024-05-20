@@ -25,10 +25,6 @@ func Info(a ...any) {
 	infoLogger.Println(a...)
 }
 
-func Debug(value any) {
-	debugLogger.Println(value)
-}
-
 func Error(error error) {
 	_, file, line, _ := runtime.Caller(1)
 	relativePath, _ := filepath.Rel(env.Get("APP_PATH"), file)

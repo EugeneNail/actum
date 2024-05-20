@@ -143,6 +143,4 @@ func TextLength(min int, max int) string {
 	}
 
 	return strings.Join(paragraphs, "\n")
-
-	return ""
 }
