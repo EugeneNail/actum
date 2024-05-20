@@ -32,7 +32,8 @@ func Update(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	if activity.Id == 0 {
-		controller.Response(nil, http.StatusNotFound)
+		message := fmt.Sprintf("Activity %d not found", activity.Id)
+		controller.Response(message, http.StatusNotFound)
 		return
 	}
 
