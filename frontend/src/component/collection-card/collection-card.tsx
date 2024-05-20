@@ -24,7 +24,7 @@ export default function CollectionCard({collection}: Props) {
                 {collection.activities && collection.activities.map(activity => (
                     <ActivityCard activity={activity}/>
                 ))}
-                <Button className="collection-card__new-activity" icon="add" negative onClick={() => navigate(`./${collection.id}/activities/new`)}/>
+                {collection.activities.length < 20 && <Button className="collection-card__new-activity" icon="add" negative onClick={() => navigate(`./${collection.id}/activities/new`)}/>}
             </div>
         </div>
     )

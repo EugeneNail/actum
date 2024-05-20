@@ -23,7 +23,7 @@ export default function CollectionsPage() {
             {collections?.length > 0 && collections.map(collection =>
                 <CollectionCard collection={collection}/>
             )}
-            <NewCollection/>
+            {collections.length < 15 && <NewCollection/>}
         </div>
     )
 }
