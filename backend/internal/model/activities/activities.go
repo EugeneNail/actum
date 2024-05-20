@@ -73,3 +73,18 @@ func (activity *Activity) Save() error {
 
 	return nil
 }
+
+func (activity *Activity) Delete() error {
+	db, err := mysql.Connect()
+	defer db.Close()
+	if err != nil {
+		return fmt.Errorf("activities.Delete(): %w", err)
+	}
+
+	_, err = db.Exec(`DELETE FROM activities WHERE id = ?`, activity.Id)
+	if err != nil {
+		return fmt.Errorf("activities.Delete(): %w", err)
+	}
+
+	return nil
+}
