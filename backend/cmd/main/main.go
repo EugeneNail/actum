@@ -25,6 +25,7 @@ func main() {
 	routing.Get("/api/collections/:id", collection.Show)
 	routing.Post("/api/activities", activity.Store)
 	routing.Get("/api/activities/:id", activity.Show)
+	routing.Put("/api/activities/:id", activity.Update)
 
 	handler := middleware.BuildPipeline([]middleware.Middleware{
 		middleware.SetHeaders,
