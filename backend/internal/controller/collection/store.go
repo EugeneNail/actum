@@ -27,7 +27,7 @@ func Store(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	currentCollections, err := user.Collections()
+	currentCollections, err := getUserCollections(user.Id)
 	if err != nil {
 		controller.Response(err, http.StatusInternalServerError)
 		return
