@@ -2,7 +2,7 @@ import "./save-activity-page.sass"
 import {useFormState} from "../../../service/use-form-state.ts";
 import { useNavigate, useParams} from "react-router-dom";
 import {useHttp} from "../../../service/use-http.ts";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import Field from "../../../component/field/field.tsx";
 import Button from "../../../component/button/button.tsx";
 import IconsList from "./icons-list.tsx";
@@ -23,6 +23,7 @@ class Errors {
 }
 
 export default function SaveActivityPage() {
+    const ref = useRef<HTMLDivElement>(document.createElement("div"))
     const {state, setField, setState, errors, setErrors} = useFormState(new Payload(), new Errors())
     const http = useHttp()
     const navigate = useNavigate()
@@ -77,10 +78,9 @@ export default function SaveActivityPage() {
     async function create() {
         const {data, status} = await http.post("/activities", state)
 
-        console.log(state)
-
         if (status == 422) {
             setErrors(data)
+            ref.current.scrollTo({top: 0, behavior: "smooth"})
             return
         }
 
@@ -97,6 +97,7 @@ export default function SaveActivityPage() {
 
         if (status == 422) {
             setErrors(data)
+            ref.current.scrollTo({top: 0, behavior: "smooth"})
             return
         }
 
@@ -106,7 +107,7 @@ export default function SaveActivityPage() {
     }
 
     return (
-        <div className="save-activity-page">
+        <div className="save-activity-page" ref={ref}>
             <div className="cover" onClick={() => navigate("/collections")}/>
             <form className="form" onSubmit={e => e.preventDefault()}>
                 <Button className="form__delete-button" icon="delete" negative onClick={() => navigate(`./delete`)}/>
