@@ -20,8 +20,8 @@ export default function IconsList({currentIcon, label, icons, onSelect}: Props) 
                 <Icon className="icons-list__drop" name={isVisible ? "arrow_drop_up" : "arrow_drop_down"} />
             </h5>
             {isVisible && <div className="icons-list__container">
-                {icons.map(icon => (
-                    <Icon className={classNames("icons-list__icon", {selected: currentIcon == icon})} name={icon} filled onClick={() => onSelect(icon)}/>
+                {icons.map((icon, index) => (
+                    <Icon key={index} className={classNames("icons-list__icon", {selected: currentIcon == icon})} name={icon} filled onClick={() => onSelect(icon)}/>
                 ))}
             </div>}
         </div>
