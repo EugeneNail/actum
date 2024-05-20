@@ -109,6 +109,7 @@ export default function SaveActivityPage() {
         <div className="save-activity-page">
             <div className="cover" onClick={() => navigate("/collections")}/>
             <form className="form" onSubmit={e => e.preventDefault()}>
+                <Button className="form__delete-button" icon="delete" negative onClick={() => navigate(`./delete`)}/>
                 <div className="form__cover">
                     <div className="form__icon-container">
                         <Icon name={state?.icon} className="form__icon" filled/>
