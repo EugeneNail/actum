@@ -23,8 +23,8 @@ func (factory *Factory) Make(count int) *Factory {
 			0,
 			fake.SentenceLength(3, 4),
 			fake.Icon(),
-			factory.userId,
 			factory.collectionId,
+			factory.userId,
 		}
 		factory.activities = append(factory.activities, activity)
 	}

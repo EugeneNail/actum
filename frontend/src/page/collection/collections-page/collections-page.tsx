@@ -13,7 +13,8 @@ export default function CollectionsPage() {
 
     useEffect(() => {
         http.get("/collections").then(({data}) => {
-            setCollections(data)
+            const sorted = data.sort((a: Collection, b: Collection) => a.id - b.id)
+            setCollections(sorted)
         })
     }, [location.pathname])
 
