@@ -11,7 +11,7 @@ func Index(writer http.ResponseWriter, request *http.Request) {
 	controller := controller.New[any](writer)
 	user := jwt.GetUser(request)
 
-	collections, err := user.Collections()
+	collections, err := getUserCollections(user.Id)
 	if err != nil {
 		controller.Response(err, http.StatusInternalServerError)
 		return

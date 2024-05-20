@@ -107,34 +107,3 @@ func (this *User) Save() error {
 func (this *User) delete() error {
 	panic("not implemented")
 }
-
-func (user *User) Collections() ([]collections.Collection, error) {
-	if len(user.collections) > 0 {
-		return user.collections, nil
-	}
-
-	db, err := mysql.Connect()
-	defer db.Close()
-	if err != nil {
-		return user.collections, fmt.Errorf("user.Collections(): %w", err)
-	}
-
-	rows, err := db.Query(`SELECT * FROM collections WHERE user_id = ?`, user.Id)
-	defer rows.Close()
-	if err != nil {
-		return user.collections, fmt.Errorf("user.Collections(): %w", err)
-	}
-
-	for rows.Next() {
-		var collection collections.Collection
-
-		err := rows.Scan(&collection.Id, &collection.Name, &collection.UserId)
-		if err != nil {
-			return user.collections, fmt.Errorf("user.Collections(): %w", err)
-		}
-
-		user.collections = append(user.collections, collection)
-	}
-
-	return user.collections, nil
-}
