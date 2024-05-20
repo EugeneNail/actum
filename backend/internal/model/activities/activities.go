@@ -47,15 +47,16 @@ func (activity *Activity) Save() error {
 
 	result, err := db.Exec(`
 		INSERT INTO activities 
-		    (name, icon, collection_id, user_id)
+		    (id, name, icon, collection_id, user_id)
 		VALUES 
-		    (?, ?, ?, ?)
+		    (?, ?, ?, ?, ?)
 		ON DUPLICATE KEY UPDATE
+			id = VALUES(id),
 			name = VALUES(name),
 			icon = VALUES(icon),
 			collection_id = VALUES(collection_id),
 			user_id = VALUES(user_id);
-	`, activity.Name, activity.Icon, activity.CollectionId, activity.UserId)
+	`, activity.Id, activity.Name, activity.Icon, activity.CollectionId, activity.UserId)
 
 	if err != nil {
 		return fmt.Errorf("activities.Save(): %w", err)

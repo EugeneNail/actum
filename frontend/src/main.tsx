@@ -28,7 +28,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                         <Route path="/collections/new" element={<SaveCollectionPage/>}/>
                         <Route path="/collections/:id" element={<SaveCollectionPage/>}/>
                         <Route path="/collections/:id/delete" element={<DeleteCollectionPage/>}/>
-                        <Route path="/collections/activities/new" element={<SaveActivityPage/>}/>
+                        <Route path="/collections/:collectionId/activities/new" element={<SaveActivityPage/>}/>
+                        <Route path="/collections/:collectionId/activities/:id" element={<SaveActivityPage/>}/>
                     </Route>
                 </Route>
                 <Route path="*" element={<Navigate to="/not-found"/>}/>

@@ -12,7 +12,7 @@ export default function CollectionCard({collection}: Props) {
     const navigate = useNavigate()
 
     function addActivity() {
-        navigate("./activities/new", {
+        navigate(`./${collection.id}/activities/new`, {
             state: {
                 collectionId: collection.id,
                 collectionName: collection.name
