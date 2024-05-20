@@ -4,6 +4,7 @@ import (
 	"github.com/EugeneNail/actum/internal/model/collections"
 	"github.com/EugeneNail/actum/internal/service/tests/startup"
 	"net/http"
+	"sort"
 	"testing"
 )
 
@@ -55,6 +56,10 @@ func performByCount(count int, t *testing.T) {
 	if len(endpointCollections) != count {
 		t.Errorf("Expected %d collections from endpoint, got %d", count, len(endpointCollections))
 	}
+
+	sort.Slice(endpointCollections, func(i int, j int) bool {
+		return endpointCollections[i].Id < endpointCollections[j].Id
+	})
 
 	for i, collection := range endpointCollections {
 		if collection.Name != newCollections[i].Name || collection.UserId != 1 {
