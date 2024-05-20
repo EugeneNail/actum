@@ -1,4 +1,17 @@
 @import ../../variables
+/* Change the white to any color */
+input:-webkit-autofill
+  -webkit-box-shadow: 0 0 0 30px darken($field-bg, 1%) inset !important
+
+input:-webkit-autofill:hover
+  -webkit-box-shadow: 0 0 0 30px darken($field-bg, 2%) inset !important
+
+input:-webkit-autofill:focus
+  -webkit-box-shadow: 0 0 0 30px darken($field-bg, 4%) inset !important
+
+input:-webkit-autofill:active
+  -webkit-box-shadow: 0 0 0 30px darken($field-bg, 4%) inset !important
+
 
 .field-wrapper
   width: 100%
@@ -33,7 +46,8 @@
     top: 16px
 
   &__input
-    padding: 26px 10px 5px 0px
+    -webkit-text-fill-color: $font-medium
+    padding: 26px 10px 5px 0
     height: 100%
     width: 100%
     background: none
