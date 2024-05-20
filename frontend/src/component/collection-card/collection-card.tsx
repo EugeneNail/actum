@@ -3,6 +3,7 @@ import Collection from "../../model/collection.ts";
 import Button from "../button/button.tsx";
 import {useNavigate} from "react-router-dom";
 import Icon from "../icon/icon.tsx";
+import ActivityCard from "../activity-card/activity-card.tsx";
 
 type Props = {
     collection: Collection
@@ -10,15 +11,6 @@ type Props = {
 
 export default function CollectionCard({collection}: Props) {
     const navigate = useNavigate()
-
-    function addActivity() {
-        navigate(`./${collection.id}/activities/new`, {
-            state: {
-                collectionId: collection.id,
-                collectionName: collection.name
-            }
-        })
-    }
 
     return (
         <div className="collection-card">
@@ -29,7 +21,10 @@ export default function CollectionCard({collection}: Props) {
                 <Button className="collection-card__delete-button" icon="delete" negative onClick={() => navigate(`./${collection.id}/delete`)}/>
             </div>
             <div className="collection-card__activities">
-                <Button className="collection-card__new-activity" icon="add" negative onClick={addActivity}/>
+                {collection.activities && collection.activities.map(activity => (
+                    <ActivityCard activity={activity}/>
+                ))}
+                <Button className="collection-card__new-activity" icon="add" negative onClick={() => navigate(`./${collection.id}/activities/new`)}/>
             </div>
         </div>
     )
