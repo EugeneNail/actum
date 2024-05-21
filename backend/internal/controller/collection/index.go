@@ -1,40 +1,33 @@
 package collection
 
 import (
-	"database/sql"
 	"fmt"
 	"github.com/EugeneNail/actum/internal/controller"
-	"github.com/EugeneNail/actum/internal/database"
 	"github.com/EugeneNail/actum/internal/database/mysql"
-	"github.com/EugeneNail/actum/internal/model/activities"
-	"github.com/EugeneNail/actum/internal/model/collections"
+	act "github.com/EugeneNail/actum/internal/model/activities"
+	col "github.com/EugeneNail/actum/internal/model/collections"
 	"github.com/EugeneNail/actum/internal/service/jwt"
 	"github.com/EugeneNail/actum/internal/service/log"
 	"net/http"
 )
 
-type Group struct {
-	Collection collections.Collection
-	Activities []activities.Activity
-}
-
-type row struct {
-	collectionId         database.NullableInt
-	collectionName       database.NullableString
-	collectionUserId     database.NullableInt
-	activityId           database.NullableInt
-	activityName         database.NullableString
-	activityIcon         database.NullableString
-	activityUserId       database.NullableInt
-	activityCollectionId database.NullableInt
-}
-
 func Index(writer http.ResponseWriter, request *http.Request) {
 	controller := controller.New[any](writer)
 	user := jwt.GetUser(request)
 
-	collections, err := getCollections(user.Id)
+	collections, collectionsById, err := fetchCollections(user.Id)
 	if err != nil {
+		controller.Response(err, http.StatusInternalServerError)
+		return
+	}
+
+	if len(collections) == 0 {
+		controller.Response(collections, http.StatusOK)
+		log.Info("User", user.Id, "indexed no collections")
+		return
+	}
+
+	if err := fetchActivities(user.Id, collectionsById); err != nil {
 		controller.Response(err, http.StatusInternalServerError)
 		return
 	}
@@ -43,113 +36,61 @@ func Index(writer http.ResponseWriter, request *http.Request) {
 	log.Info("User", user.Id, "indexed", len(collections), "collections")
 }
 
-func getCollections(userId int) ([]map[string]any, error) {
-	var collections []map[string]any
+func fetchCollections(userId int) ([]*col.Collection, map[int]*col.Collection, error) {
+	collections := make([]*col.Collection, 0)
+	collectionsById := make(map[int]*col.Collection)
 
 	db, err := mysql.Connect()
 	defer db.Close()
 	if err != nil {
-		return collections, fmt.Errorf("getCollections(): %w", err)
+		return collections, collectionsById, fmt.Errorf("fetchCollections(): %w", err)
 	}
 
-	rows, err := fetchData(db, userId)
+	rows, err := db.Query(`SELECT * FROM collections WHERE user_id = ?`, userId)
 	defer rows.Close()
 	if err != nil {
-		return collections, fmt.Errorf("getCollections(): %w", err)
+		return collections, collectionsById, fmt.Errorf("fetchCollections(): %w", err)
 	}
-
-	groups, err := mapDataToGroups(rows)
-	if err != nil {
-		return collections, fmt.Errorf("getCollections(): %w", err)
-	}
-
-	for _, group := range groups {
-		collections = append(collections, map[string]any{
-			"id":         group.Collection.Id,
-			"name":       group.Collection.Name,
-			"userId":     group.Collection.UserId,
-			"activities": group.Activities,
-		})
-	}
-
-	return collections, nil
-}
-
-func fetchData(db *sql.DB, userId int) (*sql.Rows, error) {
-	query := `
-		SELECT * 
-		FROM collections 
-		    LEFT JOIN activities 
-		        ON collections.id = activities.collection_id 
-		WHERE collections.user_id = ?
-		ORDER BY collections.id, activities.id 
-	`
-
-	rows, err := db.Query(query, userId)
-	if err != nil {
-		return rows, fmt.Errorf("fetchData(): %w", err)
-	}
-
-	return rows, nil
-}
-
-func mapDataToGroups(rows *sql.Rows) (map[int]*Group, error) {
-	groups := map[int]*Group{}
 
 	for rows.Next() {
-		collection, activity, err := scanRow(rows)
+		collection := col.Collection{}
+
+		err := rows.Scan(&collection.Id, &collection.Name, &collection.UserId)
 		if err != nil {
-			return groups, fmt.Errorf("mapDataToGroups(): %w", err)
+			return collections, collectionsById, fmt.Errorf("fetchCollections(): %w", err)
 		}
 
-		if group, exists := groups[collection.Id]; exists {
-			if activity.Id != 0 {
-				group.Activities = append(group.Activities, activity)
-			}
-		} else {
-			group = &Group{collection, []activities.Activity{}}
-			if activity.Id != 0 {
-				group.Activities = append(group.Activities, activity)
-			}
-			groups[collection.Id] = group
-		}
+		collections = append(collections, &collection)
+		collectionsById[collection.Id] = &collection
 	}
 
-	return groups, nil
+	return collections, collectionsById, nil
 }
 
-func scanRow(rows *sql.Rows) (collections.Collection, activities.Activity, error) {
-	var collection collections.Collection
-	var activity activities.Activity
-
-	row := row{}
-	err := rows.Scan(
-		&row.collectionId,
-		&row.collectionName,
-		&row.collectionUserId,
-		&row.activityId,
-		&row.activityName,
-		&row.activityIcon,
-		&row.activityUserId,
-		&row.activityCollectionId,
-	)
+func fetchActivities(userId int, collectionsById map[int]*col.Collection) error {
+	db, err := mysql.Connect()
+	defer db.Close()
 	if err != nil {
-		return collection, activity, fmt.Errorf("scanRow(): %w", err)
+		return fmt.Errorf("fetchCollections(): %w", err)
 	}
 
-	collection = collections.Collection{
-		int(row.collectionId),
-		string(row.collectionName),
-		int(row.collectionUserId),
+	rows, err := db.Query(`SELECT id, name, icon, collection_id, user_id FROM activities WHERE user_id = ?`, userId)
+	defer rows.Close()
+	if err != nil {
+		return fmt.Errorf("fetchCollections(): %w", err)
 	}
 
-	activity = activities.Activity{
-		int(row.activityId),
-		string(row.activityName),
-		string(row.activityIcon),
-		int(row.activityUserId),
-		int(row.activityCollectionId),
+	for rows.Next() {
+		var activity act.Activity
+
+		err := rows.Scan(&activity.Id, &activity.Name, &activity.Icon, &activity.CollectionId, &activity.UserId)
+		if err != nil {
+			return fmt.Errorf("fetchCollections(): %w", err)
+		}
+
+		collection := collectionsById[activity.CollectionId]
+		collection.Activities = append(collection.Activities, activity)
 	}
 
-	return collection, activity, nil
+	return nil
 }
