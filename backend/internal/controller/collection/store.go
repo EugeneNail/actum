@@ -2,6 +2,7 @@ package collection
 
 import (
 	"github.com/EugeneNail/actum/internal/controller"
+	"github.com/EugeneNail/actum/internal/model/activities"
 	"github.com/EugeneNail/actum/internal/model/collections"
 	"github.com/EugeneNail/actum/internal/service/jwt"
 	"github.com/EugeneNail/actum/internal/service/log"
@@ -43,7 +44,7 @@ func Store(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	collection := collections.Collection{0, controller.Input.Name, user.Id}
+	collection := collections.Collection{0, controller.Input.Name, user.Id, make([]activities.Activity, 0)}
 	if err := collection.Save(); err != nil {
 		controller.Response(err, http.StatusInternalServerError)
 		return

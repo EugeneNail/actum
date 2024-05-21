@@ -3,12 +3,14 @@ package collections
 import (
 	"fmt"
 	"github.com/EugeneNail/actum/internal/database/mysql"
+	"github.com/EugeneNail/actum/internal/model/activities"
 )
 
 type Collection struct {
-	Id     int    `json:"id"`
-	Name   string `json:"name"`
-	UserId int    `json:"userId"`
+	Id         int                   `json:"id"`
+	Name       string                `json:"name"`
+	UserId     int                   `json:"userId"`
+	Activities []activities.Activity `json:"activities"`
 }
 
 func Find(id int) (Collection, error) {

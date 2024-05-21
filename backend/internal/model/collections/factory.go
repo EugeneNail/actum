@@ -3,6 +3,7 @@ package collections
 import (
 	"fmt"
 	"github.com/EugeneNail/actum/internal/database/mysql"
+	"github.com/EugeneNail/actum/internal/model/activities"
 	"github.com/EugeneNail/actum/internal/service/fake"
 	"github.com/EugeneNail/actum/internal/service/tests"
 	"strings"
@@ -19,7 +20,7 @@ func NewFactory(userId int) *Factory {
 
 func (factory *Factory) Make(count int) *Factory {
 	for i := 0; i < count; i++ {
-		collection := Collection{0, fake.SentenceLength(1, 3), factory.userId}
+		collection := Collection{0, fake.SentenceLength(1, 3), factory.userId, make([]activities.Activity, 0)}
 		factory.collections = append(factory.collections, collection)
 	}
 
