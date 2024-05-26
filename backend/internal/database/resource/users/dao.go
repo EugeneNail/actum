@@ -5,18 +5,18 @@ import (
 	"fmt"
 )
 
-type Repository struct {
+type DAO struct {
 	db *sql.DB
 }
 
-func NewRepository(db *sql.DB) *Repository {
-	return &Repository{db}
+func NewDAO(db *sql.DB) *DAO {
+	return &DAO{db}
 }
 
-func (repo *Repository) Find(id int) (User, error) {
+func (dao *DAO) Find(id int) (User, error) {
 	var user User
 
-	err := repo.db.QueryRow(`SELECT * FROM users WHERE id = ? LIMIT 1`, id).
+	err := dao.db.QueryRow(`SELECT * FROM users WHERE id = ? LIMIT 1`, id).
 		Scan(&user.Id, &user.Name, &user.Email, &user.Password)
 
 	if err != nil && err != sql.ErrNoRows {
@@ -26,10 +26,10 @@ func (repo *Repository) Find(id int) (User, error) {
 	return user, nil
 }
 
-func (repo *Repository) FindBy(column string, value any) (User, error) {
+func (dao *DAO) FindBy(column string, value any) (User, error) {
 	var user User
 
-	err := repo.db.QueryRow(`SELECT * FROM users WHERE `+column+` = ?`, value).
+	err := dao.db.QueryRow(`SELECT * FROM users WHERE `+column+` = ?`, value).
 		Scan(&user.Id, &user.Name, &user.Email, &user.Password)
 
 	if err != nil && err != sql.ErrNoRows {
@@ -39,8 +39,8 @@ func (repo *Repository) FindBy(column string, value any) (User, error) {
 	return user, nil
 }
 
-func (repo *Repository) Save(user *User) error {
-	result, err := repo.db.Exec(`
+func (dao *DAO) Save(user *User) error {
+	result, err := dao.db.Exec(`
     INSERT INTO users 
         (id, name, email, password) 
     VALUES 

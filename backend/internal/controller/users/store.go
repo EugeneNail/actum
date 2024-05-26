@@ -43,7 +43,7 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 		strings.ToLower(input.Email),
 		hash.Password(input.Password),
 	)
-	if err := controller.repository.Save(&user); err != nil {
+	if err := controller.dao.Save(&user); err != nil {
 		response.Send(err, http.StatusUnprocessableEntity)
 		return
 	}

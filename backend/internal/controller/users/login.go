@@ -30,7 +30,7 @@ func (controller *Controller) Login(writer http.ResponseWriter, request *http.Re
 		return
 	}
 
-	user, err := controller.repository.FindBy("email", strings.ToLower(input.Email))
+	user, err := controller.dao.FindBy("email", strings.ToLower(input.Email))
 	if err != nil {
 		response.Send(err, http.StatusInternalServerError)
 		return

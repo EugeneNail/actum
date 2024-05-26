@@ -9,15 +9,15 @@ import (
 )
 
 type Controller struct {
-	db             *sql.DB
-	activityRepo   *activities.Repository
-	collectionRepo *collections.Repository
+	db            *sql.DB
+	activityDAO   *activities.DAO
+	collectionDAO *collections.DAO
 }
 
-func New(db *sql.DB, activityRepo *activities.Repository, collectionRepo *collections.Repository) (controller Controller) {
+func New(db *sql.DB, activityDAO *activities.DAO, collectionDAO *collections.DAO) (controller Controller) {
 	controller.db = db
-	controller.activityRepo = activityRepo
-	controller.collectionRepo = collectionRepo
+	controller.activityDAO = activityDAO
+	controller.collectionDAO = collectionDAO
 	return
 }
 

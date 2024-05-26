@@ -18,7 +18,7 @@ func (controller *Controller) Show(writer http.ResponseWriter, request *http.Req
 		return
 	}
 
-	activity, err := controller.activityRepo.Find(id)
+	activity, err := controller.activityDAO.Find(id)
 	if err != nil {
 		response.Send(err, http.StatusInternalServerError)
 		return
@@ -34,7 +34,7 @@ func (controller *Controller) Show(writer http.ResponseWriter, request *http.Req
 		response.Send("You are not allowed to view other people's activities", http.StatusForbidden)
 		return
 	}
-	
+
 	response.Send(activity, http.StatusOK)
 	log.Info("User", user.Id, "fetched activity", activity.Id)
 }

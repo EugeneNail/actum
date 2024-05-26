@@ -25,21 +25,21 @@ func main() {
 		panic(err)
 	}
 
-	userRepository := users.NewRepository(db)
-	userController := userController.New(userRepository)
+	userDAO := users.NewDAO(db)
+	userController := userController.New(userDAO)
 	routing.Post("/api/users", userController.Store)
 	routing.Post("/api/users/login", userController.Login)
 
-	collectionRepository := collections.NewRepository(db)
-	collectionController := collectionController.New(db, collectionRepository)
+	collectionDAO := collections.NewDAO(db)
+	collectionController := collectionController.New(db, collectionDAO)
 	routing.Post("/api/collections", collectionController.Store)
 	routing.Put("/api/collections/:id", collectionController.Update)
 	routing.Delete("/api/collections/:id", collectionController.Destroy)
 	routing.Get("/api/collections/:id", collectionController.Show)
 	routing.Get("/api/collections", collectionController.Index)
 
-	activityRepository := activities.NewRepository(db)
-	activityController := activityController.New(db, activityRepository, collectionRepository)
+	activityDAO := activities.NewDAO(db)
+	activityController := activityController.New(db, activityDAO, collectionDAO)
 	routing.Post("/api/activities", activityController.Store)
 	routing.Put("/api/activities/:id", activityController.Update)
 	routing.Delete("/api/activities/:id", activityController.Destroy)

@@ -19,7 +19,7 @@ func (controller *Controller) Destroy(writer http.ResponseWriter, request *http.
 		return
 	}
 
-	activity, err := controller.activityRepo.Find(id)
+	activity, err := controller.activityDAO.Find(id)
 	if err != nil {
 		response.Send(err, http.StatusBadRequest)
 		return
@@ -37,7 +37,7 @@ func (controller *Controller) Destroy(writer http.ResponseWriter, request *http.
 		return
 	}
 
-	if err := controller.activityRepo.Delete(activity); err != nil {
+	if err := controller.activityDAO.Delete(activity); err != nil {
 		response.Send(err, http.StatusBadRequest)
 		return
 	}

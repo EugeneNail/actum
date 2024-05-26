@@ -18,7 +18,7 @@ func (controller *Controller) Show(writer http.ResponseWriter, request *http.Req
 		return
 	}
 
-	collection, err := controller.repository.Find(id)
+	collection, err := controller.dao.Find(id)
 	if err != nil {
 		response.Send(err, http.StatusInternalServerError)
 		return

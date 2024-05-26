@@ -26,7 +26,7 @@ func (controller *Controller) Update(writer http.ResponseWriter, request *http.R
 		return
 	}
 
-	activity, err := controller.activityRepo.Find(id)
+	activity, err := controller.activityDAO.Find(id)
 	if err != nil {
 		response.Send(err, http.StatusInternalServerError)
 		return
@@ -58,7 +58,7 @@ func (controller *Controller) Update(writer http.ResponseWriter, request *http.R
 	activityBefore := fmt.Sprintf("%+v", activity)
 	activity.Name = input.Name
 	activity.Icon = input.Icon
-	if err := controller.activityRepo.Save(&activity); err != nil {
+	if err := controller.activityDAO.Save(&activity); err != nil {
 		response.Send(err, http.StatusInternalServerError)
 		return
 	}

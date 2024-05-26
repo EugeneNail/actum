@@ -19,7 +19,7 @@ func (controller *Controller) Destroy(writer http.ResponseWriter, request *http.
 		return
 	}
 
-	collection, err := controller.repository.Find(id)
+	collection, err := controller.dao.Find(id)
 	if err != nil {
 		response.Send(err, http.StatusInternalServerError)
 		return
@@ -36,7 +36,7 @@ func (controller *Controller) Destroy(writer http.ResponseWriter, request *http.
 		return
 	}
 
-	if err := controller.repository.Delete(collection); err != nil {
+	if err := controller.dao.Delete(collection); err != nil {
 		response.Send(err, http.StatusInternalServerError)
 		return
 	}

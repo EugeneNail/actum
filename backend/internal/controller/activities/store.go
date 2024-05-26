@@ -31,7 +31,7 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 		return
 	}
 
-	collection, err := controller.collectionRepo.Find(input.CollectionId)
+	collection, err := controller.collectionDAO.Find(input.CollectionId)
 	if err != nil {
 		response.Send(err, http.StatusInternalServerError)
 		return
@@ -73,7 +73,7 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 
 	activity := activities.New(input.Name, input.Icon, input.CollectionId, user.Id)
 
-	err = controller.activityRepo.Save(&activity)
+	err = controller.activityDAO.Save(&activity)
 	if err != nil {
 		response.Send(err, http.StatusInternalServerError)
 		return

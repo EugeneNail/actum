@@ -25,7 +25,7 @@ func (controller *Controller) Update(writer http.ResponseWriter, request *http.R
 		return
 	}
 
-	collection, err := controller.repository.Find(id)
+	collection, err := controller.dao.Find(id)
 	if err != nil {
 		response.Send(err, http.StatusInternalServerError)
 		return
@@ -65,7 +65,7 @@ func (controller *Controller) Update(writer http.ResponseWriter, request *http.R
 	}
 
 	collection.Name = input.Name
-	if err := controller.repository.Save(&collection); err != nil {
+	if err := controller.dao.Save(&collection); err != nil {
 		response.Send(err, http.StatusInternalServerError)
 		return
 	}

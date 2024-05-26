@@ -8,12 +8,12 @@ import (
 )
 
 type Controller struct {
-	db         *sql.DB
-	repository *collections.Repository
+	db  *sql.DB
+	dao *collections.DAO
 }
 
-func New(db *sql.DB, repository *collections.Repository) Controller {
-	return Controller{db, repository}
+func New(db *sql.DB, dao *collections.DAO) Controller {
+	return Controller{db, dao}
 }
 
 func (controller *Controller) hasDuplicate(name string, user users.User) (bool, error) {

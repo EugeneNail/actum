@@ -5,18 +5,18 @@ import (
 	"fmt"
 )
 
-type Repository struct {
+type DAO struct {
 	db *sql.DB
 }
 
-func NewRepository(db *sql.DB) *Repository {
-	return &Repository{db}
+func NewDAO(db *sql.DB) *DAO {
+	return &DAO{db}
 }
 
-func (repo *Repository) Find(id int) (Collection, error) {
+func (dao *DAO) Find(id int) (Collection, error) {
 	var collection Collection
 
-	err := repo.db.QueryRow(`SELECT * FROM collections WHERE id = ?`, id).
+	err := dao.db.QueryRow(`SELECT * FROM collections WHERE id = ?`, id).
 		Scan(&collection.Id, &collection.Name, &collection.UserId)
 
 	if err != nil && err != sql.ErrNoRows {
@@ -26,8 +26,8 @@ func (repo *Repository) Find(id int) (Collection, error) {
 	return collection, nil
 }
 
-func (repo *Repository) Save(collection *Collection) error {
-	result, err := repo.db.Exec(`
+func (dao *DAO) Save(collection *Collection) error {
+	result, err := dao.db.Exec(`
 		INSERT INTO collections 
 		    (id, name, user_id)
 		VALUES 
@@ -54,8 +54,8 @@ func (repo *Repository) Save(collection *Collection) error {
 	return nil
 }
 
-func (repo *Repository) Delete(collection Collection) error {
-	_, err := repo.db.Exec(`DELETE FROM collections WHERE id = ?`, collection.Id)
+func (dao *DAO) Delete(collection Collection) error {
+	_, err := dao.db.Exec(`DELETE FROM collections WHERE id = ?`, collection.Id)
 
 	if err != nil {
 		return fmt.Errorf("collections.Delete(): %w", err)

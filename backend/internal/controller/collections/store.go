@@ -52,7 +52,7 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 	}
 
 	collection := collections.New(input.Name, user.Id)
-	if err := controller.repository.Save(&collection); err != nil {
+	if err := controller.dao.Save(&collection); err != nil {
 		response.Send(err, http.StatusInternalServerError)
 		return
 	}

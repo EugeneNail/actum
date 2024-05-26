@@ -5,18 +5,18 @@ import (
 	"fmt"
 )
 
-type Repository struct {
+type DAO struct {
 	db *sql.DB
 }
 
-func NewRepository(db *sql.DB) *Repository {
-	return &Repository{db}
+func NewDAO(db *sql.DB) *DAO {
+	return &DAO{db}
 }
 
-func (repo *Repository) Find(id int) (Activity, error) {
+func (dao *DAO) Find(id int) (Activity, error) {
 	var activity Activity
 
-	err := repo.db.QueryRow(`SELECT * FROM activities WHERE id = ?`, id).
+	err := dao.db.QueryRow(`SELECT * FROM activities WHERE id = ?`, id).
 		Scan(&activity.Id, &activity.Name, &activity.Icon, &activity.UserId, &activity.CollectionId)
 
 	if err != nil && err != sql.ErrNoRows {
@@ -26,8 +26,8 @@ func (repo *Repository) Find(id int) (Activity, error) {
 	return activity, nil
 }
 
-func (repo *Repository) Save(activity *Activity) error {
-	result, err := repo.db.Exec(`
+func (dao *DAO) Save(activity *Activity) error {
+	result, err := dao.db.Exec(`
 		INSERT INTO activities
 		    (id, name, icon, collection_id, user_id)
 		VALUES
@@ -56,8 +56,8 @@ func (repo *Repository) Save(activity *Activity) error {
 	return nil
 }
 
-func (repo *Repository) Delete(activity Activity) error {
-	_, err := repo.db.Exec(`DELETE FROM activities WHERE id = ?`, activity.Id)
+func (dao *DAO) Delete(activity Activity) error {
+	_, err := dao.db.Exec(`DELETE FROM activities WHERE id = ?`, activity.Id)
 	if err != nil {
 		return fmt.Errorf("activities.Delete(): %w", err)
 	}
