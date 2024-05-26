@@ -3,7 +3,7 @@ package collections
 import (
 	"fmt"
 	"github.com/EugeneNail/actum/internal/database/mysql"
-	"github.com/EugeneNail/actum/internal/model/activities"
+	"github.com/EugeneNail/actum/internal/resource/activities"
 	"github.com/EugeneNail/actum/internal/service/fake"
 	"github.com/EugeneNail/actum/internal/service/tests"
 	"strings"

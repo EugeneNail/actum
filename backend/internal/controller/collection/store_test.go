@@ -1,7 +1,7 @@
 package collection
 
 import (
-	"github.com/EugeneNail/actum/internal/model/collections"
+	"github.com/EugeneNail/actum/internal/resource/collections"
 	"github.com/EugeneNail/actum/internal/service/tests"
 	"github.com/EugeneNail/actum/internal/service/tests/startup"
 	"net/http"

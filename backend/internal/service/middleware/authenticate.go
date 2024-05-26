@@ -3,7 +3,7 @@ package middleware
 import (
 	"context"
 	"fmt"
-	"github.com/EugeneNail/actum/internal/model/users"
+	"github.com/EugeneNail/actum/internal/resource/users"
 	"github.com/EugeneNail/actum/internal/service/jwt"
 	"net/http"
 	"strings"

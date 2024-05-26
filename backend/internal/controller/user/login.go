@@ -2,7 +2,7 @@ package user
 
 import (
 	"github.com/EugeneNail/actum/internal/controller"
-	"github.com/EugeneNail/actum/internal/model/users"
+	"github.com/EugeneNail/actum/internal/resource/users"
 	"github.com/EugeneNail/actum/internal/service/jwt"
 	"github.com/EugeneNail/actum/internal/service/log"
 	"net/http"

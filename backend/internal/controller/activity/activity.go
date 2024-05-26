@@ -3,8 +3,8 @@ package activity
 import (
 	"fmt"
 	"github.com/EugeneNail/actum/internal/database/mysql"
-	"github.com/EugeneNail/actum/internal/model/activities"
-	"github.com/EugeneNail/actum/internal/model/collections"
+	"github.com/EugeneNail/actum/internal/resource/activities"
+	"github.com/EugeneNail/actum/internal/resource/collections"
 	"strings"
 )
 

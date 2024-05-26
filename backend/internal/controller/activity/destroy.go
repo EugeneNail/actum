@@ -3,7 +3,7 @@ package activity
 import (
 	"fmt"
 	"github.com/EugeneNail/actum/internal/controller"
-	"github.com/EugeneNail/actum/internal/model/activities"
+	"github.com/EugeneNail/actum/internal/resource/activities"
 	"github.com/EugeneNail/actum/internal/service/jwt"
 	"github.com/EugeneNail/actum/internal/service/log"
 	"github.com/EugeneNail/actum/internal/service/middleware/routing"
