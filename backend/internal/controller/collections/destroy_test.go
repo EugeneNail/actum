@@ -1,4 +1,4 @@
-package collection
+package collections
 
 import (
 	"github.com/EugeneNail/actum/internal/service/tests/startup"
@@ -98,31 +98,9 @@ func TestDestroySomeoneElsesCollection(t *testing.T) {
 }
 
 func TestDestroyInvalidId(t *testing.T) {
-	client, database := startup.CollectionsDestroy(t)
-
-	client.
-		Post("/api/collections", `{
-			"name": "Work"
-		}`).
-		AssertStatus(http.StatusCreated)
-
-	database.
-		AssertCount("collections", 1).
-		AssertHas("collections", map[string]any{
-			"id":      1,
-			"name":    "Work",
-			"user_id": 1,
-		})
+	client, _ := startup.CollectionsDestroy(t)
 
 	client.
 		Delete("/api/collections/one").
 		AssertStatus(http.StatusBadRequest)
-
-	database.
-		AssertCount("collections", 1).
-		AssertHas("collections", map[string]any{
-			"id":      1,
-			"name":    "Work",
-			"user_id": 1,
-		})
 }

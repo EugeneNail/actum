@@ -9,6 +9,10 @@ type Repository struct {
 	db *sql.DB
 }
 
+func NewRepository(db *sql.DB) *Repository {
+	return &Repository{db}
+}
+
 func (repo *Repository) Find(id int) (Collection, error) {
 	var collection Collection
 
@@ -50,7 +54,7 @@ func (repo *Repository) Save(collection *Collection) error {
 	return nil
 }
 
-func (repo *Repository) Delete(collection *Collection) error {
+func (repo *Repository) Delete(collection Collection) error {
 	_, err := repo.db.Exec(`DELETE FROM collections WHERE id = ?`, collection.Id)
 
 	if err != nil {

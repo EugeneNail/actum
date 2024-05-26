@@ -1,7 +1,7 @@
-package collection
+package collections
 
 import (
-	"github.com/EugeneNail/actum/internal/resource/collections"
+	"github.com/EugeneNail/actum/internal/database/resource/collections"
 	"github.com/EugeneNail/actum/internal/service/tests"
 	"github.com/EugeneNail/actum/internal/service/tests/startup"
 	"net/http"
@@ -34,7 +34,11 @@ func TestStoreUnauthorized(t *testing.T) {
 		}`).
 		AssertStatus(http.StatusUnauthorized)
 
-	database.AssertEmpty("collections")
+	database.
+		AssertEmpty("collections").
+		AssertLacks("collections", map[string]any{
+			"name": "Sport",
+		})
 }
 
 func TestStoreInvalidData(t *testing.T) {
@@ -47,7 +51,11 @@ func TestStoreInvalidData(t *testing.T) {
 		AssertStatus(http.StatusUnprocessableEntity).
 		AssertHasValidationErrors([]string{"name"})
 
-	database.AssertEmpty("collections")
+	database.
+		AssertEmpty("collections").
+		AssertLacks("collections", map[string]any{
+			"name": "Sp",
+		})
 }
 
 func TestStoreDuplicate(t *testing.T) {
@@ -66,11 +74,18 @@ func TestStoreDuplicate(t *testing.T) {
 		AssertStatus(http.StatusConflict).
 		AssertHasValidationErrors([]string{"name"})
 
-	database.AssertCount("collections", 1)
+	database.
+		AssertCount("collections", 1).
+		AssertHas("collections", map[string]any{
+			"name":    "Sport",
+			"user_id": 1,
+		})
 }
 
 func TestStoreTooMany(t *testing.T) {
 	client, database := startup.CollectionsStore(t)
+
+	database.AssertCount("users", 1).AssertHas("users", map[string]any{"id": 1})
 
 	collections.NewFactory(1).Make(15).Insert()
 	database.AssertCount("collections", 15)

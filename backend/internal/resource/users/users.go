@@ -3,8 +3,8 @@ package users
 import (
 	"fmt"
 	"github.com/EugeneNail/actum/internal/database/mysql"
+	"github.com/EugeneNail/actum/internal/database/resource/collections"
 	"github.com/EugeneNail/actum/internal/database/resource/users"
-	"github.com/EugeneNail/actum/internal/resource/collections"
 )
 
 type User struct {

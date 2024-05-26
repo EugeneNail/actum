@@ -1,4 +1,4 @@
-package collection
+package collections
 
 import (
 	"github.com/EugeneNail/actum/internal/service/tests"
@@ -50,7 +50,10 @@ func TestUpdateInvalidData(t *testing.T) {
 		AssertHasValidationErrors([]string{"name"})
 
 	database.
-		AssertCount("collections", 0)
+		AssertCount("collections", 0).
+		AssertLacks("collections", map[string]any{
+			"name": "30",
+		})
 }
 
 func TestUpdateNotFound(t *testing.T) {
@@ -101,7 +104,11 @@ func TestUpdateDuplicate(t *testing.T) {
 		AssertStatus(http.StatusConflict).
 		AssertHasValidationErrors([]string{"name"})
 
-	database.AssertCount("collections", 1)
+	database.
+		AssertCount("collections", 1).
+		AssertLacks("collections", map[string]any{
+			"name": "SpOrt",
+		})
 }
 
 func TestUpdateSomeoneElsesCollection(t *testing.T) {

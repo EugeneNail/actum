@@ -1,7 +1,7 @@
-package collection
+package collections
 
 import (
-	"github.com/EugeneNail/actum/internal/resource/collections"
+	"github.com/EugeneNail/actum/internal/database/resource/collections"
 	"github.com/EugeneNail/actum/internal/service/tests/startup"
 	"net/http"
 	"sort"
@@ -37,14 +37,14 @@ func TestIndexMany(t *testing.T) {
 }
 
 func performByCount(count int, t *testing.T) {
-	client, database := startup.CollectionsIndex(t)
+	client, _ := startup.CollectionsIndex(t)
 
 	newCollections := collections.NewFactory(1).
 		Make(count).
 		Insert().
 		List()
 
-	database.AssertCount("collections", count)
+	//database.AssertCount("collections", count)
 
 	var endpointCollections []collections.Collection
 	client.

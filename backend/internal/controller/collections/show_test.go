@@ -1,4 +1,4 @@
-package collection
+package collections
 
 import (
 	"github.com/EugeneNail/actum/internal/service/tests/startup"
