@@ -45,7 +45,7 @@ func main() {
 	routing.Delete("/api/activities/:id", activityController.Destroy)
 	routing.Get("/api/activities/:id", activityController.Show)
 
-	handler := middleware.BuildPipeline([]middleware.Middleware{
+	handler := middleware.BuildPipeline(db, []middleware.Middleware{
 		middleware.SetHeaders,
 		middleware.Authenticate,
 		routing.Middleware,
