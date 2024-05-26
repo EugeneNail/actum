@@ -11,11 +11,11 @@ func ActivitiesStore(t *testing.T) (tests.Client, tests.Database) {
 	env.Load()
 
 	t.Cleanup(func() {
-		err := mysql.Truncate("activities")
+		err := mysql.Truncate(tests.DB, "activities")
 		tests.Check(err)
-		err = mysql.Truncate("collections")
+		err = mysql.Truncate(tests.DB, "collections")
 		tests.Check(err)
-		err = mysql.Truncate("users")
+		err = mysql.Truncate(tests.DB, "users")
 		tests.Check(err)
 	})
 
@@ -26,11 +26,11 @@ func ActivitiesShow(t *testing.T) (tests.Client, tests.Database) {
 	env.Load()
 
 	t.Cleanup(func() {
-		err := mysql.Truncate("activities")
+		err := mysql.Truncate(tests.DB, "activities")
 		tests.Check(err)
-		err = mysql.Truncate("collections")
+		err = mysql.Truncate(tests.DB, "collections")
 		tests.Check(err)
-		err = mysql.Truncate("users")
+		err = mysql.Truncate(tests.DB, "users")
 		tests.Check(err)
 	})
 
@@ -41,11 +41,11 @@ func ActivitiesUpdate(t *testing.T) (tests.Client, tests.Database) {
 	env.Load()
 
 	t.Cleanup(func() {
-		err := mysql.Truncate("activities")
+		err := mysql.Truncate(tests.DB, "activities")
 		tests.Check(err)
-		err = mysql.Truncate("collections")
+		err = mysql.Truncate(tests.DB, "collections")
 		tests.Check(err)
-		err = mysql.Truncate("users")
+		err = mysql.Truncate(tests.DB, "users")
 		tests.Check(err)
 	})
 
@@ -56,11 +56,11 @@ func ActivitiesDestroy(t *testing.T) (tests.Client, tests.Database) {
 	env.Load()
 
 	t.Cleanup(func() {
-		err := mysql.Truncate("activities")
+		err := mysql.Truncate(tests.DB, "activities")
 		tests.Check(err)
-		err = mysql.Truncate("collections")
+		err = mysql.Truncate(tests.DB, "collections")
 		tests.Check(err)
-		err = mysql.Truncate("users")
+		err = mysql.Truncate(tests.DB, "users")
 		tests.Check(err)
 	})
 

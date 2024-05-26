@@ -11,9 +11,9 @@ func CollectionsShow(t *testing.T) (tests.Client, tests.Database) {
 	env.Load()
 
 	t.Cleanup(func() {
-		err := mysql.Truncate("users")
+		err := mysql.Truncate(tests.DB, "users")
 		tests.Check(err)
-		err = mysql.Truncate("collections")
+		err = mysql.Truncate(tests.DB, "collections")
 		tests.Check(err)
 	})
 
@@ -24,9 +24,9 @@ func CollectionsStore(t *testing.T) (tests.Client, tests.Database) {
 	env.Load()
 
 	t.Cleanup(func() {
-		err := mysql.Truncate("users")
+		err := mysql.Truncate(tests.DB, "users")
 		tests.Check(err)
-		err = mysql.Truncate("collections")
+		err = mysql.Truncate(tests.DB, "collections")
 		tests.Check(err)
 	})
 
@@ -37,9 +37,9 @@ func CollectionsUpdate(t *testing.T) (tests.Client, tests.Database) {
 	env.Load()
 
 	t.Cleanup(func() {
-		err := mysql.Truncate("users")
+		err := mysql.Truncate(tests.DB, "users")
 		tests.Check(err)
-		err = mysql.Truncate("collections")
+		err = mysql.Truncate(tests.DB, "collections")
 		tests.Check(err)
 	})
 
@@ -50,9 +50,9 @@ func CollectionsIndex(t *testing.T) (tests.Client, tests.Database) {
 	env.Load()
 
 	t.Cleanup(func() {
-		err := mysql.Truncate("users")
+		err := mysql.Truncate(tests.DB, "users")
 		tests.Check(err)
-		err = mysql.Truncate("collections")
+		err = mysql.Truncate(tests.DB, "collections")
 		tests.Check(err)
 	})
 
@@ -63,9 +63,9 @@ func CollectionsDestroy(t *testing.T) (tests.Client, tests.Database) {
 	env.Load()
 
 	t.Cleanup(func() {
-		err := mysql.Truncate("users")
+		err := mysql.Truncate(tests.DB, "users")
 		tests.Check(err)
-		err = mysql.Truncate("collections")
+		err = mysql.Truncate(tests.DB, "collections")
 		tests.Check(err)
 	})
 
