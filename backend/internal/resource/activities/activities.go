@@ -5,14 +5,6 @@ import (
 	"github.com/EugeneNail/actum/internal/database/mysql"
 )
 
-type Activity struct {
-	Id           int    `json:"id"`
-	Name         string `json:"name"`
-	Icon         string `json:"icon"`
-	CollectionId int    `json:"collectionId"`
-	UserId       int    `json:"userId"`
-}
-
 func Find(id int) (Activity, error) {
 	var activity Activity
 

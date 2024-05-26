@@ -3,8 +3,8 @@ package collection
 import (
 	"fmt"
 	"github.com/EugeneNail/actum/internal/database/mysql"
-	"github.com/EugeneNail/actum/internal/model/collections"
-	"github.com/EugeneNail/actum/internal/model/users"
+	"github.com/EugeneNail/actum/internal/resource/collections"
+	"github.com/EugeneNail/actum/internal/resource/users"
 	"strings"
 )
 

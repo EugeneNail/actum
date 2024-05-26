@@ -3,20 +3,7 @@ package users
 import (
 	"fmt"
 	"github.com/EugeneNail/actum/internal/database/mysql"
-	"github.com/EugeneNail/actum/internal/model/collections"
 )
-
-type User struct {
-	Id          int    `json:"id"`
-	Name        string `json:"name"`
-	Email       string `json:"email"`
-	Password    string `json:"password"`
-	collections []collections.Collection
-}
-
-func New(name string, email string, password string) User {
-	return User{0, name, email, password, []collections.Collection{}}
-}
 
 func Find(id int) (User, error) {
 	var user User
