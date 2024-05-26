@@ -1,6 +1,8 @@
 package collections
 
-import "github.com/EugeneNail/actum/internal/resource/activities"
+import (
+	"github.com/EugeneNail/actum/internal/database/resource/activities"
+)
 
 type Collection struct {
 	Id         int                   `json:"id"`

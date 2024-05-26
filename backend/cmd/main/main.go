@@ -1,10 +1,11 @@
 package main
 
 import (
-	"github.com/EugeneNail/actum/internal/controller/activity"
+	activityController "github.com/EugeneNail/actum/internal/controller/activities"
 	collectionController "github.com/EugeneNail/actum/internal/controller/collections"
 	userController "github.com/EugeneNail/actum/internal/controller/users"
 	"github.com/EugeneNail/actum/internal/database/mysql"
+	"github.com/EugeneNail/actum/internal/database/resource/activities"
 	"github.com/EugeneNail/actum/internal/database/resource/collections"
 	"github.com/EugeneNail/actum/internal/database/resource/users"
 	"github.com/EugeneNail/actum/internal/service/env"
@@ -37,10 +38,12 @@ func main() {
 	routing.Get("/api/collections/:id", collectionController.Show)
 	routing.Get("/api/collections", collectionController.Index)
 
-	routing.Post("/api/activities", activity.Store)
-	routing.Get("/api/activities/:id", activity.Show)
-	routing.Put("/api/activities/:id", activity.Update)
-	routing.Delete("/api/activities/:id", activity.Destroy)
+	activityRepository := activities.NewRepository(db)
+	activityController := activityController.New(db, activityRepository, collectionRepository)
+	routing.Post("/api/activities", activityController.Store)
+	routing.Put("/api/activities/:id", activityController.Update)
+	routing.Delete("/api/activities/:id", activityController.Destroy)
+	routing.Get("/api/activities/:id", activityController.Show)
 
 	handler := middleware.BuildPipeline([]middleware.Middleware{
 		middleware.SetHeaders,

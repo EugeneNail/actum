@@ -1,4 +1,4 @@
-package activity
+package activities
 
 import (
 	"github.com/EugeneNail/actum/internal/service/tests/startup"

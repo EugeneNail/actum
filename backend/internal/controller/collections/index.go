@@ -2,8 +2,8 @@ package collections
 
 import (
 	"fmt"
+	"github.com/EugeneNail/actum/internal/database/resource/activities"
 	"github.com/EugeneNail/actum/internal/database/resource/collections"
-	"github.com/EugeneNail/actum/internal/resource/activities"
 	"github.com/EugeneNail/actum/internal/service/jwt"
 	"github.com/EugeneNail/actum/internal/service/log"
 	"github.com/EugeneNail/actum/internal/service/response"

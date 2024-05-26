@@ -38,7 +38,7 @@ func (controller *Controller) exceededLimit(userId int) (bool, error) {
 		userId).
 		Scan(&count)
 	if err != nil {
-		return false, fmt.Errorf("controller/collections.exceededLimit(): %w", err)
+		return false, fmt.Errorf("collections.exceededLimit(): %w", err)
 	}
 
 	if count >= 15 {
