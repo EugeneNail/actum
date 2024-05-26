@@ -1,7 +1,8 @@
-package user
+package users
 
 import (
 	"github.com/EugeneNail/actum/internal/service/env"
+	"github.com/EugeneNail/actum/internal/service/hash"
 	"github.com/EugeneNail/actum/internal/service/tests"
 	"github.com/EugeneNail/actum/internal/service/tests/startup"
 	"net/http"
@@ -24,7 +25,7 @@ func TestStoreValidData(t *testing.T) {
 	database.AssertHas("users", map[string]any{
 		"name":     "John",
 		"email":    "blank@gmail.com",
-		"password": hashPassword("Strong123"),
+		"password": hash.Password("Strong123"),
 	})
 
 }

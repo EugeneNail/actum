@@ -3,10 +3,24 @@ package users
 import (
 	"fmt"
 	"github.com/EugeneNail/actum/internal/database/mysql"
+	"github.com/EugeneNail/actum/internal/database/resource/users"
+	"github.com/EugeneNail/actum/internal/resource/collections"
 )
 
-func Find(id int) (User, error) {
-	var user User
+type User struct {
+	Id          int    `json:"id"`
+	Name        string `json:"name"`
+	Email       string `json:"email"`
+	Password    string `json:"password"`
+	collections []collections.Collection
+}
+
+func New(name string, email string, password string) User {
+	return User{0, name, email, password, []collections.Collection{}}
+}
+
+func Find(id int) (users.User, error) {
+	var user users.User
 	db, err := mysql.Connect()
 	defer db.Close()
 	if err != nil {
@@ -28,8 +42,8 @@ func Find(id int) (User, error) {
 	return user, nil
 }
 
-func FindBy(column string, value any) (User, error) {
-	var user User
+func FindBy(column string, value any) (users.User, error) {
+	var user users.User
 	db, err := mysql.Connect()
 	defer db.Close()
 
@@ -53,7 +67,7 @@ func FindBy(column string, value any) (User, error) {
 	return user, nil
 }
 
-func list() ([]User, error) {
+func list() ([]users.User, error) {
 	panic("not implemented")
 }
 

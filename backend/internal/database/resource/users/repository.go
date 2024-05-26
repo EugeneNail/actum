@@ -9,6 +9,10 @@ type Repository struct {
 	db *sql.DB
 }
 
+func NewRepository(db *sql.DB) *Repository {
+	return &Repository{db}
+}
+
 func (repo *Repository) Find(id int) (User, error) {
 	var user User
 

@@ -3,7 +3,9 @@ package main
 import (
 	"github.com/EugeneNail/actum/internal/controller/activity"
 	"github.com/EugeneNail/actum/internal/controller/collection"
-	"github.com/EugeneNail/actum/internal/controller/user"
+	userController "github.com/EugeneNail/actum/internal/controller/users"
+	"github.com/EugeneNail/actum/internal/database/mysql"
+	"github.com/EugeneNail/actum/internal/database/resource/users"
 	"github.com/EugeneNail/actum/internal/service/env"
 	"github.com/EugeneNail/actum/internal/service/log"
 	"github.com/EugeneNail/actum/internal/service/middleware"
@@ -16,8 +18,16 @@ func main() {
 	env.Load()
 	go log.RotateFiles()
 
-	routing.Post("/api/users", user.Store)
-	routing.Post("/api/users/login", user.Login)
+	db, err := mysql.Connect()
+	if err != nil {
+		panic(err)
+	}
+
+	userRepository := users.NewRepository(db)
+	userController := userController.New(userRepository)
+
+	routing.Post("/api/users", userController.Store)
+	routing.Post("/api/users/login", userController.Login)
 	routing.Post("/api/collections", collection.Store)
 	routing.Put("/api/collections/:id", collection.Update)
 	routing.Get("/api/collections", collection.Index)
@@ -34,8 +44,7 @@ func main() {
 		routing.Middleware,
 	})
 
-	err := http.ListenAndServe(":"+os.Getenv("APP_PORT"), handler)
-
+	err = http.ListenAndServe(":"+os.Getenv("APP_PORT"), handler)
 	if err != nil {
 		panic(err)
 	}

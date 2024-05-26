@@ -1,7 +1,8 @@
-package user
+package users
 
 import (
 	"github.com/EugeneNail/actum/internal/service/env"
+	"github.com/EugeneNail/actum/internal/service/hash"
 	"github.com/EugeneNail/actum/internal/service/tests"
 	"github.com/EugeneNail/actum/internal/service/tests/startup"
 	"net/http"
@@ -23,7 +24,7 @@ func TestLoginValidData(t *testing.T) {
 	database.AssertHas("users", map[string]any{
 		"name":     "John",
 		"email":    "jodame3394@agafx.com",
-		"password": hashPassword("Strong123"),
+		"password": hash.Password("Strong123"),
 	})
 
 	client.
@@ -38,7 +39,7 @@ func TestLoginValidData(t *testing.T) {
 		AssertHas("users", map[string]any{
 			"name":     "John",
 			"email":    "jodame3394@agafx.com",
-			"password": hashPassword("Strong123"),
+			"password": hash.Password("Strong123"),
 		})
 }
 
@@ -71,7 +72,7 @@ func TestLoginIncorrectEmail(t *testing.T) {
 	database.AssertHas("users", map[string]any{
 		"name":     "William",
 		"email":    "doleya5976@agafx.com",
-		"password": hashPassword("w24V,KY$f2YSIPQ"),
+		"password": hash.Password("w24V,KY$f2YSIPQ"),
 	})
 
 	client.
@@ -100,7 +101,7 @@ func TestLoginIncorrectPassword(t *testing.T) {
 	database.AssertHas("users", map[string]any{
 		"name":     "Antony",
 		"email":    "pleonius@sentimentdate.com",
-		"password": hashPassword("L00k@tmEImHer3"),
+		"password": hash.Password("L00k@tmEImHer3"),
 	})
 
 	client.
