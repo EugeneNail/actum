@@ -2,7 +2,6 @@ package tests
 
 import (
 	"fmt"
-	"github.com/EugeneNail/actum/internal/database/mysql"
 	"testing"
 )
 
@@ -15,12 +14,8 @@ func NewDatabase(t *testing.T) Database {
 }
 
 func (database *Database) AssertEmpty(table string) *Database {
-	db, err := mysql.Connect()
-	defer db.Close()
-	Check(err)
-
 	var rows int
-	err = db.
+	err := DB.
 		QueryRow(`SELECT COUNT(*) FROM ` + table).
 		Scan(&rows)
 	Check(err)
@@ -49,22 +44,18 @@ func (database *Database) AssertLacks(table string, entity map[string]any) *Data
 }
 
 func getMappedCount(table string, entity map[string]any) (count int) {
-	db, err := mysql.Connect()
-	defer db.Close()
-	Check(err)
-
 	query := fmt.Sprintf(`SELECT COUNT(*) FROM %s WHERE`, table)
 	isFirstElement := true
 	for column, value := range entity {
 		if isFirstElement {
-			query += fmt.Sprintf(` %s = '%v'`, column, value)
+			query += fmt.Sprintf(` binary %s = '%v'`, column, value)
 			isFirstElement = false
 			continue
 		}
-		query += fmt.Sprintf(` AND %s = '%v'`, column, value)
+		query += fmt.Sprintf(` AND binary %s = '%v'`, column, value)
 	}
 
-	err = db.
+	err := DB.
 		QueryRow(query).
 		Scan(&count)
 	Check(err)
@@ -73,12 +64,8 @@ func getMappedCount(table string, entity map[string]any) (count int) {
 }
 
 func (database *Database) AssertCount(table string, expected int) *Database {
-	db, err := mysql.Connect()
-	defer db.Close()
-	Check(err)
-
 	var count int
-	err = db.
+	err := DB.
 		QueryRow(`SELECT COUNT(*) FROM ` + table).
 		Scan(&count)
 	Check(err)

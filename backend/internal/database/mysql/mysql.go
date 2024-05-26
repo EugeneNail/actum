@@ -22,14 +22,8 @@ func GetDsn() string {
 	)
 }
 
-func Truncate(table string) error {
-	db, err := Connect()
-	defer db.Close()
-	if err != nil {
-		return fmt.Errorf("mysql.Truncate(): %w", err)
-	}
-
-	_, err = db.Exec(`DELETE FROM ` + table)
+func Truncate(db *sql.DB, table string) error {
+	_, err := db.Exec(`DELETE FROM ` + table)
 	if err != nil {
 		return fmt.Errorf("mysql.Truncate(): %w", err)
 	}

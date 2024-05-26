@@ -2,9 +2,11 @@ package middleware
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
-	"github.com/EugeneNail/actum/internal/resource/users"
+	"github.com/EugeneNail/actum/internal/database/resource/users"
 	"github.com/EugeneNail/actum/internal/service/jwt"
+	"github.com/EugeneNail/actum/internal/service/response"
 	"net/http"
 	"strings"
 	"time"
@@ -24,8 +26,10 @@ func init() {
 	}
 }
 
-func Authenticate(next http.Handler) http.Handler {
+func Authenticate(db *sql.DB, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		response := response.NewSender(writer)
+
 		for _, route := range unprotectedRoutes {
 			if route.method == request.Method && route.path == request.RequestURI {
 				next.ServeHTTP(writer, request)
@@ -35,38 +39,29 @@ func Authenticate(next http.Handler) http.Handler {
 
 		parts := strings.Split(request.Header.Get("Authorization"), " ")
 		if len(parts) < 2 {
-			writer.WriteHeader(http.StatusUnauthorized)
-			if _, err := writer.Write([]byte(`"Bearer token is not present"`)); err != nil {
-				http.Error(writer, err.Error(), http.StatusInternalServerError)
-			}
+			response.Send("Bearer token is not present", http.StatusUnauthorized)
 			return
 		}
 
 		token := parts[1]
 
 		if !jwt.IsValid(token) {
-			writer.WriteHeader(http.StatusUnauthorized)
-			if _, err := writer.Write([]byte(`"Bearer token is invalid"`)); err != nil {
-				http.Error(writer, err.Error(), http.StatusInternalServerError)
-			}
+			response.Send("Bearer token is invalid", http.StatusUnauthorized)
 			return
 		}
 
 		payload, err := jwt.ExtractPayload(token)
 		if err != nil {
-			http.Error(writer, err.Error(), http.StatusBadRequest)
+			response.Send(err, http.StatusBadRequest)
 			return
 		}
 
 		if payload.Exp < time.Now().Unix() {
-			writer.WriteHeader(http.StatusUnauthorized)
-			if _, err := writer.Write([]byte(`"Bearer token has expired"`)); err != nil {
-				http.Error(writer, err.Error(), http.StatusInternalServerError)
-			}
+			response.Send("Bearer token has expired", http.StatusUnauthorized)
 			return
 		}
 
-		user, err := users.Find(payload.Id)
+		user, err := getUser(db, payload.Id)
 		if err != nil {
 			http.Error(writer, err.Error(), http.StatusInternalServerError)
 		}
@@ -84,4 +79,17 @@ func Authenticate(next http.Handler) http.Handler {
 		ctx := context.WithValue(request.Context(), jwt.CtxKey("user"), user)
 		next.ServeHTTP(writer, request.WithContext(ctx))
 	})
+}
+
+func getUser(db *sql.DB, userId int) (users.User, error) {
+	var user users.User
+
+	err := db.QueryRow(`SELECT * FROM users WHERE id = ? LIMIT 1`, userId).
+		Scan(&user.Id, &user.Name, &user.Email, &user.Password)
+
+	if err != nil && err != sql.ErrNoRows {
+		return user, fmt.Errorf("authenticate.getUser(): %w", err)
+	}
+
+	return user, nil
 }

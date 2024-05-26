@@ -15,10 +15,22 @@ type field struct {
 
 func Perform(data any) (map[string]string, error) {
 	fields := extractFields(data)
-	validationErrors, err := validate(fields)
+	validationErrors := make(map[string]string)
 
-	if err != nil {
-		return nil, fmt.Errorf("validation.Perform(): %w", err)
+	for _, field := range fields {
+	currentFieldLoop:
+		for _, applyRule := range field.ruleFuncs {
+			validationError, err := applyRule(field.name, field.value)
+
+			if err != nil {
+				return nil, fmt.Errorf("validate(): %w", err)
+			}
+
+			if validationError != nil {
+				validationErrors[field.name] = validationError.Error()
+				break currentFieldLoop
+			}
+		}
 	}
 
 	return validationErrors, nil
@@ -50,26 +62,4 @@ func newField(name string, value any, pipeRules string) field {
 	}
 
 	return field{name, value, rules}
-}
-
-func validate(fields []field) (map[string]string, error) {
-	errors := make(map[string]string)
-
-	for _, field := range fields {
-	currentFieldLoop:
-		for _, ruleFunc := range field.ruleFuncs {
-			validationError, err := ruleFunc(field.name, field.value)
-
-			if err != nil {
-				return nil, fmt.Errorf("validate(): %w", err)
-			}
-
-			if validationError != nil {
-				errors[field.name] = validationError.Error()
-				break currentFieldLoop
-			}
-		}
-	}
-
-	return errors, nil
 }
