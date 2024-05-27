@@ -4,7 +4,6 @@ import (
 	"github.com/EugeneNail/actum/internal/database/mysql"
 	"github.com/EugeneNail/actum/internal/service/fake"
 	"github.com/EugeneNail/actum/internal/service/tests"
-	"strings"
 )
 
 type Factory struct {
@@ -18,6 +17,8 @@ func NewFactory(userId int, collectionId int) *Factory {
 }
 
 func (factory *Factory) Make(count int) *Factory {
+	factory.activities = make([]Activity, count)
+
 	for i := 0; i < count; i++ {
 		activity := Activity{
 			0,
@@ -26,28 +27,34 @@ func (factory *Factory) Make(count int) *Factory {
 			factory.collectionId,
 			factory.userId,
 		}
-		factory.activities = append(factory.activities, activity)
+		factory.activities[i] = activity
 	}
 
 	return factory
 }
 
 func (factory *Factory) Insert() *Factory {
+	const columnsCount = 4
+	var placeholders string
+	values := make([]any, len(factory.activities)*columnsCount)
 
-	var placeholders []string
-	var values []any
-
-	for _, activity := range factory.activities {
-		placeholders = append(placeholders, "(?, ?, ?, ?)")
-		values = append(values, activity.Name, activity.Icon, activity.UserId, activity.CollectionId)
+	for i, activity := range factory.activities {
+		placeholders += "(?, ?, ?, ?),"
+		values[columnsCount*i+0] = activity.Name
+		values[columnsCount*i+1] = activity.Icon
+		values[columnsCount*i+2] = activity.UserId
+		values[columnsCount*i+3] = activity.CollectionId
 	}
-	query := `INSERT INTO activities (name, icon, user_id, collection_id) VALUES` + strings.Join(placeholders, ", ")
+	placeholders = placeholders[:len(placeholders)-1]
 
 	db, err := mysql.Connect()
 	defer db.Close()
 	tests.Check(err)
 
-	_, err = db.Exec(query, values...)
+	_, err = db.Exec(
+		`INSERT INTO activities (name, icon, user_id, collection_id) VALUES`+placeholders,
+		values...,
+	)
 	tests.Check(err)
 
 	return factory

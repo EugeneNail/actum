@@ -1,12 +1,9 @@
 package collections
 
 import (
-	"fmt"
 	"github.com/EugeneNail/actum/internal/database/mysql"
-	"github.com/EugeneNail/actum/internal/database/resource/activities"
 	"github.com/EugeneNail/actum/internal/service/fake"
 	"github.com/EugeneNail/actum/internal/service/tests"
-	"strings"
 )
 
 type Factory struct {
@@ -19,30 +16,35 @@ func NewFactory(userId int) *Factory {
 }
 
 func (factory *Factory) Make(count int) *Factory {
+	factory.collections = make([]Collection, count)
+
 	for i := 0; i < count; i++ {
-		collection := Collection{0, fake.SentenceLength(1, 3), factory.userId, make([]activities.Activity, 0)}
-		factory.collections = append(factory.collections, collection)
+		factory.collections[i] = New(fake.SentenceLength(1, 3), factory.userId)
 	}
 
 	return factory
 }
 
 func (factory *Factory) Insert() *Factory {
-	var placeholders []string
-	var values []any
+	const columnsCount = 2
+	var placeholders string
+	values := make([]any, len(factory.collections)*columnsCount)
 
-	for _, collection := range factory.collections {
-		placeholders = append(placeholders, "(?, ?)")
-		values = append(values, collection.Name, factory.userId)
+	for i, collection := range factory.collections {
+		placeholders += "(?, ?),"
+		values[columnsCount*i+0] = collection.Name
+		values[columnsCount*i+1] = factory.userId
 	}
-
-	query := fmt.Sprintf("INSERT INTO collections (name, user_id) VALUES %s", strings.Join(placeholders, ", "))
+	placeholders = placeholders[:len(placeholders)-1]
 
 	db, err := mysql.Connect()
 	defer db.Close()
 	tests.Check(err)
 
-	_, err = db.Exec(query, values...)
+	_, err = db.Exec(
+		`INSERT INTO collections (name, user_id) VALUES`+placeholders,
+		values...,
+	)
 	tests.Check(err)
 
 	return factory
