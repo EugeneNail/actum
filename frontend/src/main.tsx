@@ -19,22 +19,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <Notification>
         <BrowserRouter>
             <Routes>
-                <Route path="/not-found" element={<NotFoundPage/>}/>
-                <Route element={<GuestLayout/>}>
-                    <Route path="/signup" element={<SignupPage/>}/>
-                    <Route path="/login" element={<LoginPage/>}/>
-                </Route>
-                <Route element={<DefaultLayout/>}>
-                    <Route path="/collections" element={<CollectionsPage/>}>
-                        <Route path="/collections/new" element={<SaveCollectionPage/>}/>
-                        <Route path="/collections/:id" element={<SaveCollectionPage/>}/>
-                        <Route path="/collections/:id/delete" element={<DeleteCollectionPage/>}/>
-                        <Route path="/collections/:collectionId/activities/new" element={<SaveActivityPage/>}/>
-                        <Route path="/collections/:collectionId/activities/:id" element={<SaveActivityPage/>}/>
-                        <Route path="/collections/:collectionId/activities/:id/delete" element={<DeleteActivityPage/>}/>
-                    </Route>
-                </Route>
-                <Route path="*" element={<Navigate to="/not-found"/>}/>
+            
             </Routes>
         </BrowserRouter>
     </Notification>
