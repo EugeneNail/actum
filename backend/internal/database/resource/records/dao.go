@@ -11,8 +11,8 @@ type DAO struct {
 	db *sql.DB
 }
 
-func NewDAO(db *sql.DB) DAO {
-	return DAO{db}
+func NewDAO(db *sql.DB) *DAO {
+	return &DAO{db}
 }
 
 func (dao *DAO) Find(id int) (Record, error) {
@@ -40,7 +40,7 @@ func (dao *DAO) Save(record *Record) error {
 		    notes = VALUES(notes),
 		    date = VALUES(date),
 		    user_id = VALUES(user_id)
-	`, record.Id, record.Mood, record.Notes, record.Date, record.UserId)
+	`, record.Id, record.Mood, record.Date, record.Notes, record.UserId)
 
 	if err != nil {
 		return fmt.Errorf("records.Save(): %w", err)
