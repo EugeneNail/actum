@@ -22,6 +22,7 @@ func (database *Database) AssertEmpty(table string) *Database {
 
 	if rows > 0 {
 		database.t.Errorf(`The table "%s" is expected to be empty, got %d rows instead`, table, rows)
+		database.t.SkipNow()
 	}
 
 	return database
@@ -30,6 +31,7 @@ func (database *Database) AssertEmpty(table string) *Database {
 func (database *Database) AssertHas(table string, entity map[string]any) *Database {
 	if getMappedCount(table, entity) == 0 {
 		database.t.Errorf(`The table "%s" does not contain entity %+v`, table, entity)
+		database.t.SkipNow()
 	}
 
 	return database
@@ -38,6 +40,7 @@ func (database *Database) AssertHas(table string, entity map[string]any) *Databa
 func (database *Database) AssertLacks(table string, entity map[string]any) *Database {
 	if getMappedCount(table, entity) != 0 {
 		database.t.Errorf(`The table "%s" contains entity %+v`, table, entity)
+		database.t.SkipNow()
 	}
 
 	return database
@@ -72,6 +75,7 @@ func (database *Database) AssertCount(table string, expected int) *Database {
 
 	if count != expected {
 		database.t.Errorf(`The "%s" table must have %d rows, got %d`, table, expected, count)
+		database.t.SkipNow()
 	}
 
 	return database

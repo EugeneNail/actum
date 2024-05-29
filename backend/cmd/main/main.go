@@ -3,10 +3,12 @@ package main
 import (
 	activityController "github.com/EugeneNail/actum/internal/controller/activities"
 	collectionController "github.com/EugeneNail/actum/internal/controller/collections"
+	recordController "github.com/EugeneNail/actum/internal/controller/records"
 	userController "github.com/EugeneNail/actum/internal/controller/users"
 	"github.com/EugeneNail/actum/internal/database/mysql"
 	"github.com/EugeneNail/actum/internal/database/resource/activities"
 	"github.com/EugeneNail/actum/internal/database/resource/collections"
+	"github.com/EugeneNail/actum/internal/database/resource/records"
 	"github.com/EugeneNail/actum/internal/database/resource/users"
 	"github.com/EugeneNail/actum/internal/service/env"
 	"github.com/EugeneNail/actum/internal/service/log"
@@ -44,6 +46,10 @@ func main() {
 	routing.Put("/api/activities/:id", activityController.Update)
 	routing.Delete("/api/activities/:id", activityController.Destroy)
 	routing.Get("/api/activities/:id", activityController.Show)
+
+	recordDAO := records.NewDAO(db)
+	recordController := recordController.New(db, recordDAO, activityDAO)
+	routing.Post("/api/records", recordController.Store)
 
 	handler := middleware.BuildPipeline(db, []middleware.Middleware{
 		middleware.SetHeaders,

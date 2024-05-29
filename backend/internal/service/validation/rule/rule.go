@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/EugeneNail/actum/internal/database/mysql"
+	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
@@ -40,6 +41,14 @@ func Extract(pipeRule string) RuleFunc {
 		return newExistsRuleFunc(rule)
 	case "mixedCase":
 		return mixedCase
+	case "before":
+		return newBeforeRuleFunc(rule)
+	case "after":
+		return newAfterRuleFunc(rule)
+	case "today":
+		return newBeforeRuleFunc([]string{"", time.Now().Format("2006-01-02")})
+	case "integer":
+		return integer
 	default:
 		return func(string, any) (error, error) { return nil, fmt.Errorf("unknown rule %s", rule[0]) }
 	}
@@ -47,6 +56,11 @@ func Extract(pipeRule string) RuleFunc {
 
 func required(name string, value any) (error, error) {
 	if value == 0 || value == "" {
+		return fmt.Errorf("The %s field is required", name), nil
+	}
+
+	reflectValue := reflect.ValueOf(value)
+	if reflectValue.Kind() == reflect.Slice && reflectValue.Len() == 0 {
 		return fmt.Errorf("The %s field is required", name), nil
 	}
 
@@ -86,10 +100,20 @@ func sentence(name string, value any) (error, error) {
 }
 
 func date(name string, value any) (error, error) {
-	_, err := time.Parse(time.DateTime, value.(string))
+	message := fmt.Sprintf("The %s field must be a valid YYYY-MM-DD date value", name)
 
+	match, err := regexp.MatchString("^20[0-9]{2}-(0[0-9]|1[0-2])-([0-2][0-9]|3[0-1])$", value.(string))
 	if err != nil {
-		return fmt.Errorf("The %s field must be a datetime value", name), nil
+		return errors.New(message), nil
+	}
+
+	if !match {
+		return errors.New(message), nil
+	}
+
+	_, err = time.Parse("2006-01-02", value.(string))
+	if err != nil {
+		return fmt.Errorf(message), nil
 	}
 
 	return nil, nil
@@ -286,4 +310,74 @@ func newExistsRuleFunc(rule []string) RuleFunc {
 
 		return nil, nil
 	}
+}
+
+func newBeforeRuleFunc(rule []string) RuleFunc {
+	conditionDate, err := time.Parse("2006-01-02", rule[1])
+	if err != nil {
+		return func(string, any) (error, error) {
+			return nil, err
+		}
+	}
+	conditionDate.Add(time.Second*60*60*24 - 1)
+
+	return func(name string, value any) (error, error) {
+		validationError, err := date(name, value)
+		if validationError != nil || err != nil {
+			return validationError, err
+		}
+
+		inputDate, err := time.Parse("2006-01-02", value.(string))
+		if err != nil {
+			return nil, fmt.Errorf("newBeforeRuleFunc(): %w", err)
+		}
+
+		if inputDate.After(conditionDate) {
+			return errors.New(fmt.Sprintf("The %s field must be a date before %s", name, rule[1])), nil
+		}
+
+		return nil, nil
+	}
+}
+
+func newAfterRuleFunc(rule []string) RuleFunc {
+	conditionDate, err := time.Parse("2006-01-02", rule[1])
+	if err != nil {
+		return func(string, any) (error, error) {
+			return nil, err
+		}
+	}
+
+	return func(name string, value any) (error, error) {
+		validationError, err := date(name, value)
+		if validationError != nil || err != nil {
+			return validationError, err
+		}
+
+		inputDate, err := time.Parse("2006-01-02", value.(string))
+		if err != nil {
+			return nil, fmt.Errorf("newBeforeRuleFunc(): %w", err)
+		}
+
+		if inputDate.Before(conditionDate) {
+			return errors.New(fmt.Sprintf("The %s field must be a date after %s", name, rule[1])), nil
+		}
+
+		return nil, nil
+	}
+}
+
+func integer(name string, value any) (error, error) {
+	switch value.(type) {
+	case float32:
+		if int(value.(float32)) != value {
+			return fmt.Errorf("The %s field must be an integer", name), nil
+		}
+	case float64:
+		if int(value.(float64)) != value {
+			return fmt.Errorf("The %s field must be an integer", name), nil
+		}
+	}
+
+	return nil, nil
 }

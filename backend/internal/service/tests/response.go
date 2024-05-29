@@ -23,6 +23,7 @@ func (response *Response) ReadData(reference any) *Response {
 func (response *Response) AssertStatus(status int) *Response {
 	if response.StatusCode != status {
 		response.t.Errorf("expected status %d, got %d", status, response.StatusCode)
+		response.t.SkipNow()
 	}
 
 	return response
@@ -38,6 +39,7 @@ func (response *Response) AssertHasValidationErrors(fields []string) *Response {
 	for _, field := range fields {
 		if _, exists := errors[field]; !exists {
 			response.t.Errorf(`expected validation error for field "%s" to be present`, field)
+			response.t.SkipNow()
 		}
 	}
 
