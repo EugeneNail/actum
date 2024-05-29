@@ -64,3 +64,33 @@ func (dao *DAO) Delete(activity Activity) error {
 
 	return nil
 }
+
+func (dao *DAO) ListIn(ids []int, userId int) ([]Activity, error) {
+	var activities []Activity
+
+	var placeholders string
+	values := make([]any, 1+len(ids))
+	values[0] = userId
+
+	for i, id := range ids {
+		values[i+1] = id
+		placeholders += "?,"
+	}
+	placeholders = "(" + placeholders[:len(placeholders)-1] + ")"
+
+	rows, err := dao.db.Query(`SELECT * FROM activities WHERE user_id = ? AND id IN`+placeholders, values...)
+	defer rows.Close()
+	if err != nil {
+		return activities, fmt.Errorf("activities.ListIn(): %w", err)
+	}
+
+	for rows.Next() {
+		var activity Activity
+		if err := rows.Scan(&activity.Id, &activity.Name, &activity.Icon, &activity.UserId, &activity.CollectionId); err != nil {
+			return activities, fmt.Errorf("checkExistence(): %w", err)
+		}
+		activities = append(activities, activity)
+	}
+
+	return activities, nil
+}
