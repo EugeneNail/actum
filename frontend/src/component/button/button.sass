@@ -1,0 +1,40 @@
+@import ../../variables
+
+.button
+  display: flex
+  border-radius: 12px
+  height: 64px
+  align-items: center
+  justify-content: center
+  gap: 10px
+  padding: 24px 32px
+  cursor: pointer
+
+  &.even
+    padding: 0
+    aspect-ratio: 1 / 1 !important
+
+  &.round
+    border-radius: 1000px
+
+  &.primary
+    background: $green-strong
+    color: $font-strong
+    font-weight: bold
+
+    &:hover
+      background: darken($green-strong, 5%)
+
+    &:active
+      background: darken($green-strong, 3%)
+
+
+  &.secondary
+    background: $green-weak
+    color: $green-strong
+
+    &:hover
+      background: darken($green-weak, 3%)
+
+    &:active
+      background: darken($green-weak, 4%)

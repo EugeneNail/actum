@@ -4,13 +4,13 @@ import "./icon.sass"
 type IconProps = {
     name: string
     className?: string
-    filled?: boolean
+    bold?: boolean
     onClick?: () => void
 }
 
-export default function Icon({name, className, filled, onClick}: IconProps) {
+export default function Icon({name, className, bold, onClick}: IconProps) {
     return (
-        <span className={classNames("icon", "material-symbols-rounded", className, { filled: filled })} onClick={onClick}>
+        <span className={classNames("icon", "material-symbols-rounded", className, { bold: bold })} onClick={onClick}>
             {name}
         </span>
     )
