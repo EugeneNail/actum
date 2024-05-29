@@ -142,5 +142,5 @@ func TextLength(min int, max int) string {
 		paragraphs = append(paragraphs, Paragraph())
 	}
 
-	return strings.Join(paragraphs, "\n")
+	return strings.Join(paragraphs, "\\n")
 }
