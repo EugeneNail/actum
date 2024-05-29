@@ -1,9 +1,10 @@
+import "./guest-page.sass"
 import Form from "../../component/form/form.tsx";
 import Field from "../../component/field/field.tsx";
 import {useFormState} from "../../service/use-form-state.ts";
 import {Color} from "../../model/color.tsx";
 import {useHttp} from "../../service/use-http.ts";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import base64UrlToString from "../../service/base64.ts";
 
 class Payload {
@@ -49,6 +50,7 @@ export default function SignupPage() {
                 <Field color={Color.red} name="password" label="Password" icon="lock" value={state.password} error={errors.password} onChange={setField} password/>
                 <Field color={Color.red} name="passwordConfirmation" label="Confirm password" icon="lock" value={state.passwordConfirmation} error={errors.passwordConfirmation} onChange={setField} password/>
             </Form>
+            <Link to="/login" className="guest-page-link">I already have an account</Link>
         </div>
     )
 }
