@@ -18,23 +18,66 @@
     border-radius: 1000px
 
   &.primary
-    background: $green-strong
-    color: $font-strong
-    font-weight: bold
+    &.green
+      background: $green-strong
+      color: $font-strong
+      font-weight: bold
 
-    &:hover
-      background: darken($green-strong, 5%)
+      &:hover
+        background: darken($green-strong, 5%)
 
-    &:active
-      background: darken($green-strong, 3%)
+      &:active
+        background: darken($green-strong, 3%)
 
+    &.yellow
+      background: $yellow-strong
+      color: $font-strong
+      font-weight: bold
+
+      &:hover
+        background: darken($yellow-strong, 5%)
+
+      &:active
+        background: darken($yellow-strong, 3%)
+
+    &.red
+      background: $red-strong
+      color: $font-strong
+      font-weight: bold
+
+      &:hover
+        background: darken($red-strong, 5%)
+
+      &:active
+        background: darken($red-strong, 3%)
 
   &.secondary
-    background: $green-weak
-    color: $green-strong
+    &.green
+      background: $green-weak
+      color: $green-strong
 
-    &:hover
-      background: darken($green-weak, 3%)
+      &:hover
+        background: darken($green-weak, 3%)
 
-    &:active
-      background: darken($green-weak, 4%)
+      &:active
+        background: darken($green-weak, 4%)
+
+    &.yellow
+      background: $yellow-weak
+      color: $yellow-strong
+
+      &:hover
+        background: darken($yellow-weak, 3%)
+
+      &:active
+        background: darken($yellow-weak, 4%)
+
+    &.red
+      background: $red-weak
+      color: $red-strong
+
+      &:hover
+        background: darken($red-weak, 3%)
+
+      &:active
+        background: darken($red-weak, 4%)
