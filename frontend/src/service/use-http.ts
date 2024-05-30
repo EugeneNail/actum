@@ -24,7 +24,7 @@ export function useHttp() {
                 notification.pop(error.response.data)
             }
 
-            if (error.response.status == 500) {
+            if (error.response.status == 500 || error.response.status == 400) {
                 notification.pop(error.response.data)
             }
 

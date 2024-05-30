@@ -18,10 +18,10 @@ export default function CollectionCard({collection}: Props) {
             </div>
             <div className="collection-card__activities">
                 {collection.activities && collection.activities.map(activity => (
-                    <ActivityCard key={activity.id} activity={activity}/>
+                    <ActivityCard key={activity.id} activity={activity} collectionId={collection.id}/>
                 ))}
-                {(collection.activities?.length < 20 || collection.activities == null) && <div className="collection-card-button">
-                    <div className="collection-card-button__icon-container">
+                {(collection.activities?.length < 20 || collection.activities == null) && <div className="collection-card-button" onClick={() => navigate(`./${collection.id}/activities/new`)}>
+                    <div className="collection-card-button__icon-container" >
                         <Icon className="collection-card-button__icon" name="add" bold/>
                     </div>
                     <p className="collection-card-button__label">Add activity</p>
