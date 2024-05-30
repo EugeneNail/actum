@@ -2,10 +2,11 @@ import "./guest-page.sass"
 import Form from "../../component/form/form.tsx";
 import Field from "../../component/field/field.tsx";
 import {useFormState} from "../../service/use-form-state.ts";
-import {Color} from "../../model/color.tsx";
 import {useHttp} from "../../service/use-http.ts";
 import {Link, useNavigate} from "react-router-dom";
 import base64UrlToString from "../../service/base64.ts";
+import FormButtons from "../../component/form/form-button-container.tsx";
+import FormSubmitButton from "../../component/form/form-submit-button.tsx";
 
 class Payload {
     email: string = ""
@@ -22,7 +23,7 @@ export default function LoginPage() {
     const http = useHttp()
     const navigate = useNavigate()
 
-    async function submit() {
+    async function login() {
         const {data, status} = await http.post("/api/users/login", state)
         if (status == 422 || status == 401) {
             setErrors(data)
@@ -43,9 +44,12 @@ export default function LoginPage() {
 
     return (
         <div className="page">
-            <Form title={greetings} subtitle={"Log in to continue"} submitMessage="Log in" noBack onSubmit={submit}>
-                <Field color={Color.green} name="email" label="Email" icon="mail" value={state.email} error={errors.email} onChange={setField}/>
-                <Field color={Color.red} name="password" label="Password" icon="lock" value={state.password} error={errors.password} onChange={setField} password/>
+            <Form title={greetings} subtitle={"Log in to continue"}>
+                <Field name="email" label="Email" icon="mail" value={state.email} error={errors.email} onChange={setField}/>
+                <Field name="password" label="Password" icon="lock" value={state.password} error={errors.password} onChange={setField} password/>
+                <FormButtons>
+                    <FormSubmitButton label="Log in" onClick={login}/>
+                </FormButtons>
             </Form>
             <Link to="/signup" className="guest-page-link">I don't have an account</Link>
         </div>
