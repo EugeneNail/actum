@@ -2,14 +2,12 @@ import Icon from "../icon/icon.tsx";
 import classNames from "classnames";
 import "./field.sass"
 import {ChangeEvent, useEffect, useState} from "react";
-import {Color} from "../../model/color.tsx";
 
 type FieldProps = {
     value: string
     icon?: string
     name: string
     label: string
-    color: Color
     className?: string
     error?: string
     password?: boolean
@@ -37,7 +35,7 @@ export default function Field({value, icon = "", name, label, className, error =
                 <div className="field__icon-container">
                     <Icon name={icon}/>
                 </div>
-                <input value={value} placeholder={label} type={isVisible ? "text" : "password"} id={name} name={name} className="field__input" onChange={onChange}/>
+                <input autoComplete="off" value={value} placeholder={label} type={isVisible ? "text" : "password"} id={name} name={name} className="field__input" onChange={onChange}/>
                 {password && <Icon className="field__visibility" name={isVisible ? "visibility_off" : "visibility"} onClick={() => setVisible(!isVisible)}/>}
             </div>
             <p className="field__error">{error}</p>
