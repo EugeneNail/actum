@@ -5,6 +5,7 @@ import SignupPage from "./page/guest-page/signup-page.tsx";
 import DefaultLayout from "./layout/default-layout.tsx";
 import CollectionsPage from "./page/collections/collections-page/collections-page.tsx";
 import SaveCollectionPage from "./page/collections/save-collection-page/save-collections-page.tsx";
+import DeleteCollectionPage from "./page/collections/delete-collection-page/delete-collection-page.tsx";
 
 export default function Routing() {
     return (
@@ -17,6 +18,7 @@ export default function Routing() {
                         <Route path="/collections" element={<CollectionsPage/>}/>
                         <Route path="/collections/new" element={<SaveCollectionPage/>}/>
                         <Route path="/collections/:id" element={<SaveCollectionPage/>}/>
+                        <Route path="/collections/:id/delete" element={<DeleteCollectionPage/>}/>
                     </Route>
                     <Route path="/" element={<Navigate to="/records"/>}/>
                 </Routes>

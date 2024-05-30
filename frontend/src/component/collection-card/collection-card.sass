@@ -1,0 +1,59 @@
+@import ../../variables
+
+.collection-card
+  &__title-container
+    cursor: pointer
+    height: 50px
+    display: flex
+    align-items: center
+    justify-content: center
+    background: $background
+    border-radius: 10px 10px 0 0
+    transition: 0.3s
+
+    &:hover
+      background: lighten($background, 2%)
+
+  &__title
+    pointer-events: none
+    font-size: 20px
+    font-weight: normal
+    color: $font-strong
+
+  &__activities
+    margin-top: 10px
+    display: grid
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr))
+    gap: 10px
+
+  &-button
+    width: 100%
+    border: 3px dotted $background
+    border-radius: 10px
+    display: flex
+    align-items: center
+    height: 50px
+    cursor: pointer
+
+    &:hover
+      border: 3px solid $background
+
+    &__icon-container
+      display: grid
+      place-items: center
+      aspect-ratio: 1 / 1
+      height: 100%
+      outline: 3px dotted $green-weak
+      border-radius: 10px
+
+    &:hover &__icon-container
+      outline: 3px solid $green-strong
+
+    &__icon
+      color: $green-strong
+
+    &__label
+      text-align: center
+      width: 100%
+      padding: 5px
+      font-size: 12px

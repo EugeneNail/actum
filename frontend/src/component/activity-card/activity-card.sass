@@ -1,0 +1,36 @@
+@import ../../variables
+
+.activity-card
+  cursor: pointer
+  width: 100%
+  background: $background
+  border-radius: 10px
+  display: flex
+  align-items: center
+  height: 50px
+  transition: 0.3s
+
+  &:hover
+    background: lighten($background, 3%)
+
+  &:hover &__icon-container
+    background: darken($green, 10%)
+
+  &__icon-container
+    display: grid
+    place-items: center
+    aspect-ratio: 1 / 1
+    height: 100%
+    background: $green-weak
+    border-radius: 10px
+    transition: 0.3s
+
+  &__icon
+    color: $green-strong
+
+  &__name
+    text-align: center
+    width: 100%
+    word-break: break-all
+    padding: 5px
+    font-size: 12px

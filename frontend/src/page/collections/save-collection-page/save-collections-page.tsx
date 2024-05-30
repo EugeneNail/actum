@@ -1,0 +1,100 @@
+import "./save-collection-page.sass"
+import {useHttp} from "../../../service/use-http.ts";
+import {useFormState} from "../../../service/use-form-state.ts";
+import {useEffect, useState} from "react";
+import {Outlet, useNavigate, useParams} from "react-router-dom";
+import {useNotificationContext} from "../../../component/notification/notification.tsx";
+import Form from "../../../component/form/form.tsx";
+import Field from "../../../component/field/field.tsx";
+import FormButtons from "../../../component/form/form-button-container.tsx";
+import FormBackButton from "../../../component/form/form-back-button.tsx";
+import FormSubmitButton from "../../../component/form/form-submit-button.tsx";
+import FormDeleteButton from "../../../component/form/form-delete-button.tsx";
+
+class Payload {
+    name = ""
+}
+
+class Errors {
+    name = ""
+}
+
+export default function SaveCollectionPage() {
+    const http = useHttp()
+    const {state, setState, setField, errors, setErrors} = useFormState(new Payload(), new Errors())
+    const willStore = window.location.pathname.includes("/new")
+    const navigate = useNavigate()
+    const notification = useNotificationContext()
+    const {id} = useParams()
+    const [initialName, setInitialName] = useState("")
+
+    useEffect(() => {
+        if (!willStore) {
+            fetchCollection()
+        }
+    }, [])
+
+    async function fetchCollection() {
+        const {data, status} = await http.get(`/api/collections/${id}`)
+
+        if (status == 403) {
+            notification.pop(data)
+            navigate("/collections")
+            return
+        }
+
+        if (status == 200) {
+            setInitialName(data.name)
+            setState({name: data.name})
+        }
+    }
+
+    async function save() {
+        if (willStore) {
+            await store()
+        } else {
+            await update()
+        }
+    }
+
+    async function store() {
+        const {data, status} = await http.post("/api/collections", state)
+
+        if (status == 422 || status == 409) {
+            setErrors(data)
+            return
+        }
+
+        navigate("/collections")
+    }
+
+    async function update() {
+        const {data, status} = await http.put(`/api/collections/${id}`, {name: state.name})
+
+        if (status == 403) {
+            notification.pop(data)
+            return
+        }
+
+        if (status == 422) {
+            setErrors(data)
+            return
+        }
+
+        navigate("/collections")
+    }
+
+    return (
+        <div className="save-collection-page page">
+            <Form title={willStore ? "New collection" : "Collection"} subtitle={initialName ? initialName : ""}>
+                <Field name="name" label="Name" icon="category" value={state.name} error={errors.name} onChange={setField}/>
+                <FormButtons>
+                    <FormBackButton/>
+                    <FormSubmitButton label="Save" onClick={save}/>
+                    {!willStore && <FormDeleteButton onClick={() => navigate("./delete")}/>}
+                </FormButtons>
+            </Form>
+            <Outlet/>
+        </div>
+    )
+}
