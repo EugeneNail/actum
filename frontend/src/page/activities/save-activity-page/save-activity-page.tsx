@@ -118,6 +118,7 @@ export default function SaveActivityPage() {
         }
 
         if (status == 422) {
+            window.scrollTo({top: 0, left: 0, behavior: "smooth"})
             setErrors(data)
             return
         }
