@@ -14,7 +14,7 @@ import IconSelect from "../../../component/icon-select/icon-select.tsx";
 
 class Payload {
     name: string = ""
-    icon: string = ""
+    icon: number = 0
     collectionId: number = 0
 }
 
@@ -39,7 +39,7 @@ export default function SaveActivityPage() {
         setState({
             ...state,
             collectionId: parseInt(collectionId ?? "0"),
-            icon: "Man"
+            icon: 100
         })
         fetchCollection()
 
@@ -88,7 +88,7 @@ export default function SaveActivityPage() {
     async function store() {
         const {data, status} = await http.post("/api/activities", {
             name: state.name,
-            icon: state.icon,
+            icon: Number(state.icon),
             collectionId: parseInt(collectionId ?? "0")
         })
 
@@ -99,7 +99,7 @@ export default function SaveActivityPage() {
         }
 
         if (status == 400) {
-            notification.pop(data)
+            return
         }
 
         navigate("/collections")
@@ -109,7 +109,7 @@ export default function SaveActivityPage() {
     async function update() {
         const {data, status} = await http.put(`/api/activities/${activityId}`, {
             name: state.name,
-            icon: state.icon
+            icon: Number(state.icon)
         })
 
         if (status == 403) {
@@ -122,6 +122,10 @@ export default function SaveActivityPage() {
             return
         }
 
+        if (status == 400) {
+            return
+        }
+
         navigate("/collections")
     }
 
@@ -129,7 +133,7 @@ export default function SaveActivityPage() {
     return (
         <div className="save-activity-page page">
             <Form title={willStore ? "New activity" : "Activity"} subtitle={(initialActivityName ? `"${initialActivityName}" ` : "") + `of collection "${collectionName}"`}>
-                <Field name="name" label="Name" icon={state.icon} value={state.name} error={errors.name} onChange={setField}/>
+                <Field name="name" label="Name" icon="webhook" value={state.name} error={errors.name} onChange={setField}/>
                 <IconSelect className="save-activity-page__icon-select" name="icon" value={state.icon} onChange={setField}/>
                 <FormButtons>
                     <FormBackButton/>
