@@ -12,7 +12,7 @@ import (
 
 type storeInput struct {
 	Name         string `json:"name" rules:"required|min:3|max:20|sentence"`
-	Icon         string `json:"icon" rules:"required|max:25|regex:^[0-9a-zA-Z_]+$"`
+	Icon         int    `json:"icon" rules:"required|min:100|max:1000"`
 	CollectionId int    `json:"collectionId" rules:"required|exists:collections,id"`
 }
 

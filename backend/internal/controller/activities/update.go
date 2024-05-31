@@ -13,7 +13,7 @@ import (
 
 type updateInput struct {
 	Name string `json:"name" rules:"required|min:3|max:20|sentence"`
-	Icon string `json:"icon" rules:"required|max:25|regex:^[0-9a-zA-Z_]+$"`
+	Icon int    `json:"icon" rules:"required|min:100|max:1000"`
 }
 
 func (controller *Controller) Update(writer http.ResponseWriter, request *http.Request) {
