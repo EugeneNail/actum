@@ -1,6 +1,9 @@
 @import ../../variables
 
 .icon-select
+  display: flex
+  flex-direction: column
+  gap: 10px
 
   &__input
     display: none
@@ -9,7 +12,6 @@
 
   &__header
     user-select: none
-    background: $background
     border-radius: 10px
     display: flex
     align-items: center
@@ -17,8 +19,9 @@
     padding: 0 20px
     cursor: pointer
 
-    &:hover
-      background: lighten($background, 3%)
+    @media(pointer: fine)
+      &:hover
+        background: lighten($background, 3%)
 
   &__name
     font-size: 20px
@@ -35,32 +38,28 @@
     display: grid
     gap: 15px
     grid-template-columns: repeat(auto-fill, minmax(50px, 1fr))
-    transition: 0.3s linear
-    max-height: 700px
+    transition: 0.75s ease
+    max-height: 900px
     margin-bottom: 70px
 
-  &:last-child &__list
-    max-height: 2300px
-
   &.invisible &__list
-    max-height: 0
-    margin-bottom: 0
-    margin-top: 0
+    display: none
 
   &__item
     cursor: pointer
     aspect-ratio: 1 / 1
     display: grid
-    place-items: center
-    width: 50px
+    justify-content: center
+    align-content: center
     border-radius: 10px
 
-    &:hover
-      background: $green-weak
+    @media (pointer: fine)
+      &:hover
+        background: $background
 
     &.selected
-      color: $font-strong
-      background: $green-strong
+      border: 3px solid $green-strong
 
   &__icon
-    font-size: 45px
+    width: 100%
+

@@ -25,7 +25,7 @@ func TestShow(t *testing.T) {
 	client.
 		Post("/api/activities", `{
 			"name": "Sleep",
-			"icon": "add",
+			"icon": 421,
 			"collectionId": 1
 		}`).
 		AssertStatus(http.StatusCreated)
@@ -34,7 +34,7 @@ func TestShow(t *testing.T) {
 		AssertCount("activities", 1).
 		AssertHas("activities", map[string]any{
 			"name":          "Sleep",
-			"icon":          "add",
+			"icon":          421,
 			"user_id":       1,
 			"collection_id": 1,
 		})
@@ -71,7 +71,7 @@ func TestShowSomeonesActivity(t *testing.T) {
 	client.
 		Post("/api/activities", `{
 			"name": "Make cake",
-			"icon": "cake",
+			"icon": 777,
 			"collectionId": 1
 		}`).
 		AssertStatus(http.StatusCreated)
@@ -80,7 +80,7 @@ func TestShowSomeonesActivity(t *testing.T) {
 		AssertCount("activities", 1).
 		AssertHas("activities", map[string]any{
 			"name":          "Make cake",
-			"icon":          "cake",
+			"icon":          777,
 			"user_id":       1,
 			"collection_id": 1,
 		})
@@ -110,7 +110,7 @@ func TestShowNotFound(t *testing.T) {
 	client.
 		Post("/api/activities", `{
 			"name": "Run",
-			"icon": "minus",
+			"icon": 645,
 			"collectionId": 1
 		}`).
 		AssertStatus(http.StatusCreated)
@@ -119,7 +119,7 @@ func TestShowNotFound(t *testing.T) {
 		AssertCount("activities", 1).
 		AssertHas("activities", map[string]any{
 			"name":          "Run",
-			"icon":          "minus",
+			"icon":          645,
 			"user_id":       1,
 			"collection_id": 1,
 		})

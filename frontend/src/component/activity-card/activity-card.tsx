@@ -1,7 +1,7 @@
 import "./activity-card.sass"
 import Activity from "../../model/activity.ts";
-import Icon from "../icon/icon.tsx";
 import {useNavigate} from "react-router-dom";
+import Icon8 from "../icon8/icon8.tsx";
 
 type Props ={
     collectionId: number
@@ -14,7 +14,7 @@ export default function ActivityCard({activity, collectionId}: Props) {
     function formatName(): string {
         const name = activity.name
         if (name.length > 16) {
-            return name.substring(0, 14).trim() + "..."
+            return name.substring(0, 20).trim()
         }
         return name
     }
@@ -22,7 +22,7 @@ export default function ActivityCard({activity, collectionId}: Props) {
     return (
         <div className="activity-card" onClick={() => navigate(`./${collectionId}/activities/${activity.id}`)}>
             <div className="activity-card__icon-container">
-                <Icon name={activity.icon} className="activity-card__icon"/>
+                <Icon8 id={activity.icon} className="activity-card__icon"/>
             </div>
             <p className="activity-card__name">{formatName()}</p>
         </div>

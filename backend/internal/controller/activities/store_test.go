@@ -28,7 +28,7 @@ func TestStoreValidData(t *testing.T) {
 	client.
 		Post("/api/activities", `{
 			"name": "Clean teeth",
-			"icon": "add",
+			"icon": 100,
 			"collectionId": 1
 		}`).
 		AssertStatus(http.StatusCreated)
@@ -37,7 +37,7 @@ func TestStoreValidData(t *testing.T) {
 		AssertCount("activities", 1).
 		AssertHas("activities", map[string]any{
 			"name":          "Clean teeth",
-			"icon":          "add",
+			"icon":          100,
 			"collection_id": 1,
 			"user_id":       1,
 		})
@@ -62,7 +62,7 @@ func TestStoreInvalidData(t *testing.T) {
 	client.
 		Post("/api/activities", `{
 			"name": "Very long name of the activity",
-			"icon": "Trend up",
+			"icon": 1001,
 			"collectionId": -99
 		}`).
 		AssertStatus(http.StatusUnprocessableEntity).
@@ -90,7 +90,7 @@ func TestStoreDuplicate(t *testing.T) {
 	client.
 		Post("/api/activities", `{
 			"name": "Sleep good",
-			"icon": "add",
+			"icon": 700,
 			"collectionId": 1
 		}`).
 		AssertStatus(http.StatusCreated)
@@ -99,7 +99,7 @@ func TestStoreDuplicate(t *testing.T) {
 		AssertCount("activities", 1).
 		AssertHas("activities", map[string]any{
 			"name":          "Sleep good",
-			"icon":          "add",
+			"icon":          700,
 			"collection_id": 1,
 			"user_id":       1,
 		})
@@ -107,7 +107,7 @@ func TestStoreDuplicate(t *testing.T) {
 	client.
 		Post("/api/activities", `{
 			"name": "sleEp goOd",
-			"icon": "add",
+			"icon": 700,
 			"collectionId": 1
 		}`).
 		AssertStatus(http.StatusConflict).
@@ -117,7 +117,7 @@ func TestStoreDuplicate(t *testing.T) {
 		AssertCount("activities", 1).
 		AssertHas("activities", map[string]any{
 			"name":          "Sleep good",
-			"icon":          "add",
+			"icon":          700,
 			"collection_id": 1,
 			"user_id":       1,
 		})
@@ -143,7 +143,7 @@ func TestStoreToSomeonesCollection(t *testing.T) {
 	client.
 		Post("/api/activities", `{
 			"name": "Cut grass",
-			"icon": "Person",
+			"icon": 610,
 			"collectionId": 1
 		}`).
 		AssertStatus(403)
@@ -170,7 +170,7 @@ func TestStoreToNonexistentCollection(t *testing.T) {
 	client.
 		Post("/api/activities", `{
 			"name": "Lightweight",
-			"icon": "run",
+			"icon": 112,
 			"collectionId": 2
 		}`).
 		AssertStatus(http.StatusUnprocessableEntity).
@@ -204,7 +204,7 @@ func TestStoreTooMany(t *testing.T) {
 	client.
 		Post("/api/activities", `{
 			"name": "Wash hands",
-			"icon": "hand",
+			"icon": 502,
 			"collectionId": 1
 		}`).
 		AssertStatus(http.StatusConflict)
@@ -235,9 +235,9 @@ func TestStoreValidation(t *testing.T) {
 		{"Numbers", "name", "Wake p at 6 am"},
 		{"Only numbers", "name", "123534"},
 		{"Dash", "name", "Work for 9-10 hours"},
-		{"One word", "icon", "add"},
-		{"Multiple words", "icon", "local_gas_station"},
-		{"Mixed case", "icon", "Trending_Up"},
+		{"First group", "icon", 100},
+		{"Ninth group", "icon", 903},
+		{"Third group", "icon", 333},
 		{"Existent collection", "collectionId", 1},
 	})
 
@@ -247,8 +247,9 @@ func TestStoreValidation(t *testing.T) {
 		{"Has comma", "name", "Sleep, sleep and sleep"},
 		{"Period", "name", "Better. Faster. Stronger."},
 		{"Other symbols", "name", "[]/\\?!"},
-		{"Has space", "icon", "Bug report"},
-		{"Has dash", "icon", "card-giftcard"},
+		{"Zero group", "icon", 99},
+		{"Negative group", "icon", -100},
+		{"Nonexistent group", "icon", 1001},
 		{"Nonexistent collection", "collectionId", 2},
 	})
 }

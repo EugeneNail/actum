@@ -24,7 +24,7 @@ func TestUpdateValidData(t *testing.T) {
 	client.
 		Post("/api/activities", `{
 			"name": "Dolor sit amet",
-			"icon": "add",
+			"icon": 200,
 			"collectionId": 1
 		}`).
 		AssertStatus(http.StatusCreated)
@@ -33,14 +33,14 @@ func TestUpdateValidData(t *testing.T) {
 		AssertCount("activities", 1).
 		AssertHas("activities", map[string]any{
 			"name":          "Dolor sit amet",
-			"icon":          "add",
+			"icon":          200,
 			"collection_id": 1,
 		})
 
 	client.
 		Put("/api/activities/1", `{
 			"name": "Lorem",
-			"icon": "Test"
+			"icon": 201
 		}`).
 		AssertStatus(http.StatusNoContent)
 
@@ -48,12 +48,12 @@ func TestUpdateValidData(t *testing.T) {
 		AssertCount("activities", 1).
 		AssertLacks("activities", map[string]any{
 			"name":          "Dolor sit amet",
-			"icon":          "add",
+			"icon":          200,
 			"collection_id": 1,
 		}).
 		AssertHas("activities", map[string]any{
 			"name":          "Lorem",
-			"icon":          "Test",
+			"icon":          201,
 			"collection_id": 1,
 		})
 }
@@ -76,7 +76,7 @@ func TestUpdateInvalidData(t *testing.T) {
 	client.
 		Post("/api/activities", `{
 			"name": "Look at me",
-			"icon": "hello",
+			"icon": 401,
 			"collectionId": 1
 		}`).
 		AssertStatus(http.StatusCreated)
@@ -85,14 +85,14 @@ func TestUpdateInvalidData(t *testing.T) {
 		AssertCount("activities", 1).
 		AssertHas("activities", map[string]any{
 			"name":          "Look at me",
-			"icon":          "hello",
+			"icon":          401,
 			"collection_id": 1,
 		})
 
 	client.
 		Put("/api/activities/1", `{
 			"name": "Lo",
-			"icon": "gas-station"
+			"icon": 10000
 		}`).
 		AssertStatus(http.StatusUnprocessableEntity)
 
@@ -100,7 +100,7 @@ func TestUpdateInvalidData(t *testing.T) {
 		AssertCount("activities", 1).
 		AssertHas("activities", map[string]any{
 			"name":          "Look at me",
-			"icon":          "hello",
+			"icon":          401,
 			"collection_id": 1,
 		})
 }
@@ -125,17 +125,11 @@ func TestUpdateNotFound(t *testing.T) {
 	client.
 		Put("/api/activities/1", `{
 			"name": "Lorem",
-			"icon": "Test"
+			"icon": 421
 		}`).
 		AssertStatus(http.StatusNotFound)
 
-	database.
-		AssertCount("activities", 0).
-		AssertLacks("activities", map[string]any{
-			"name":          "Lorem",
-			"icon":          "Test",
-			"collection_id": 1,
-		})
+	database.AssertCount("activities", 0)
 }
 
 func TestUpdateSomeoneElses(t *testing.T) {
@@ -156,7 +150,7 @@ func TestUpdateSomeoneElses(t *testing.T) {
 	client.
 		Post("/api/activities", `{
 			"name": "Creating something",
-			"icon": "pencil",
+			"icon": 800,
 			"collectionId": 1
 		}`).
 		AssertStatus(http.StatusCreated)
@@ -165,7 +159,7 @@ func TestUpdateSomeoneElses(t *testing.T) {
 		AssertCount("activities", 1).
 		AssertHas("activities", map[string]any{
 			"name":          "Creating something",
-			"icon":          "pencil",
+			"icon":          800,
 			"collection_id": 1,
 		})
 
@@ -173,7 +167,7 @@ func TestUpdateSomeoneElses(t *testing.T) {
 	client.
 		Put("/api/activities/1", `{
 			"name": "Lorem",
-			"icon": "Test"
+			"icon": 900
 		}`).
 		AssertStatus(http.StatusForbidden)
 
@@ -181,7 +175,7 @@ func TestUpdateSomeoneElses(t *testing.T) {
 		AssertCount("activities", 1).
 		AssertHas("activities", map[string]any{
 			"name":          "Creating something",
-			"icon":          "pencil",
+			"icon":          800,
 			"collection_id": 1,
 		})
 }
@@ -192,7 +186,7 @@ func TestUpdateInvalidId(t *testing.T) {
 	client.
 		Put("/api/activities/one", `{
 			"name": "Lorem",
-			"icon": "Test"
+			"icon": 100
 		}`).
 		AssertStatus(http.StatusBadRequest)
 
