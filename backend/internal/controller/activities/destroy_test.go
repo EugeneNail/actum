@@ -23,14 +23,14 @@ func TestDestroy(t *testing.T) {
 	client.
 		Post("/api/activities", `{
 			"name": "Fabulous activity",
-			"icon": "product",
+			"icon": 332,
 			"collectionId": 1 
 		}`).
 		AssertStatus(http.StatusCreated)
 
 	database.AssertHas("activities", map[string]any{
 		"name":          "Fabulous activity",
-		"icon":          "product",
+		"icon":          332,
 		"collection_id": 1,
 		"user_id":       1,
 	})
@@ -57,26 +57,39 @@ func TestDestroyInvalidId(t *testing.T) {
 	client.
 		Post("/api/activities", `{
 			"name": "Fabulous activity",
-			"icon": "product",
+			"icon": 323,
 			"collectionId": 1 
 		}`).
 		AssertStatus(http.StatusCreated)
 
 	database.AssertHas("activities", map[string]any{
 		"name":          "Fabulous activity",
-		"icon":          "product",
+		"icon":          323,
 		"collection_id": 1,
 		"user_id":       1,
 	})
 
-	client.Delete("/api/activities/one").AssertStatus(http.StatusBadRequest)
+	client.
+		Delete("/api/activities/one").
+		AssertStatus(http.StatusBadRequest)
+
+	database.
+		AssertCount("activities", 1).
+		AssertHas("activities", map[string]any{
+			"name":          "Fabulous activity",
+			"icon":          323,
+			"collection_id": 1,
+			"user_id":       1,
+		})
 }
 
 func TestDestroyNotFound(t *testing.T) {
 	client, database := startup.ActivitiesDestroy(t)
 
 	database.AssertCount("activities", 0)
-	client.Delete("/api/activities/1").AssertStatus(http.StatusNotFound)
+	client.
+		Delete("/api/activities/1").
+		AssertStatus(http.StatusNotFound)
 }
 
 func TestDestroySomeoneElsesActivity(t *testing.T) {
@@ -98,7 +111,7 @@ func TestDestroySomeoneElsesActivity(t *testing.T) {
 	client.
 		Post("/api/activities", `{
 			"name": "Fabulous activity",
-			"icon": "product",
+			"icon": 876,
 			"collectionId": 1 
 		}`).
 		AssertStatus(http.StatusCreated)
@@ -107,10 +120,20 @@ func TestDestroySomeoneElsesActivity(t *testing.T) {
 		AssertCount("activities", 1).
 		AssertHas("activities", map[string]any{
 			"name":          "Fabulous activity",
-			"icon":          "product",
+			"icon":          876,
 			"collection_id": 1,
 		})
 
 	client.ChangeUser()
-	client.Delete("/api/activities/1").AssertStatus(http.StatusForbidden)
+	client.
+		Delete("/api/activities/1").
+		AssertStatus(http.StatusForbidden)
+
+	database.
+		AssertCount("activities", 1).
+		AssertHas("activities", map[string]any{
+			"name":          "Fabulous activity",
+			"icon":          876,
+			"collection_id": 1,
+		})
 }

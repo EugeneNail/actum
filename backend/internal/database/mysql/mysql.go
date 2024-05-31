@@ -6,10 +6,21 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"os"
+	"time"
 )
 
 func Connect() (*sql.DB, error) {
-	return sql.Open("mysql", GetDsn())
+	db, err := sql.Open("mysql", GetDsn())
+	if err != nil {
+		return db, fmt.Errorf("mysql.Connect(): %w", err)
+	}
+
+	db.SetMaxOpenConns(150)
+	db.SetMaxIdleConns(150)
+	db.SetConnMaxLifetime(time.Second * 5)
+	db.SetConnMaxIdleTime(time.Second * 10)
+
+	return db, nil
 }
 
 func GetDsn() string {
