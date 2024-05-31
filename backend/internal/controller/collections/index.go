@@ -78,6 +78,8 @@ func (controller *Controller) fetchActivities(userId int) ([]activities.Activity
 		if err != nil {
 			return items, fmt.Errorf("fetchCollections(): %w", err)
 		}
+
+		items = append(items, activity)
 	}
 
 	return items, nil

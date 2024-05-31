@@ -1,72 +1,74 @@
 @import ../../variables
-/* Change the white to any color */
 input:-webkit-autofill
-  -webkit-box-shadow: 0 0 0 30px darken($field-bg, 1%) inset !important
+  -webkit-text-fill-color: $font-medium
+  -webkit-box-shadow: 0 0 0 30px $background-strong inset !important
 
-input:-webkit-autofill:hover
-  -webkit-box-shadow: 0 0 0 30px darken($field-bg, 2%) inset !important
-
-input:-webkit-autofill:focus
-  -webkit-box-shadow: 0 0 0 30px darken($field-bg, 4%) inset !important
-
-input:-webkit-autofill:active
-  -webkit-box-shadow: 0 0 0 30px darken($field-bg, 4%) inset !important
-
-
-.field-wrapper
-  width: 100%
 
 .field
-  border-bottom: 1px #aaa solid
+  margin-top: 13px
   width: 100%
-  background: darken($field-bg, 1%)
-  border-radius: 8px 8px 0px 0px
-  grid-template-columns: 50px 1fr 50px
-  display: grid
-  place-items: center
 
-  &:has(*:hover)
-    background: darken($field-bg, 2%)
+  &:first-child
+    margin-top: 0
 
-  &:has(&__input:focus)
-    background: darken($field-bg, 4%)
-    border-bottom: 2px $accent solid
+  &__icon-container
+    transition: 0.3s
+    background: $green-weak
+    color: $green-strong
+    height: 80%
+    border-radius: 8px
+    padding: 0 6px
+    display: flex
+    align-items: center
+
+  &__content
+    width: 100%
+    border-radius: 8px 8px 0px 0px
+    grid-template-columns: auto 1fr auto
+    display: grid
+    place-items: center
+    gap: 18px
 
   &__input-container
     position: relative
     height: fit-content
     width: 100%
 
-
-  &__label
-    pointer-events: none
-    transition: 0.3s
-    position: absolute
-    left: 0px
-    top: 16px
-
   &__input
-    -webkit-text-fill-color: $font-medium
-    padding: 26px 10px 5px 0
+    border-bottom: 3px darken($delimiter, 11%) solid
+    font-size: 20px
+    padding: 13px 0
     height: 100%
     width: 100%
     background: none
+    color: $font-strong
 
-  &__input:focus + &__label
-    color: $accent
-    font-size: 12px
-    top: 8px
+    &::placeholder
+      transition: 0.3s
+      color: $font-medium
 
-  &__input:not(:placeholder-shown) + &__label
-    font-size: 12px
-    top: 8px
+    &:focus
+      border-bottom: 3px $green-strong solid
+
+    &:focus::placeholder
+      color: transparent
 
   &__visibility
+    font-variation-settings: 'FILL' 0, 'wght' 300
     cursor: pointer
     user-select: none
+    width: 30px
 
   &__error
-    color: #ec0b00
+    height: 17px
+    color: $red-strong
     font-size: 12px
-    margin-top: 7px
+    margin-top: 4px
 
+.field
+  .invalid &__icon-container
+    background: $red-weak
+    color: $red-strong
+
+  .invalid &__input:focus
+    border-bottom: 3px $red-strong solid

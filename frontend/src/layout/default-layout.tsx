@@ -5,8 +5,8 @@ import Header from "../component/header/header.tsx";
 export default function DefaultLayout() {
     return (
         <div className="default-layout">
-            <Header/>
             <Outlet/>
+            <Header/>
         </div>
     )
 }

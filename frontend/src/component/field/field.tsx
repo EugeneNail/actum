@@ -14,8 +14,14 @@ type FieldProps = {
     onChange: (event: ChangeEvent<HTMLInputElement>) => void
 }
 
-export default function Field({value, icon = "", name, label, className, error, password, onChange}: FieldProps) {
+export default function Field({value, icon = "", name, label, className, error = "", password, onChange}: FieldProps) {
     const [isVisible, setVisible] = useState(true)
+    className = classNames(
+        "field",
+        className,
+        {invalid: error?.length > 0}
+    )
+
 
     useEffect(() => {
         if (password) {
@@ -24,16 +30,15 @@ export default function Field({value, icon = "", name, label, className, error, 
     }, [])
 
     return (
-        <div className="field-wrapper">
-            <div className={classNames("field", className)}>
-                <Icon name={icon}/>
-                <div className="field__input-container">
-                    <input value={value} placeholder="" type={isVisible ? "text" : "password"} id={name} name={name} className="field__input" onChange={onChange}/>
-                    <label htmlFor={name} className="field__label">{label}</label>
+        <div className={className}>
+            <div className={classNames("field__content", className)}>
+                <div className="field__icon-container">
+                    <Icon name={icon}/>
                 </div>
+                <input autoComplete="off" value={value} placeholder={label} type={isVisible ? "text" : "password"} id={name} name={name} className="field__input" onChange={onChange}/>
                 {password && <Icon className="field__visibility" name={isVisible ? "visibility_off" : "visibility"} onClick={() => setVisible(!isVisible)}/>}
             </div>
-            {error && <p className="field__error">{error}</p>}
+            <p className="field__error">{error}</p>
         </div>
     )
 }

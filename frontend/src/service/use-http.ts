@@ -1,8 +1,11 @@
 import axios from "axios";
+import {useNotificationContext} from "../component/notification/notification.tsx";
 
 export function useHttp() {
+    const notification = useNotificationContext()
+
     const http = axios.create({
-        baseURL: "http://192.168.1.3:8080/api",
+        baseURL: "http://192.168.1.3:8080",
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
@@ -18,7 +21,11 @@ export function useHttp() {
             }
 
             if (error.response.status == 404 && window.location.pathname != "/not-found") {
-                window.location.href = "/not-found"
+                notification.pop(error.response.data)
+            }
+
+            if (error.response.status == 500 || error.response.status == 400) {
+                notification.pop(error.response.data)
             }
 
             return error.response

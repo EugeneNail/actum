@@ -1,58 +1,59 @@
 @import ../../variables
 
 .collection-card
-  position: relative
-  background: $primary
-  border-radius: 10px
+  &__title-container
+    cursor: pointer
+    height: 50px
+    display: flex
+    align-items: center
+    justify-content: center
+    background: $background
+    border-radius: 10px 10px 0 0
+    transition: 0.3s
+
+    &:hover
+      background: lighten($background, 2%)
+
+  &__title
+    pointer-events: none
+    font-size: 20px
+    font-weight: normal
+    color: $font-strong
 
   &__activities
     margin-top: 10px
-    gap: 25px
-    display: flex
-    flex-wrap: wrap
-    justify-content: center
-    padding: 5px 5px 40px 5px
-
-  &__icon
-    color: $accent
-    align-self: center
-
-  &__label
-    white-space: nowrap
-    overflow: hidden
-    text-overflow: ellipsis
-    align-self: center
-    color: $font-strong
-    font-size: 20px
-
-  &__header
-    padding: 15px 10px
-    display: flex
+    display: grid
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr))
     gap: 10px
 
-  &__edit-button
-    margin-left: auto
-
-  &__edit-button, &__delete-button
-    height: 30px
-
-    & *
-      font-size: 20px
-
-
-  &__new-activity-container
-    width: 50px
+  &-button
+    width: 100%
+    border: 3px dotted $background
+    border-radius: 10px
+    display: flex
+    align-items: center
     height: 50px
-    display: grid
-    place-items: center
-    border-radius: 50%
-    aspect-ratio: 1 / 1
-    background: $secondary
     cursor: pointer
 
     &:hover
-      background: lighten($secondary, 5%)
+      border: 3px solid $background
 
-  &__new-activity-icon
-    font-size: 30px
-    color: $accent
+    &__icon-container
+      display: grid
+      place-items: center
+      aspect-ratio: 1 / 1
+      height: 100%
+      outline: 3px dotted $green-weak
+      border-radius: 10px
+
+    &:hover &__icon-container
+      outline: 3px solid $green-strong
+
+    &__icon
+      color: $green-strong
+
+    &__label
+      text-align: center
+      width: 100%
+      padding: 5px
+      font-size: 12px

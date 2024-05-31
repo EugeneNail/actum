@@ -1,0 +1,66 @@
+@import ../../variables
+
+.icon-select
+
+  &__input
+    display: none
+
+.icon-select-list
+
+  &__header
+    user-select: none
+    background: $background
+    border-radius: 10px
+    display: flex
+    align-items: center
+    height: 60px
+    padding: 0 20px
+    cursor: pointer
+
+    &:hover
+      background: lighten($background, 3%)
+
+  &__name
+    font-size: 20px
+    color: $font-strong
+    margin-bottom: 3px
+
+  &__chevron
+    font-size: 30px
+    margin-left: auto
+
+  &__list
+    margin-top: 20px
+    overflow: hidden
+    display: grid
+    gap: 15px
+    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr))
+    transition: 0.3s linear
+    max-height: 700px
+    margin-bottom: 70px
+
+  &:last-child &__list
+    max-height: 2300px
+
+  &.invisible &__list
+    max-height: 0
+    margin-bottom: 0
+    margin-top: 0
+
+  &__item
+    cursor: pointer
+    aspect-ratio: 1 / 1
+    display: grid
+    place-items: center
+    width: 50px
+    border-radius: 10px
+
+    &:hover
+      background: $green-weak
+
+    &.selected
+      color: $font-strong
+      background: $green-strong
+
+  &__icon
+    font-size: 45px

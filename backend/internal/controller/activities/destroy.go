@@ -21,7 +21,7 @@ func (controller *Controller) Destroy(writer http.ResponseWriter, request *http.
 
 	activity, err := controller.activityDAO.Find(id)
 	if err != nil {
-		response.Send(err, http.StatusBadRequest)
+		response.Send(err, http.StatusInternalServerError)
 		return
 	}
 
@@ -38,7 +38,7 @@ func (controller *Controller) Destroy(writer http.ResponseWriter, request *http.
 	}
 
 	if err := controller.activityDAO.Delete(activity); err != nil {
-		response.Send(err, http.StatusBadRequest)
+		response.Send(err, http.StatusInternalServerError)
 		return
 	}
 

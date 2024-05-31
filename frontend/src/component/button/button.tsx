@@ -1,30 +1,42 @@
 import "./button.sass"
-import Icon from "../icon/icon.tsx";
+import {ReactNode} from "react";
 import classNames from "classnames";
+import {Color} from "../../model/color.tsx";
 
-type ButtonProps = {
-    label?: string
-    className?: string
-    icon?: string
-    onClick?: () => void
-    negative?: boolean
-    pill?: boolean
-    accent?: boolean
+export enum ButtonStyle {
+    Primary,
+    Secondary
 }
 
-export default function Button({label, className, icon = "", negative, pill, accent, onClick}: ButtonProps) {
+type Props = {
+    className?:string
+    color?: Color
+    submit?: boolean
+    even?: boolean
+    round?: boolean
+    shadowed?: boolean
+    style?: ButtonStyle
+    onClick: () => void
+    children: ReactNode
+}
+
+export default function Button({className, color = Color.green, submit, even, round, shadowed, style = ButtonStyle.Primary, onClick, children}: Props) {
+    className = classNames(
+        "button",
+        className,
+        {even: even},
+        {round: round},
+        {shadowed: shadowed},
+        {green: color == Color.green},
+        {yellow: color == Color.yellow},
+        {red: color == Color.red},
+        {primary: style == ButtonStyle.Primary},
+        {secondary: style == ButtonStyle.Secondary}
+    )
+
     return (
-        <button className={classNames("button", className, {round: icon && !label}, {negative: negative}, {pill: pill}, {accent: accent})} onClick={onClick}>
-            {icon &&
-                <div className="button__icon-container">
-                    <Icon className="button__icon" name={icon} filled/>
-                </div>
-            }
-            {label &&
-                <div className="button__label">
-                    {label}
-                </div>
-            }
+        <button type={submit ? "submit" : "button"} className={className} onClick={onClick}>
+            {children}
         </button>
     )
 }

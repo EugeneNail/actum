@@ -1,65 +1,84 @@
 @import ../../variables
 
 .button
-  width: 100%
-  height: 50px
-  color: white
-  background: $accent
-  border-radius: 8px
+  user-select: none
   display: flex
+  border-radius: 12px
+  height: 64px
   align-items: center
   justify-content: center
-  padding: 0 14px
   gap: 10px
+  padding: 24px 32px
   cursor: pointer
 
-  &:hover
-    background: darken($accent, 5%)
-
-  &:active
-    background: darken($accent, 3%)
+  &.even
+    padding: 0
+    aspect-ratio: 1 / 1 !important
 
   &.round
-    padding: 0
-    width: fit-content
-    aspect-ratio: 1 / 1
-    border-radius: 50%
-
-  &.negative
-    background: $secondary
-
-    &:hover
-      background: darken($accent, 35%)
-
-    &  *
-      color: $accent
-
-  &.pill
-    background: lighten($primary, 15%)
-    color: $accent
     border-radius: 1000px
-    height: 40px
 
-    &:hover
-      background: lighten($primary, 13%)
-
-    &  *
+  &.primary
+    &.green
+      background: $green-strong
+      color: $font-strong
       font-weight: bold
-      color: $accent
-
-    &.accent
-      background: $accent
 
       &:hover
-        background: darken($accent, 5%)
+        background: darken($green-strong, 5%)
 
       &:active
-        background: darken($accent, 3%)
+        background: darken($green-strong, 3%)
 
-      & *
-        color: $font-strong
+    &.yellow
+      background: $yellow-strong
+      color: $font-strong
+      font-weight: bold
 
+      &:hover
+        background: darken($yellow-strong, 5%)
 
-  & > *,
-  &__icon
-    color: $secondary
+      &:active
+        background: darken($yellow-strong, 3%)
+
+    &.red
+      background: $red-strong
+      color: $font-strong
+      font-weight: bold
+
+      &:hover
+        background: darken($red-strong, 5%)
+
+      &:active
+        background: darken($red-strong, 3%)
+
+  &.secondary
+    &.green
+      background: $green-weak
+      color: $green-strong
+
+      &:hover
+        background: darken($green-weak, 3%)
+
+      &:active
+        background: darken($green-weak, 4%)
+
+    &.yellow
+      background: $yellow-weak
+      color: $yellow-strong
+
+      &:hover
+        background: darken($yellow-weak, 3%)
+
+      &:active
+        background: darken($yellow-weak, 4%)
+
+    &.red
+      background: $red-weak
+      color: $red-strong
+
+      &:hover
+        background: darken($red-weak, 3%)
+
+      &:active
+        background: darken($red-weak, 4%)

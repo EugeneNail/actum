@@ -1,9 +1,8 @@
 import "./collection-card.sass"
-import Collection from "../../model/collection.ts";
-import Button from "../button/button.tsx";
-import {useNavigate} from "react-router-dom";
-import Icon from "../icon/icon.tsx";
+import Collection from "../../model/collection";
 import ActivityCard from "../activity-card/activity-card.tsx";
+import Icon from "../icon/icon.tsx";
+import {useNavigate} from "react-router-dom";
 
 type Props = {
     collection: Collection
@@ -14,17 +13,19 @@ export default function CollectionCard({collection}: Props) {
 
     return (
         <div className="collection-card">
-            <div className="collection-card__header">
-                <Icon className="collection-card__icon" name="category"/>
-                <p className="collection-card__label">{collection.name}</p>
-                <Button className="collection-card__edit-button" icon="edit" negative onClick={() => navigate(`./${collection.id}`)}/>
-                <Button className="collection-card__delete-button" icon="delete" negative onClick={() => navigate(`./${collection.id}/delete`)}/>
+            <div className="collection-card__title-container" onClick={() => navigate(`./${collection.id}`)}>
+                <h6 className="collection-card__title">{collection.name}</h6>
             </div>
             <div className="collection-card__activities">
                 {collection.activities && collection.activities.map(activity => (
-                    <ActivityCard activity={activity}/>
+                    <ActivityCard key={activity.id} activity={activity} collectionId={collection.id}/>
                 ))}
-                {collection.activities.length < 20 && <Button className="collection-card__new-activity" icon="add" negative onClick={() => navigate(`./${collection.id}/activities/new`)}/>}
+                {(collection.activities?.length < 20 || collection.activities == null) && <div className="collection-card-button" onClick={() => navigate(`./${collection.id}/activities/new`)}>
+                    <div className="collection-card-button__icon-container" >
+                        <Icon className="collection-card-button__icon" name="add" bold/>
+                    </div>
+                    <p className="collection-card-button__label">Add activity</p>
+                </div>}
             </div>
         </div>
     )

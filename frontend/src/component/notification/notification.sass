@@ -1,7 +1,7 @@
 @import ../../variables
 
 .notification
-  background: $primary
+  background: $background
   box-shadow: 0 0 10px black
   border-radius: 10px
   left: 50%
@@ -22,15 +22,17 @@
     font-size: 13px
 
   &__icon-container
+    color: $yellow-strong
     grid-area: icon
     border-radius: 50%
     aspect-ratio: 1 / 1
     display: grid
     place-items: center
-    background: #ef8c19
+    background: $yellow
     width: 40px
 
   &__icon
+    color: white
     font-size: 24px
     margin-bottom: 5px
 
@@ -40,7 +42,7 @@
   &__timer
     position: absolute
     animation: shrink 5s linear infinite
-    background: lighten($primary, 5%)
+    background: lighten($background, 5%)
     left: 50%
     transform: translateX(-50%)
     height: 3px
