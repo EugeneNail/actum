@@ -106,14 +106,18 @@ func checkMigrationsDirectory() {
 }
 
 func apply(migration migration) {
-	query, err := os.ReadFile(migration.path)
+	file, err := os.ReadFile(migration.path)
 	check(err)
+	queries := strings.Split(string(file), ";")
 	db, err := mysql.Connect()
 	check(err)
 	transaction, err := db.BeginTx(context.Background(), &sql.TxOptions{})
 	check(err)
-	_, err = transaction.Exec(string(query))
-	checkTransaction(err, migration, transaction)
+
+	for _, query := range queries {
+		_, err = transaction.Exec(query)
+		checkTransaction(err, migration, transaction)
+	}
 
 	if strings.Contains(migration.path, ".up.") {
 		_, err := transaction.Exec("INSERT INTO migrations (migration) VALUES (?)", migration.name)
@@ -124,6 +128,7 @@ func apply(migration migration) {
 		_, err := transaction.Exec("DELETE FROM migrations WHERE migration = ?", migration.name)
 		checkTransaction(err, migration, transaction)
 	}
+
 	err = transaction.Commit()
 	check(err)
 	fmt.Println("DONE", migration.name)
