@@ -7,18 +7,21 @@ import (
 )
 
 func TestUpdateValidData(t *testing.T) {
-	client, database := startup.ActivitiesUpdate(t)
+	client, database := startup.Activities(t)
 
 	client.
 		Post("/api/collections", `{
-			"name": "lorem ipsum"
+			"name": "lorem ipsum",
+			"color": 1
 		}`).
 		AssertStatus(http.StatusCreated)
 
 	database.
 		AssertCount("collections", 1).
 		AssertHas("collections", map[string]any{
-			"name": "lorem ipsum",
+			"name":    "lorem ipsum",
+			"color":   1,
+			"user_id": 1,
 		})
 
 	client.
@@ -59,18 +62,20 @@ func TestUpdateValidData(t *testing.T) {
 }
 
 func TestUpdateInvalidData(t *testing.T) {
-	client, database := startup.ActivitiesUpdate(t)
+	client, database := startup.Activities(t)
 
 	client.
 		Post("/api/collections", `{
-			"name": "Collection"
+			"name": "Collection",
+			"color": 1
 		}`).
 		AssertStatus(http.StatusCreated)
 
 	database.
 		AssertCount("collections", 1).
 		AssertHas("collections", map[string]any{
-			"name": "Collection",
+			"name":  "Collection",
+			"color": 1,
 		})
 
 	client.
@@ -106,18 +111,20 @@ func TestUpdateInvalidData(t *testing.T) {
 }
 
 func TestUpdateNotFound(t *testing.T) {
-	client, database := startup.ActivitiesUpdate(t)
+	client, database := startup.Activities(t)
 
 	client.
 		Post("/api/collections", `{
-			"name": "lorem ipsum"
+			"name": "lorem ipsum",
+			"color": 1
 		}`).
 		AssertStatus(http.StatusCreated)
 
 	database.
 		AssertCount("collections", 1).
 		AssertHas("collections", map[string]any{
-			"name": "lorem ipsum",
+			"name":  "lorem ipsum",
+			"color": 1,
 		})
 
 	database.AssertCount("activities", 0)
@@ -133,18 +140,20 @@ func TestUpdateNotFound(t *testing.T) {
 }
 
 func TestUpdateSomeoneElses(t *testing.T) {
-	client, database := startup.ActivitiesUpdate(t)
+	client, database := startup.Activities(t)
 
 	client.
 		Post("/api/collections", `{
-			"name": "Playing"
+			"name": "Playing",
+			"color": 1
 		}`).
 		AssertStatus(http.StatusCreated)
 
 	database.
 		AssertCount("collections", 1).
 		AssertHas("collections", map[string]any{
-			"name": "Playing",
+			"name":  "Playing",
+			"color": 1,
 		})
 
 	client.
@@ -181,7 +190,7 @@ func TestUpdateSomeoneElses(t *testing.T) {
 }
 
 func TestUpdateInvalidId(t *testing.T) {
-	client, database := startup.ActivitiesUpdate(t)
+	client, database := startup.Activities(t)
 
 	client.
 		Put("/api/activities/one", `{

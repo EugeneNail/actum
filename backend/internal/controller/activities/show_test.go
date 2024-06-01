@@ -7,11 +7,12 @@ import (
 )
 
 func TestShow(t *testing.T) {
-	client, database := startup.ActivitiesShow(t)
+	client, database := startup.Activities(t)
 
 	client.
 		Post("/api/collections", `{
-			"name": "Work"
+			"name": "Work",
+			"color": 3
 		}`).
 		AssertStatus(http.StatusCreated)
 
@@ -19,6 +20,7 @@ func TestShow(t *testing.T) {
 		AssertCount("collections", 1).
 		AssertHas("collections", map[string]any{
 			"name":    "Work",
+			"color":   3,
 			"user_id": 1,
 		})
 
@@ -45,7 +47,7 @@ func TestShow(t *testing.T) {
 }
 
 func TestShowInvalidId(t *testing.T) {
-	client, _ := startup.ActivitiesShow(t)
+	client, _ := startup.Activities(t)
 
 	client.
 		Get("/api/activities/one").
@@ -53,11 +55,12 @@ func TestShowInvalidId(t *testing.T) {
 }
 
 func TestShowSomeonesActivity(t *testing.T) {
-	client, database := startup.ActivitiesShow(t)
+	client, database := startup.Activities(t)
 
 	client.
 		Post("/api/collections", `{
-			"name": "Cooking"
+			"name": "Cooking",
+			"color": 3
 		}`).
 		AssertStatus(http.StatusCreated)
 
@@ -65,6 +68,7 @@ func TestShowSomeonesActivity(t *testing.T) {
 		AssertCount("collections", 1).
 		AssertHas("collections", map[string]any{
 			"name":    "Cooking",
+			"color":   3,
 			"user_id": 1,
 		})
 
@@ -92,11 +96,12 @@ func TestShowSomeonesActivity(t *testing.T) {
 }
 
 func TestShowNotFound(t *testing.T) {
-	client, database := startup.ActivitiesShow(t)
+	client, database := startup.Activities(t)
 
 	client.
 		Post("/api/collections", `{
-			"name": "Kill bugs"
+			"name": "Kill bugs",
+			"color": 3
 		}`).
 		AssertStatus(http.StatusCreated)
 
@@ -104,6 +109,7 @@ func TestShowNotFound(t *testing.T) {
 		AssertCount("collections", 1).
 		AssertHas("collections", map[string]any{
 			"name":    "Kill bugs",
+			"color":   3,
 			"user_id": 1,
 		})
 

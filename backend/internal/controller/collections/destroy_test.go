@@ -7,11 +7,12 @@ import (
 )
 
 func TestDestroy(t *testing.T) {
-	client, database := startup.CollectionsDestroy(t)
+	client, database := startup.Collections(t)
 
 	client.
 		Post("/api/collections", `{
-			"name": "Do something"
+			"name": "Do something",
+			"color": 5
 		}`).
 		AssertStatus(http.StatusCreated)
 
@@ -20,6 +21,7 @@ func TestDestroy(t *testing.T) {
 		AssertHas("collections", map[string]any{
 			"id":      1,
 			"name":    "Do something",
+			"color":   5,
 			"user_id": 1,
 		})
 
@@ -32,16 +34,18 @@ func TestDestroy(t *testing.T) {
 		AssertLacks("collections", map[string]any{
 			"id":      1,
 			"name":    "Do something",
+			"color":   5,
 			"user_id": 1,
 		})
 }
 
 func TestDestroyNotFound(t *testing.T) {
-	client, database := startup.CollectionsDestroy(t)
+	client, database := startup.Collections(t)
 
 	client.
 		Post("/api/collections", `{
-			"name": "Hello"
+			"name": "Hello",
+			"color": 5
 		}`).
 		AssertStatus(http.StatusCreated)
 
@@ -50,6 +54,7 @@ func TestDestroyNotFound(t *testing.T) {
 		AssertHas("collections", map[string]any{
 			"id":      1,
 			"name":    "Hello",
+			"color":   5,
 			"user_id": 1,
 		})
 
@@ -62,16 +67,18 @@ func TestDestroyNotFound(t *testing.T) {
 		AssertHas("collections", map[string]any{
 			"id":      1,
 			"name":    "Hello",
+			"color":   5,
 			"user_id": 1,
 		})
 }
 
 func TestDestroySomeoneElsesCollection(t *testing.T) {
-	client, database := startup.CollectionsDestroy(t)
+	client, database := startup.Collections(t)
 
 	client.
 		Post("/api/collections", `{
-			"name": "Looking in a mirror"
+			"name": "Looking in a mirror",
+			"color": 5
 		}`).
 		AssertStatus(http.StatusCreated)
 
@@ -80,6 +87,7 @@ func TestDestroySomeoneElsesCollection(t *testing.T) {
 		AssertHas("collections", map[string]any{
 			"id":      1,
 			"name":    "Looking in a mirror",
+			"color":   5,
 			"user_id": 1,
 		})
 
@@ -93,12 +101,13 @@ func TestDestroySomeoneElsesCollection(t *testing.T) {
 		AssertHas("collections", map[string]any{
 			"id":      1,
 			"name":    "Looking in a mirror",
+			"color":   5,
 			"user_id": 1,
 		})
 }
 
 func TestDestroyInvalidId(t *testing.T) {
-	client, _ := startup.CollectionsDestroy(t)
+	client, _ := startup.Collections(t)
 
 	client.
 		Delete("/api/collections/one").

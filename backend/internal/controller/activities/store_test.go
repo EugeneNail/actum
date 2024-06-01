@@ -10,11 +10,12 @@ import (
 )
 
 func TestStoreValidData(t *testing.T) {
-	client, database := startup.ActivitiesStore(t)
+	client, database := startup.Activities(t)
 
 	client.
 		Post("/api/collections", `{
-			"name": "Habits"
+			"name": "Habits",
+			"color": 3
 		}`).
 		AssertStatus(http.StatusCreated)
 
@@ -22,6 +23,7 @@ func TestStoreValidData(t *testing.T) {
 		AssertCount("collections", 1).
 		AssertHas("collections", map[string]any{
 			"name":    "Habits",
+			"color":   3,
 			"user_id": 1,
 		})
 
@@ -44,11 +46,12 @@ func TestStoreValidData(t *testing.T) {
 }
 
 func TestStoreInvalidData(t *testing.T) {
-	client, database := startup.ActivitiesStore(t)
+	client, database := startup.Activities(t)
 
 	client.
 		Post("/api/collections", `{
-			"name": "Work"
+			"name": "Work",
+			"color": 3
 		}`).
 		AssertStatus(http.StatusCreated)
 
@@ -56,6 +59,7 @@ func TestStoreInvalidData(t *testing.T) {
 		AssertCount("collections", 1).
 		AssertHas("collections", map[string]any{
 			"name":    "Work",
+			"color":   3,
 			"user_id": 1,
 		})
 
@@ -72,11 +76,12 @@ func TestStoreInvalidData(t *testing.T) {
 }
 
 func TestStoreDuplicate(t *testing.T) {
-	client, database := startup.ActivitiesStore(t)
+	client, database := startup.Activities(t)
 
 	client.
 		Post("/api/collections", `{
-			"name": "Sleep"
+			"name": "Sleep",
+			"color": 3
 		}`).
 		AssertStatus(http.StatusCreated)
 
@@ -84,6 +89,7 @@ func TestStoreDuplicate(t *testing.T) {
 		AssertCount("collections", 1).
 		AssertHas("collections", map[string]any{
 			"name":    "Sleep",
+			"color":   3,
 			"user_id": 1,
 		})
 
@@ -124,11 +130,12 @@ func TestStoreDuplicate(t *testing.T) {
 }
 
 func TestStoreToSomeonesCollection(t *testing.T) {
-	client, database := startup.ActivitiesStore(t)
+	client, database := startup.Activities(t)
 
 	client.
 		Post("/api/collections", `{
-			"name":"Household"
+			"name":"Household",
+			"color": 3
 		}`).
 		AssertStatus(http.StatusCreated)
 
@@ -136,6 +143,7 @@ func TestStoreToSomeonesCollection(t *testing.T) {
 		AssertCount("collections", 1).
 		AssertHas("collections", map[string]any{
 			"name":    "Household",
+			"color":   3,
 			"user_id": 1,
 		})
 
@@ -152,11 +160,12 @@ func TestStoreToSomeonesCollection(t *testing.T) {
 }
 
 func TestStoreToNonexistentCollection(t *testing.T) {
-	client, database := startup.ActivitiesStore(t)
+	client, database := startup.Activities(t)
 
 	client.
 		Post("/api/collections", `{
-			"name": "Workout"
+			"name": "Workout",
+			"color": 3
 		}`).
 		AssertStatus(http.StatusCreated)
 
@@ -164,6 +173,7 @@ func TestStoreToNonexistentCollection(t *testing.T) {
 		AssertCount("collections", 1).
 		AssertHas("collections", map[string]any{
 			"name":    "Workout",
+			"color":   3,
 			"user_id": 1,
 		})
 
@@ -180,11 +190,12 @@ func TestStoreToNonexistentCollection(t *testing.T) {
 }
 
 func TestStoreTooMany(t *testing.T) {
-	client, database := startup.ActivitiesStore(t)
+	client, database := startup.Activities(t)
 
 	client.
 		Post("/api/collections", `{
-			"name":"Health"
+			"name":"Health",
+			"color": 3
 		}`).
 		AssertStatus(http.StatusCreated)
 
@@ -213,11 +224,12 @@ func TestStoreTooMany(t *testing.T) {
 }
 
 func TestStoreValidation(t *testing.T) {
-	client, database := startup.ActivitiesStore(t)
+	client, database := startup.Activities(t)
 
 	client.
 		Post("/api/collections", `{
-			"name": "Test Collection"
+			"name": "Test Collection",
+			"color": 3
 		}`).
 		AssertStatus(http.StatusCreated)
 

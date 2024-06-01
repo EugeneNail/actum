@@ -14,7 +14,7 @@ import (
 )
 
 func TestStoreValidData(t *testing.T) {
-	client, database := startup.RecordsStore(t)
+	client, database := startup.Records(t)
 
 	collections.NewFactory(1).Make(1).Insert()
 	activities.NewFactory(1, 1).Make(5).Insert().List()
@@ -50,7 +50,7 @@ func TestStoreValidData(t *testing.T) {
 }
 
 func TestStoreInvalidData(t *testing.T) {
-	client, database := startup.RecordsStore(t)
+	client, database := startup.Records(t)
 
 	collections.NewFactory(1).Make(1).Insert()
 	activities.NewFactory(1, 1).Make(5).Insert().List()
@@ -78,7 +78,7 @@ func TestStoreInvalidData(t *testing.T) {
 }
 
 func TestStoreMissingActivity(t *testing.T) {
-	client, database := startup.RecordsStore(t)
+	client, database := startup.Records(t)
 
 	collections.NewFactory(1).Make(1).Insert()
 	activities.NewFactory(1, 1).Make(2).Insert().List()
@@ -97,7 +97,7 @@ func TestStoreMissingActivity(t *testing.T) {
 }
 
 func TestStoreConflictDate(t *testing.T) {
-	client, database := startup.RecordsStore(t)
+	client, database := startup.Records(t)
 
 	collections.NewFactory(1).Make(1).Insert()
 	activities.NewFactory(1, 1).Make(5).Insert().List()

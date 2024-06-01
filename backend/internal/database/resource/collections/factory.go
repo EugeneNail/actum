@@ -4,6 +4,7 @@ import (
 	"github.com/EugeneNail/actum/internal/database/mysql"
 	"github.com/EugeneNail/actum/internal/service/fake"
 	"github.com/EugeneNail/actum/internal/service/tests"
+	"math/rand/v2"
 )
 
 type Factory struct {
@@ -19,21 +20,22 @@ func (factory *Factory) Make(count int) *Factory {
 	factory.collections = make([]Collection, count)
 
 	for i := 0; i < count; i++ {
-		factory.collections[i] = New(fake.SentenceLength(1, 3), factory.userId)
+		factory.collections[i] = New(fake.SentenceLength(1, 3), rand.IntN(5)+1, factory.userId)
 	}
 
 	return factory
 }
 
 func (factory *Factory) Insert() *Factory {
-	const columnsCount = 2
+	const columnsCount = 3
 	var placeholders string
 	values := make([]any, len(factory.collections)*columnsCount)
 
 	for i, collection := range factory.collections {
-		placeholders += "(?, ?),"
+		placeholders += "(?, ?, ?),"
 		values[columnsCount*i+0] = collection.Name
-		values[columnsCount*i+1] = factory.userId
+		values[columnsCount*i+1] = collection.Color
+		values[columnsCount*i+2] = factory.userId
 	}
 	placeholders = placeholders[:len(placeholders)-1]
 
@@ -42,7 +44,7 @@ func (factory *Factory) Insert() *Factory {
 	tests.Check(err)
 
 	_, err = db.Exec(
-		`INSERT INTO collections (name, user_id) VALUES`+placeholders,
+		`INSERT INTO collections (name, color, user_id) VALUES`+placeholders,
 		values...,
 	)
 	tests.Check(err)

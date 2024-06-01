@@ -10,7 +10,7 @@ import (
 )
 
 func TestLoginValidData(t *testing.T) {
-	client, database := startup.UsersLogin(t)
+	client, database := startup.Users(t)
 
 	client.
 		Post("/api/users", `{
@@ -44,7 +44,7 @@ func TestLoginValidData(t *testing.T) {
 }
 
 func TestLoginInvalidData(t *testing.T) {
-	client, database := startup.UsersLogin(t)
+	client, database := startup.Users(t)
 
 	client.
 		Post("/api/users/login", `{
@@ -58,7 +58,7 @@ func TestLoginInvalidData(t *testing.T) {
 }
 
 func TestLoginIncorrectEmail(t *testing.T) {
-	client, database := startup.UsersLogin(t)
+	client, database := startup.Users(t)
 
 	client.
 		Post("/api/users", `{
@@ -87,7 +87,7 @@ func TestLoginIncorrectEmail(t *testing.T) {
 }
 
 func TestLoginIncorrectPassword(t *testing.T) {
-	client, database := startup.UsersLogin(t)
+	client, database := startup.Users(t)
 
 	client.
 		Post("/api/users", `{
