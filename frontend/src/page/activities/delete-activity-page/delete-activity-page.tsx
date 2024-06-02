@@ -46,7 +46,7 @@ export default function DeleteActivityPage() {
                 <p className="justified">You can also edit activity. Do you want to delete the activity?</p>
                 <FormButtons>
                     <FormBackButton/>
-                    <FormSubmitButton label="Delete" color={Color.red} onClick={destroy}/>
+                    <FormSubmitButton label="Delete" color={Color.Red} onClick={destroy}/>
                 </FormButtons>
             </Form>
         </div>

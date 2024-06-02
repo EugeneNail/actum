@@ -19,22 +19,129 @@
     border-radius: 1000px
 
   &.primary
-    background: $accent-strong
-    color: $font-strong
     font-weight: bold
+    color: $font-strong
 
-    &:hover
-      background: darken($accent-strong, 5%)
+    &.red
+      background: $red-strong
+      color: $font-strong
 
-    &:active
-      background: darken($accent-strong, 3%)
+      @media (pointer: fine)
+        &:hover
+          background: darken($red-strong, 5%)
+
+      &:active
+        background: darken($red-strong, 3%)
+
+    &.orange
+      background: $orange-strong
+
+      @media (pointer: fine)
+        &:hover
+          background: darken($orange-strong, 5%)
+
+      &:active
+        background: darken($orange-strong, 3%)
+
+    &.yellow
+      background: $yellow-strong
+
+      @media (pointer: fine)
+        &:hover
+          background: darken($yellow-strong, 5%)
+
+      &:active
+        background: darken($yellow-strong, 3%)
+
+    &.green
+      background: $green-strong
+
+      @media (pointer: fine)
+        &:hover
+          background: darken($green-strong, 5%)
+
+      &:active
+        background: darken($green-strong, 3%)
+
+    &.blue
+      background: $blue-strong
+
+      @media (pointer: fine)
+        &:hover
+          background: darken($blue-strong, 5%)
+
+      &:active
+        background: darken($blue-strong, 3%)
+
+    &.purple
+      background: $purple-strong
+
+      @media (pointer: fine)
+        &:hover
+          background: darken($purple-strong, 5%)
+
+      &:active
+        background: darken($purple-strong, 3%)
+
 
   &.secondary
-    background: $accent-weak
-    color: $accent-strong
 
-    &:hover
-      background: darken($accent-weak, 3%)
+    &.red
+      color: $red-strong
+      background: $red-weak
 
-    &:active
-      background: darken($accent-weak, 4%)
+      &:hover
+        background: darken($red-weak, 3%)
+
+      &:active
+        background: darken($red-weak, 4%)
+
+    &.orange
+      color: $orange-strong
+      background: $orange-weak
+
+      &:hover
+        background: darken($orange-weak, 3%)
+
+      &:active
+        background: darken($orange-weak, 4%)
+
+    &.yellow
+      color: $yellow-strong
+      background: $yellow-weak
+
+      &:hover
+        background: darken($yellow-weak, 3%)
+
+      &:active
+        background: darken($yellow-weak, 4%)
+
+    &.green
+      color: $green-strong
+      background: $green-weak
+
+      &:hover
+        background: darken($green-weak, 3%)
+
+      &:active
+        background: darken($green-weak, 4%)
+
+    &.blue
+      color: $blue-strong
+      background: $blue-weak
+
+      &:hover
+        background: darken($blue-weak, 3%)
+
+      &:active
+        background: darken($blue-weak, 4%)
+
+    &.purple
+      color: $purple-strong
+      background: $purple-weak
+
+      &:hover
+        background: darken($purple-weak, 3%)
+
+      &:active
+        background: darken($purple-weak, 4%)
