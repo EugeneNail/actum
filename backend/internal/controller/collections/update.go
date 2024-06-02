@@ -12,7 +12,8 @@ import (
 )
 
 type updateInput struct {
-	Name string `json:"name" rules:"required|min:3|max:20|sentence"`
+	Name  string `json:"name" rules:"required|min:3|max:20|sentence"`
+	Color int    `json:"color" rules:"required|min:1|max:6"`
 }
 
 func (controller *Controller) Update(writer http.ResponseWriter, request *http.Request) {
@@ -53,18 +54,8 @@ func (controller *Controller) Update(writer http.ResponseWriter, request *http.R
 		return
 	}
 
-	hasDuplicate, err := controller.hasDuplicate(input.Name, user)
-	if err != nil {
-		response.Send(err, http.StatusInternalServerError)
-		return
-	}
-
-	if hasDuplicate {
-		response.Send(map[string]string{"name": "Collection already exists"}, http.StatusConflict)
-		return
-	}
-
 	collection.Name = input.Name
+	collection.Color = input.Color
 	if err := controller.dao.Save(&collection); err != nil {
 		response.Send(err, http.StatusInternalServerError)
 		return

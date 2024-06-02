@@ -1,0 +1,2 @@
+ALTER TABLE collections
+    ADD color SMALLINT NOT NULL

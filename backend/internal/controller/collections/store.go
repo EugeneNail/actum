@@ -10,7 +10,8 @@ import (
 )
 
 type storeInput struct {
-	Name string `json:"name" rules:"required|min:3|max:20|sentence"`
+	Name  string `json:"name" rules:"required|min:3|max:20|sentence"`
+	Color int    `json:"color" rules:"required|min:1|max:6"`
 }
 
 func (controller *Controller) Store(writer http.ResponseWriter, request *http.Request) {
@@ -51,7 +52,7 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 		return
 	}
 
-	collection := collections.New(input.Name, user.Id)
+	collection := collections.New(input.Name, input.Color, user.Id)
 	if err := controller.dao.Save(&collection); err != nil {
 		response.Send(err, http.StatusInternalServerError)
 		return

@@ -1,10 +1,10 @@
 import "./icon8.sass"
 import classNames from "classnames";
-import {icons8Names} from "./icons8.ts";
+import {Icons8, icons8Names} from "./icons8.ts";
 
 type Props = {
     className?: string
-    id: number
+    id: Icons8
 }
 
 export default function Icon8({className, id}: Props) {

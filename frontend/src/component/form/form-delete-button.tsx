@@ -9,7 +9,7 @@ type Props = {
 
 export default function FormDeleteButton({onClick}: Props) {
     return (
-        <Button className="form__delete-button" even style={ButtonStyle.Secondary} color={Color.red} onClick={onClick}>
+        <Button className="form__delete-button" even style={ButtonStyle.Secondary} color={Color.Red} onClick={onClick}>
             <Icon className="form__delete-button-icon" name="delete" bold/>
         </Button>
     )

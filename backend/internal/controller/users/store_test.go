@@ -11,7 +11,7 @@ import (
 )
 
 func TestStoreValidData(t *testing.T) {
-	client, database := startup.UsersStore(t)
+	client, database := startup.Users(t)
 
 	client.
 		Post("/api/users", `{
@@ -31,7 +31,7 @@ func TestStoreValidData(t *testing.T) {
 }
 
 func TestStoreInvalidData(t *testing.T) {
-	client, database := startup.UsersStore(t)
+	client, database := startup.Users(t)
 
 	client.
 		Post("/api/users", `{
@@ -47,7 +47,7 @@ func TestStoreInvalidData(t *testing.T) {
 }
 
 func TestStoreDuplicateEmail(t *testing.T) {
-	client, database := startup.UsersStore(t)
+	client, database := startup.Users(t)
 
 	input := `{
 		"name": "John",

@@ -4,24 +4,31 @@
   min-height: fit-content
   padding: 20px
   display: grid
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr))
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr))
   gap: 70px 40px
   place-items: inherit
 
   &-button
-    border: 3px dotted $green-weak
+    border: 3px dashed $accent-weak
     border-radius: 10px
-    height: 50px
-    display: flex
-    align-items: center
-    justify-content: center
     cursor: pointer
+    height: 300px
 
     &:hover
-      border: 3px solid $green-weak
+      border: 3px dashed $accent-strong
+
+    &__title-container
+      height: 50px
+      display: flex
+      align-items: center
+      justify-content: center
+      border-bottom: 3px dashed $accent-weak
+
+    &:hover &__title-container
+      border-bottom: 3px dashed $accent-strong
 
     &__icon
-      color: $green-strong
+      color: $accent-strong
 
     &__label
       color: $font-strong

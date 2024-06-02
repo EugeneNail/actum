@@ -20,16 +20,19 @@ type Props = {
     children: ReactNode
 }
 
-export default function Button({className, color = Color.green, submit, even, round, shadowed, style = ButtonStyle.Primary, onClick, children}: Props) {
+export default function Button({className, color = Color.Green, submit, even, round, shadowed, style = ButtonStyle.Primary, onClick, children}: Props) {
     className = classNames(
         "button",
         className,
         {even: even},
         {round: round},
         {shadowed: shadowed},
-        {green: color == Color.green},
-        {yellow: color == Color.yellow},
-        {red: color == Color.red},
+        {green: color == Color.Green},
+        {yellow: color == Color.Yellow},
+        {red: color == Color.Red},
+        {blue: color == Color.Blue},
+        {orange: color == Color.Orange},
+        {purple: color == Color.Purple},
         {primary: style == ButtonStyle.Primary},
         {secondary: style == ButtonStyle.Secondary}
     )

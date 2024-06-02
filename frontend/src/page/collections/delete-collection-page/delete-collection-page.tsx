@@ -44,7 +44,7 @@ export default function DeleteCollectionPage() {
                 <p className="justified">Activities will also be removed from your records. You can also edit collection. Do you want to delete the collection?</p>
                 <FormButtons>
                     <FormBackButton/>
-                    <FormSubmitButton label="Delete" color={Color.red} onClick={destroy}/>
+                    <FormSubmitButton label="Delete" color={Color.Red} onClick={destroy}/>
                 </FormButtons>
             </Form>
         </div>

@@ -7,11 +7,12 @@ import (
 )
 
 func TestShow(t *testing.T) {
-	client, database := startup.CollectionsShow(t)
+	client, database := startup.Collections(t)
 
 	client.
 		Post("/api/collections", `{
-			"name": "Workout"
+			"name": "Workout",
+			"color": 6
 		}`).
 		AssertStatus(http.StatusCreated)
 
@@ -19,6 +20,7 @@ func TestShow(t *testing.T) {
 		AssertCount("collections", 1).
 		AssertHas("collections", map[string]any{
 			"name":    "Workout",
+			"color":   6,
 			"user_id": 1,
 		})
 

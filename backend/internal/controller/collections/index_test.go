@@ -9,7 +9,7 @@ import (
 )
 
 func TestIndexEmpty(t *testing.T) {
-	client, database := startup.CollectionsIndex(t)
+	client, database := startup.Collections(t)
 
 	database.AssertCount("collections", 0)
 
@@ -37,14 +37,14 @@ func TestIndexMany(t *testing.T) {
 }
 
 func performByCount(count int, t *testing.T) {
-	client, _ := startup.CollectionsIndex(t)
+	client, database := startup.Collections(t)
 
 	newCollections := collections.NewFactory(1).
 		Make(count).
 		Insert().
 		List()
 
-	//database.AssertCount("collections", count)
+	database.AssertCount("collections", count)
 
 	var endpointCollections []collections.Collection
 	client.
@@ -61,7 +61,9 @@ func performByCount(count int, t *testing.T) {
 	})
 
 	for i, collection := range endpointCollections {
-		if collection.Name != newCollections[i].Name || collection.UserId != 1 {
+		if collection.Name != newCollections[i].Name ||
+			collection.UserId != 1 ||
+			collection.Color != newCollections[i].Color {
 			t.Errorf("Collection %+v must be %+v", collection, newCollections[i])
 		}
 	}

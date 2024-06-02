@@ -7,16 +7,18 @@ import (
 )
 
 func TestDestroy(t *testing.T) {
-	client, database := startup.ActivitiesDestroy(t)
+	client, database := startup.Activities(t)
 
 	client.
 		Post("/api/collections", `{
-			"name": "fabulous collection"
+			"name": "fabulous collection",
+			"color": 2
 		}`).
 		AssertStatus(http.StatusCreated)
 
 	database.AssertHas("collections", map[string]any{
 		"name":    "fabulous collection",
+		"color":   2,
 		"user_id": 1,
 	})
 
@@ -41,16 +43,18 @@ func TestDestroy(t *testing.T) {
 }
 
 func TestDestroyInvalidId(t *testing.T) {
-	client, database := startup.ActivitiesDestroy(t)
+	client, database := startup.Activities(t)
 
 	client.
 		Post("/api/collections", `{
-			"name": "fabulous collection"
+			"name": "fabulous collection",
+			"color": 2
 		}`).
 		AssertStatus(http.StatusCreated)
 
 	database.AssertHas("collections", map[string]any{
 		"name":    "fabulous collection",
+		"color":   2,
 		"user_id": 1,
 	})
 
@@ -84,7 +88,7 @@ func TestDestroyInvalidId(t *testing.T) {
 }
 
 func TestDestroyNotFound(t *testing.T) {
-	client, database := startup.ActivitiesDestroy(t)
+	client, database := startup.Activities(t)
 
 	database.AssertCount("activities", 0)
 	client.
@@ -93,11 +97,12 @@ func TestDestroyNotFound(t *testing.T) {
 }
 
 func TestDestroySomeoneElsesActivity(t *testing.T) {
-	client, database := startup.ActivitiesDestroy(t)
+	client, database := startup.Activities(t)
 
 	client.
 		Post("/api/collections", `{
-			"name": "fabulous collection"
+			"name": "fabulous collection",
+			"color": 2
 		}`).
 		AssertStatus(http.StatusCreated)
 
@@ -105,6 +110,7 @@ func TestDestroySomeoneElsesActivity(t *testing.T) {
 		AssertCount("collections", 1).
 		AssertHas("collections", map[string]any{
 			"name":    "fabulous collection",
+			"color":   2,
 			"user_id": 1,
 		})
 

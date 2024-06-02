@@ -8,11 +8,12 @@ import (
 )
 
 func TestUpdateValidData(t *testing.T) {
-	client, database := startup.CollectionsUpdate(t)
+	client, database := startup.Collections(t)
 
 	client.
 		Post("/api/collections", `{
-			"name": "Exercises"
+			"name": "Exercises",
+			"color": 2
 		}`).
 		AssertStatus(http.StatusCreated)
 
@@ -21,12 +22,14 @@ func TestUpdateValidData(t *testing.T) {
 		AssertHas("collections", map[string]any{
 			"id":      1,
 			"name":    "Exercises",
+			"color":   2,
 			"user_id": 1,
 		})
 
 	client.
 		Put("/api/collections/1", `{
-			"name": "Sport"
+			"name": "Sport",
+			"color": 3
 		}`).
 		AssertStatus(http.StatusNoContent)
 
@@ -34,17 +37,19 @@ func TestUpdateValidData(t *testing.T) {
 		AssertHas("collections", map[string]any{
 			"id":      1,
 			"name":    "Sport",
+			"color":   3,
 			"user_id": 1,
 		}).
 		AssertCount("collections", 1)
 }
 
 func TestUpdateInvalidData(t *testing.T) {
-	client, database := startup.CollectionsUpdate(t)
+	client, database := startup.Collections(t)
 
 	client.
 		Post("/api/collections", `{
-			"name": "30"
+			"name": "30",
+			"color": 77
 		}`).
 		AssertStatus(http.StatusUnprocessableEntity).
 		AssertHasValidationErrors([]string{"name"})
@@ -52,16 +57,18 @@ func TestUpdateInvalidData(t *testing.T) {
 	database.
 		AssertCount("collections", 0).
 		AssertLacks("collections", map[string]any{
-			"name": "30",
+			"name":  "30",
+			"color": 77,
 		})
 }
 
 func TestUpdateNotFound(t *testing.T) {
-	client, database := startup.CollectionsUpdate(t)
+	client, database := startup.Collections(t)
 
 	client.
 		Post("/api/collections", `{
-			"name": "Wor"
+			"name": "Wor",
+			"color": 2
 		}`).
 		AssertStatus(http.StatusCreated)
 
@@ -70,12 +77,14 @@ func TestUpdateNotFound(t *testing.T) {
 		AssertHas("collections", map[string]any{
 			"id":      1,
 			"name":    "Wor",
+			"color":   2,
 			"user_id": 1,
 		})
 
 	client.
 		Put("/api/collections/2", `{
-			"name": "Work"
+			"name": "Work",
+			"color": 3
 		}`).
 		AssertStatus(http.StatusNotFound)
 
@@ -84,39 +93,18 @@ func TestUpdateNotFound(t *testing.T) {
 		AssertHas("collections", map[string]any{
 			"id":      1,
 			"name":    "Wor",
+			"color":   2,
 			"user_id": 1,
 		})
 }
 
-func TestUpdateDuplicate(t *testing.T) {
-	client, database := startup.CollectionsUpdate(t)
-
-	client.
-		Post("/api/collections", `{
-			"name": "sport"	
-		}`).
-		AssertStatus(http.StatusCreated)
-
-	client.
-		Put("/api/collections/1", `{
-			"name": "SpOrt"	
-		}`).
-		AssertStatus(http.StatusConflict).
-		AssertHasValidationErrors([]string{"name"})
-
-	database.
-		AssertCount("collections", 1).
-		AssertLacks("collections", map[string]any{
-			"name": "SpOrt",
-		})
-}
-
 func TestUpdateSomeoneElsesCollection(t *testing.T) {
-	client, database := startup.CollectionsUpdate(t)
+	client, database := startup.Collections(t)
 
 	client.
 		Post("/api/collections", `{
-			"name": "Travelling"
+			"name": "Travelling",
+			"color": 2
 		}`).
 		AssertStatus(http.StatusCreated)
 
@@ -125,6 +113,7 @@ func TestUpdateSomeoneElsesCollection(t *testing.T) {
 		AssertHas("collections", map[string]any{
 			"id":      1,
 			"name":    "Travelling",
+			"color":   2,
 			"user_id": 1,
 		})
 
@@ -132,7 +121,8 @@ func TestUpdateSomeoneElsesCollection(t *testing.T) {
 
 	client.
 		Put("/api/collections/1", `{
-			"name": "LolIHackedYou"
+			"name": "LolIHackedYou",
+			"color": 5
 		}`).
 		AssertStatus(http.StatusForbidden)
 
@@ -141,6 +131,7 @@ func TestUpdateSomeoneElsesCollection(t *testing.T) {
 		AssertHas("collections", map[string]any{
 			"id":      1,
 			"name":    "Travelling",
+			"color":   2,
 			"user_id": 1,
 		})
 }
@@ -154,6 +145,12 @@ func TestUpdateValidation(t *testing.T) {
 		{"Only numbers", "name", "234 4524"},
 		{"Dash", "name", "Too long-short"},
 		{"Long", "name", "Making my cat nice"},
+		{"Color 1", "color", 1},
+		{"Color 2", "color", 2},
+		{"Color 3", "color", 3},
+		{"Color 4", "color", 4},
+		{"Color 5", "color", 5},
+		{"Color 6", "color", 6},
 	})
 
 	tests.AssertValidationFail[storeInput](t, []tests.ValidationTest{
@@ -162,5 +159,7 @@ func TestUpdateValidation(t *testing.T) {
 		{"Has comma", "name", "Eating, sleeping and working"},
 		{"Has period", "name", "Today is today. Tomorrow is tomorrow"},
 		{"Has other symbols", "name", "@'!?;"},
+		{"Less than min", "color", 0},
+		{"Nonexistent", "color", 7},
 	})
 }

@@ -16,8 +16,8 @@ func NewDAO(db *sql.DB) *DAO {
 func (dao *DAO) Find(id int) (Collection, error) {
 	var collection Collection
 
-	err := dao.db.QueryRow(`SELECT * FROM collections WHERE id = ?`, id).
-		Scan(&collection.Id, &collection.Name, &collection.UserId)
+	err := dao.db.QueryRow(`SELECT id, name, color, user_id FROM collections WHERE id = ?`, id).
+		Scan(&collection.Id, &collection.Name, &collection.Color, &collection.UserId)
 
 	if err != nil && err != sql.ErrNoRows {
 		return collection, fmt.Errorf("collection.Find(): %w", err)
@@ -29,14 +29,15 @@ func (dao *DAO) Find(id int) (Collection, error) {
 func (dao *DAO) Save(collection *Collection) error {
 	result, err := dao.db.Exec(`
 		INSERT INTO collections 
-		    (id, name, user_id)
+		    (id, name, color, user_id)
 		VALUES 
-		    (?, ?, ?)
+		    (?, ?, ?, ?)
 		ON DUPLICATE KEY UPDATE
 			id = VALUES(id),
 			name = VALUES(name),
+			color = VALUES(color),
 			user_id = VALUES(user_id);
-	`, collection.Id, collection.Name, collection.UserId)
+	`, collection.Id, collection.Name, collection.Color, collection.UserId)
 
 	if err != nil {
 		return fmt.Errorf("collection.Save(): %w", err)

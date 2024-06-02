@@ -42,7 +42,7 @@ func (controller *Controller) Index(writer http.ResponseWriter, request *http.Re
 func (controller *Controller) fetchCollections(userId int) ([]*collections.Collection, error) {
 	items := make([]*collections.Collection, 0)
 
-	rows, err := controller.db.Query(`SELECT * FROM collections WHERE user_id = ?`, userId)
+	rows, err := controller.db.Query(`SELECT id, name, color, user_id FROM collections WHERE user_id = ?`, userId)
 	defer rows.Close()
 	if err != nil {
 		return items, fmt.Errorf("fetchCollections(): %w", err)
@@ -51,7 +51,7 @@ func (controller *Controller) fetchCollections(userId int) ([]*collections.Colle
 	for rows.Next() {
 		collection := collections.Collection{}
 
-		err := rows.Scan(&collection.Id, &collection.Name, &collection.UserId)
+		err := rows.Scan(&collection.Id, &collection.Name, &collection.Color, &collection.UserId)
 		if err != nil {
 			return items, fmt.Errorf("fetchCollections(): %w", err)
 		}
