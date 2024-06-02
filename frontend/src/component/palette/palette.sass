@@ -1,0 +1,83 @@
+@import ../../variables
+
+.palette
+  margin-top: 50px
+  display: flex
+  flex-wrap: wrap
+  justify-content: space-between
+  gap: 5px
+
+  &__input
+    display: none
+
+  &__check-mark
+    color: $font-strong
+
+  &__color-box
+    display: grid
+    place-items: center
+    aspect-ratio: 1 / 1
+    border-radius: 50px
+    cursor: pointer
+    height: 50px
+    transition: 0.3s
+
+    &.red
+      background: $red
+
+      @media (pointer: fine)
+        &:hover
+          background: $red-strong
+
+      &.selected
+        background: $red-strong
+
+    &.orange
+      background: $orange
+
+      @media (pointer: fine)
+        &:hover
+          background: $orange-strong
+
+      &.selected
+        background: $orange-strong
+
+    &.yellow
+      background: $yellow
+
+      @media (pointer: fine)
+        &:hover
+          background: $yellow-strong
+
+      &.selected
+        background: $yellow-strong
+
+    &.green
+      background: $green
+
+      @media (pointer: fine)
+        &:hover
+          background: $green-strong
+
+      &.selected
+        background: $green-strong
+
+    &.blue
+      background: $blue
+
+      @media (pointer: fine)
+        &:hover
+          background: $blue-strong
+
+      &.selected
+        background: $blue-strong
+
+    &.purple
+      background: $purple
+
+      @media (pointer: fine)
+        &:hover
+          background: $purple-strong
+
+      &.selected
+        background: $purple-strong
