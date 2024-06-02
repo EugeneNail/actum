@@ -23,8 +23,10 @@ export default function CollectionsPage() {
                 <CollectionCard key={collection.id} collection={collection}/>
             )}
             <div className="collections-page-button" onClick={() => navigate("./new")}>
-                <Icon name="add" className="collections-page-button__icon" bold/>
-                <p className="collections-page-button__label">Add collection</p>
+                <div className="collections-page-button__title-container">
+                    <Icon name="add" className="collections-page-button__icon" bold/>
+                    <p className="collections-page-button__label">Add collection</p>
+                </div>
             </div>
         </div>
     )

@@ -10,13 +10,17 @@ import FormButtons from "../../../component/form/form-button-container.tsx";
 import FormBackButton from "../../../component/form/form-back-button.tsx";
 import FormSubmitButton from "../../../component/form/form-submit-button.tsx";
 import FormDeleteButton from "../../../component/form/form-delete-button.tsx";
+import Palette from "../../../component/palette/palette.tsx";
+import {Color} from "../../../model/color.tsx";
 
 class Payload {
     name = ""
+    color: Color = Color.Red
 }
 
 class Errors {
     name = ""
+    color = ""
 }
 
 export default function SaveCollectionPage() {
@@ -28,11 +32,13 @@ export default function SaveCollectionPage() {
     const {id} = useParams()
     const [initialName, setInitialName] = useState("")
 
+
     useEffect(() => {
         if (!willStore) {
             fetchCollection()
         }
     }, [])
+
 
     async function fetchCollection() {
         const {data, status} = await http.get(`/api/collections/${id}`)
@@ -45,9 +51,13 @@ export default function SaveCollectionPage() {
 
         if (status == 200) {
             setInitialName(data.name)
-            setState({name: data.name})
+            setState({
+                name: data.name,
+                color: data.color
+            })
         }
     }
+
 
     async function save() {
         if (willStore) {
@@ -57,8 +67,12 @@ export default function SaveCollectionPage() {
         }
     }
 
+
     async function store() {
-        const {data, status} = await http.post("/api/collections", state)
+        const {data, status} = await http.post("/api/collections", {
+            name: state.name,
+            color: Number(state.color)
+        })
 
         if (status == 422 || status == 409) {
             setErrors(data)
@@ -68,8 +82,12 @@ export default function SaveCollectionPage() {
         navigate("/collections")
     }
 
+
     async function update() {
-        const {data, status} = await http.put(`/api/collections/${id}`, {name: state.name})
+        const {data, status} = await http.put(`/api/collections/${id}`, {
+            name: state.name,
+            color: Number(state.color)
+        })
 
         if (status == 403) {
             notification.pop(data)
@@ -88,6 +106,7 @@ export default function SaveCollectionPage() {
         <div className="save-collection-page page">
             <Form title={willStore ? "New collection" : "Collection"} subtitle={initialName ? initialName : ""}>
                 <Field name="name" label="Name" icon="category" value={state.name} error={errors.name} onChange={setField}/>
+                <Palette name="color" value={state.color} onChange={setField}/>
                 <FormButtons>
                     <FormBackButton/>
                     <FormSubmitButton label="Save" onClick={save}/>

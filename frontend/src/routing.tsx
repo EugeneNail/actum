@@ -4,7 +4,7 @@ import LoginPage from "./page/guest-page/login-page.tsx";
 import SignupPage from "./page/guest-page/signup-page.tsx";
 import DefaultLayout from "./layout/default-layout.tsx";
 import CollectionsPage from "./page/collections/collections-page/collections-page.tsx";
-import SaveCollectionPage from "./page/collections/save-collection-page/save-collections-page.tsx";
+import SaveCollectionPage from "./page/collections/save-collection-page/save-collection-page.tsx";
 import DeleteCollectionPage from "./page/collections/delete-collection-page/delete-collection-page.tsx";
 import SaveActivityPage from "./page/activities/save-activity-page/save-activity-page.tsx";
 import DeleteActivityPage from "./page/activities/delete-activity-page/delete-activity-page.tsx";

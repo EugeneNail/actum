@@ -1,6 +1,10 @@
 @import ../../variables
 
 .collection-card
+  border-radius: 20px
+  background: $background
+  padding-bottom: 20px
+
   &__title-container
     cursor: pointer
     height: 50px
@@ -10,6 +14,7 @@
     background: $background
     border-radius: 10px 10px 0 0
     transition: 0.3s
+    border-bottom: 1px $delimiter dashed
 
     &:hover
       background: lighten($background, 2%)
@@ -17,42 +22,114 @@
   &__title
     pointer-events: none
     font-size: 20px
-    font-weight: normal
-    color: $font-strong
+    font-weight: bold
+
+    &.red
+      color: $red-strong
+
+    &.yellow
+      color: $yellow-strong
+
+    &.orange
+      color: $orange-strong
+
+    &.green
+      color: $green-strong
+
+    &.blue
+      color: $blue-strong
+
+    &.purple
+      color: $purple-strong
 
   &__activities
     margin-top: 10px
-    display: grid
-    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr))
-    gap: 10px
+    padding: 10px
+    display: flex
+    flex-wrap: wrap
+    justify-content: center
+    gap: 40px 10px
 
   &-button
-    width: 100%
+    width: 80px
     border: 3px dotted $background
     border-radius: 10px
     display: flex
+    flex-direction: column
     align-items: center
-    height: 50px
     cursor: pointer
 
     &:hover
       border: 3px solid $background
 
     &__icon-container
+      height: 45px
       display: grid
       place-items: center
       aspect-ratio: 1 / 1
-      height: 100%
       outline: 3px dotted $green-weak
       border-radius: 10px
 
-    &:hover &__icon-container
-      outline: 3px solid $green-strong
+      &.red
+        outline: 2px dashed $red
+
+    &__icon-container.red
+      outline: 2px dashed $red
+
+    &:hover &__icon-container.red
+      outline: 2px dashed $red-strong
+
+    &__icon-container.yellow
+      outline: 2px dashed $yellow
+
+    &:hover &__icon-container.yellow
+      outline: 2px dashed $yellow-strong
+
+    &__icon-container.orange
+      outline: 2px dashed $orange
+
+    &:hover &__icon-container.orange
+      outline: 2px dashed $orange-strong
+
+    &__icon-container.green
+      outline: 2px dashed $green
+
+    &:hover &__icon-container.green
+      outline: 2px dashed $green-strong
+
+    &__icon-container.blue
+      outline: 2px dashed $blue
+
+    &:hover &__icon-container.blue
+      outline: 2px dashed $blue-strong
+
+    &__icon-container.purple
+      outline: 2px dashed $purple
+
+    &:hover &__icon-container.purple
+      outline: 2px dashed $purple-strong
 
     &__icon
-      color: $green-strong
+      &.red
+        color: $red-strong
+
+      &.orange
+        color: $orange-strong
+
+      &.yellow
+        color: $yellow-strong
+
+      &.green
+        color: $green-strong
+
+      &.blue
+        color: $blue-strong
+
+      &.purple
+        color: $purple-strong
 
     &__label
+      margin-top: 2px
       text-align: center
       width: 100%
       padding: 5px
