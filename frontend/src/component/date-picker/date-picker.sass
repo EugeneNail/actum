@@ -1,0 +1,58 @@
+@import ../../variables
+
+.date-picker
+
+  &__input
+
+  &__calendar
+    position: absolute
+    left: 0
+    top: 0
+    width: 100%
+    background: $background
+    min-height: 100vh
+    z-index: 2
+    display: grid
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr))
+    justify-content: center
+    gap: 50px
+    padding: 30px
+
+  &__month
+    border-radius: 10px
+    background: lighten($background, 2%)
+
+  &__month-name
+    text-align: center
+    padding: 20px
+
+  &__month-days
+    padding: 5px
+    display: grid
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr
+    gap: 5px
+
+  &__day
+    color: lighten($font-medium, 10%)
+    display: grid
+    place-items: center
+    cursor: pointer
+    aspect-ratio: 1 / 1
+    border-radius: 3px
+
+    &.weekday
+      font-weight: bold
+      pointer-events: none
+
+    @media (pointer: fine)
+      &:hover
+        background: $accent-weak
+
+    &.inactive
+      pointer-events: none
+      color: transparent
+
+    &.selected
+      background: $accent
+      color: $font-strong
+
