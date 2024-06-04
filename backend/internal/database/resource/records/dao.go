@@ -21,7 +21,7 @@ func (dao *DAO) Find(id int) (Record, error) {
 	err := dao.db.QueryRow(`SELECT * FROM records WHERE id = ?`, id).
 		Scan(&record.Id, &record.Mood, &record.Date, &record.Notes, &record.UserId)
 
-	if err != nil || err != sql.ErrNoRows {
+	if err != nil && err != sql.ErrNoRows {
 		return record, fmt.Errorf("records.Find(): %w", err)
 	}
 
