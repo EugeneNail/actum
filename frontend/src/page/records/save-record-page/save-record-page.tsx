@@ -12,7 +12,7 @@ import ActivityPicker from "../../../component/activity-picker/activity-picker.t
 import {DatePicker} from "../../../component/date-picker/date-picker.tsx";
 import MoodSelect from "../../../component/mood-select/mood-select.tsx";
 import Notes from "../../../component/notes/notes.tsx";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 
 class Payload {
     mood = 0
@@ -35,11 +35,31 @@ export default function SaveRecordPage() {
     const notification = useNotificationContext()
     const willStore = window.location.pathname.includes("/new")
     const navigate = useNavigate()
+    const {id} = useParams<string>()
 
 
     useEffect(() => {
+        if (!willStore) {
+            fetchRecord()
+        }
         fetchCollections()
     }, [])
+
+
+    async function fetchRecord() {
+        const {data, status} = await http.get(`/api/records/${id}`)
+        if (status != 200) {
+            notification.pop(data)
+            return
+        }
+
+        setState({
+            mood: data.mood,
+            date: data.date,
+            notes: data.notes,
+            activities: data.activities
+        })
+    }
 
 
     async function fetchCollections() {
@@ -109,16 +129,30 @@ export default function SaveRecordPage() {
 
 
     async function update() {
+        const {data, status} = await http.put(`/api/records/${id}`, {
+            mood: Number(state.mood),
+            notes: state.notes,
+            activities: state.activities
+        })
 
+        if (status == 422) {
+            setErrors(data)
+            return
+        }
+
+        if (status == 404) {
+            notification.pop(data)
+            return
+        }
+
+        navigate("/records")
     }
-
-
 
     return (
         <div className="save-record-page page">
             <Form title={willStore ? "New record" : "Record"} subtitle={willStore ? "" : state.date}>
                 <MoodSelect name="mood" value={state.mood} onChange={setField}/>
-                <DatePicker name="date" label="Date" value={state.date} error={errors.date} onChange={setField}/>
+                {willStore && <DatePicker name="date" label="Date" value={state.date} error={errors.date} onChange={setField}/>}
                 <ActivityPicker collections={collections} value={state.activities} toggleActivity={addActivity}/>
                 <Notes label="Notes" name="notes" max={5000} value={state.notes} onChange={setField}/>
                 <FormButtons>
