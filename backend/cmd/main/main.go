@@ -50,6 +50,7 @@ func main() {
 	recordDAO := records.NewDAO(db)
 	recordController := recordController.New(db, recordDAO, activityDAO)
 	routing.Post("/api/records", recordController.Store)
+	routing.Put("/api/records/:id", recordController.Update)
 
 	handler := middleware.BuildPipeline(db, []middleware.Middleware{
 		middleware.SetHeaders,
