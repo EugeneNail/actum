@@ -8,8 +8,8 @@ import (
 )
 
 type ValidationTest struct {
-	Name  string
 	Field string
+	Name  string
 	Value any
 }
 

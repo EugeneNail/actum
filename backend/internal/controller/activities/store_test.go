@@ -240,28 +240,28 @@ func TestStoreValidation(t *testing.T) {
 		})
 
 	tests.AssertValidationSuccess[storeInput](t, []tests.ValidationTest{
-		{"Short", "name", "Run"},
-		{"Long", "name", "VeryEnoughLongName"},
-		{"One word", "name", "Washing"},
-		{"Multiple words", "name", "Wake up early"},
-		{"Numbers", "name", "Wake p at 6 am"},
-		{"Only numbers", "name", "123534"},
-		{"Dash", "name", "Work for 9-10 hours"},
-		{"First group", "icon", 100},
-		{"Ninth group", "icon", 903},
-		{"Third group", "icon", 333},
-		{"Existent collection", "collectionId", 1},
+		{"name", "Short", "Run"},
+		{"name", "Long", "VeryEnoughLongName"},
+		{"name", "One word", "Washing"},
+		{"name", "Multiple words", "Wake up early"},
+		{"name", "Numbers", "Wake p at 6 am"},
+		{"name", "Only numbers", "123534"},
+		{"name", "Dash", "Work for 9-10 hours"},
+		{"icon", "First group", 100},
+		{"icon", "Ninth group", 903},
+		{"icon", "Third group", 333},
+		{"collectionId", "Existent collection", 1},
 	})
 
 	tests.AssertValidationFail[storeInput](t, []tests.ValidationTest{
-		{"Too short", "name", "Ha"},
-		{"Too long", "name", strings.Repeat("Very", 5) + "LongName"},
-		{"Has comma", "name", "Sleep, sleep and sleep"},
-		{"Period", "name", "Better. Faster. Stronger."},
-		{"Other symbols", "name", "[]/\\?!"},
-		{"Zero group", "icon", 99},
-		{"Negative group", "icon", -100},
-		{"Nonexistent group", "icon", 1001},
-		{"Nonexistent collection", "collectionId", 2},
+		{"name", "Too short", "Ha"},
+		{"name", "Too long", strings.Repeat("Very", 5) + "LongName"},
+		{"name", "Has comma", "Sleep, sleep and sleep"},
+		{"name", "Period", "Better. Faster. Stronger."},
+		{"name", "Other symbols", "[]/\\?!"},
+		{"icon", "Zero group", 99},
+		{"icon", "Negative group", -100},
+		{"icon", "Nonexistent group", 1001},
+		{"collectionId", "Nonexistent collection", 2},
 	})
 }

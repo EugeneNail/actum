@@ -116,28 +116,28 @@ func TestStoreTooMany(t *testing.T) {
 
 func TestStoreValidation(t *testing.T) {
 	tests.AssertValidationSuccess[storeInput](t, []tests.ValidationTest{
-		{"Short", "name", "Run"},
-		{"One word", "name", "Sport"},
-		{"Multiple words", "name", "Cut nails"},
-		{"Numbers", "name", "Gaming for 8 hours"},
-		{"Only numbers", "name", "1263 123 6662 123"},
-		{"Dash", "name", "Sleep for 3-4 hours"},
-		{"Long", "name", "Go to the store for"},
-		{"Color 1", "color", 1},
-		{"Color 2", "color", 2},
-		{"Color 3", "color", 3},
-		{"Color 4", "color", 4},
-		{"Color 5", "color", 5},
-		{"Color 6", "color", 6},
+		{"name", "Short", "Run"},
+		{"name", "One word", "Sport"},
+		{"name", "Multiple words", "Cut nails"},
+		{"name", "Numbers", "Gaming for 8 hours"},
+		{"name", "Only numbers", "1263 123 6662 123"},
+		{"name", "Dash", "Sleep for 3-4 hours"},
+		{"name", "Long", "Go to the store for"},
+		{"color", "Color 1", 1},
+		{"color", "Color 2", 2},
+		{"color", "Color 3", 3},
+		{"color", "Color 4", 4},
+		{"color", "Color 5", 5},
+		{"color", "Color 6", 6},
 	})
 
 	tests.AssertValidationFail[storeInput](t, []tests.ValidationTest{
-		{"Too short", "name", "Be"},
-		{"Too long", "name", "The quick brown fox jumps"},
-		{"Has comma", "name", "Work tomorrow, today"},
-		{"Has period", "name", "Run. Sleep."},
-		{"Has other symbols", "name", "@'!?;"},
-		{"Less than min", "color", 0},
-		{"Nonexistent", "color", 7},
+		{"name", "Too short", "Be"},
+		{"name", "Too long", "The quick brown fox jumps"},
+		{"name", "Has comma", "Work tomorrow, today"},
+		{"name", "Has period", "Run. Sleep."},
+		{"name", "Has other symbols", "@'!?;"},
+		{"color", "Less than min", 0},
+		{"color", "Nonexistent", 7},
 	})
 }
