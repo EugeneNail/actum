@@ -159,6 +159,10 @@ func TestStoreConflictDate(t *testing.T) {
 }
 
 func TestStoreValidation(t *testing.T) {
+	today := time.Now().Format("2006-01-02")
+	yesterday := time.Now().Add(time.Hour * 24 * -1).Format("2006-01-02")
+	yearAgo := time.Now().Add(time.Hour * 24 * 365 * -1).Format("2006-01-02")
+
 	tests.AssertValidationSuccess[storeInput](t, []tests.ValidationTest{
 		{"mood", "Mood 1", 1},
 		{"mood", "Mood 2", 2},
@@ -168,8 +172,11 @@ func TestStoreValidation(t *testing.T) {
 		{"notes", "Short", fake.SentenceLength(1, 2)},
 		{"notes", "Average", fake.Sentence()},
 		{"notes", "Long", fake.Text()},
-		{"date", "Date 1", "2020-01-02"},
-		{"date", "Date 2", "2024-05-25"},
+		{"date", "Today", today},
+		{"date", "Yesterday", yesterday},
+		{"date", "Long ago", "2020-01-01"},
+		{"date", "Year ago", yearAgo},
+		{"date", "Just date", "2024-05-25"},
 		{"date", "New Year", "2023-12-31"},
 		{"date", "After the New Year", "2024-01-01"},
 		{"activities", "Activities", []int{1, 2, 3}},

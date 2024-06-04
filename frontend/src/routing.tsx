@@ -26,6 +26,7 @@ export default function Routing() {
                         <Route path="/collections/:collectionId/activities/:activityId" element={<SaveActivityPage/>}/>
                         <Route path="/collections/:collectionId/activities/:activityId/delete" element={<DeleteActivityPage/>}/>
                         <Route path="/records/new" element={<SaveRecordPage/>}/>
+                        <Route path="/records/:id" element={<SaveRecordPage/>}/>
                     </Route>
                     <Route path="/" element={<Navigate to="/records"/>}/>
                 </Routes>

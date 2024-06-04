@@ -55,17 +55,6 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 		return
 	}
 
-	ownsEach, err := controller.ownsEach(input.Activities, user.Id)
-	if err != nil {
-		response.Send(err, http.StatusInternalServerError)
-		return
-	}
-
-	if !ownsEach {
-		response.Send(map[string]any{"activities": "You are not allowed to use other people's activities"}, http.StatusForbidden)
-		return
-	}
-
 	record, err := records.New(input.Mood, input.Date, input.Notes, user.Id)
 	if err != nil {
 		response.Send(err, http.StatusInternalServerError)
