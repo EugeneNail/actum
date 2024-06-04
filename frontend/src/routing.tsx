@@ -8,6 +8,7 @@ import SaveCollectionPage from "./page/collections/save-collection-page/save-col
 import DeleteCollectionPage from "./page/collections/delete-collection-page/delete-collection-page.tsx";
 import SaveActivityPage from "./page/activities/save-activity-page/save-activity-page.tsx";
 import DeleteActivityPage from "./page/activities/delete-activity-page/delete-activity-page.tsx";
+import SaveRecordPage from "./page/records/save-record-page/save-record-page.tsx";
 
 export default function Routing() {
     return (
@@ -24,6 +25,7 @@ export default function Routing() {
                         <Route path="/collections/:collectionId/activities/new" element={<SaveActivityPage/>}/>
                         <Route path="/collections/:collectionId/activities/:activityId" element={<SaveActivityPage/>}/>
                         <Route path="/collections/:collectionId/activities/:activityId/delete" element={<DeleteActivityPage/>}/>
+                        <Route path="/records/new" element={<SaveRecordPage/>}/>
                     </Route>
                     <Route path="/" element={<Navigate to="/records"/>}/>
                 </Routes>

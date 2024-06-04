@@ -1,0 +1,112 @@
+@import ../../variables
+
+.activity-picker
+  gap: 10px
+  display: flex
+  flex-direction: column
+
+.picker-collection
+  &__header
+    user-select: none
+    border-radius: 10px
+    display: flex
+    align-items: center
+    height: 60px
+    padding: 0 20px
+    cursor: pointer
+
+    @media(pointer: fine)
+      &:hover
+        background: lighten($background, 3%)
+
+  &__name
+    font-size: 20px
+    color: $font-strong
+    margin-bottom: 3px
+
+  &__chevron
+    font-size: 30px
+    margin-left: auto
+
+  &__activities
+    margin-top: 20px
+    overflow: hidden
+    display: flex
+    flex-wrap: wrap
+    justify-content: center
+    gap: 15px 10px
+    transition: 0.75s ease
+    max-height: 900px
+    margin-bottom: 70px
+
+  &.invisible &__activities
+    display: none
+
+  &__item
+    width: 80px
+    cursor: pointer
+    aspect-ratio: 1 / 1
+    display: grid
+    justify-content: center
+    align-content: center
+    border-radius: 10px
+
+    @media (pointer: fine)
+      &:hover
+        background: $background
+
+.picker-activity
+  cursor: pointer
+  width: 80px
+  border-radius: 10px
+  display: flex
+  flex-direction: column
+  align-items: center
+  transition: 0.3s
+  user-select: none
+
+  &:not(.toggled):hover
+    background: lighten($background, 3%)
+
+  &.toggled
+    color: $font-strong !important
+
+    &.red
+      background: $red-strong
+
+    &.orange
+      background: $orange-strong
+
+    &.yellow
+      background: $yellow-strong
+
+      & *
+        color: $background
+
+    &.green
+      background: $green-strong
+
+    &.blue
+      background: $blue-strong
+
+    &.purple
+      background: $purple-strong
+
+  &__icon-container
+    display: grid
+    place-items: center
+    aspect-ratio: 1 / 1
+    border-radius: 10px
+    transition: 0.3s
+
+  &__icon
+    width: 50px
+    height: 50px
+
+  &__name
+    color: inherit
+    text-align: center
+    width: 100%
+    word-break: break-all
+    padding: 5px
+    font-size: 12px
