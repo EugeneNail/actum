@@ -45,23 +45,3 @@ func (controller *Controller) findMissing(needle []int, haystack []activities.Ac
 	return missing
 
 }
-
-func (controller *Controller) ownsEach(activityIds []int, userId int) (bool, error) {
-	var count int
-	var placeholders string
-	values := make([]any, 1+len(activityIds))
-	values[0] = userId
-
-	for i, id := range activityIds {
-		values[i+1] = id
-		placeholders += "?,"
-	}
-	placeholders = "(" + placeholders[:len(placeholders)-1] + ")"
-
-	err := controller.db.QueryRow(`SELECT COUNT(*) FROM activities WHERE user_id = ? AND id IN`+placeholders, values...).Scan(&count)
-	if err != nil {
-		return false, fmt.Errorf("activities.ListIn(): %w", err)
-	}
-
-	return count == len(activityIds), nil
-}
