@@ -144,6 +144,10 @@ func (dao *DAO) List(minDate time.Time, maxDate time.Time, userId int) ([]*Recor
 		return records, fmt.Errorf("records.List(): %w", err)
 	}
 
+	if len(records) == 0 {
+		return records, nil
+	}
+
 	activities, err := dao.fetchActivities(records)
 	if err != nil {
 		return records, fmt.Errorf("records.List(): %w", err)
@@ -171,6 +175,7 @@ func (dao *DAO) fetchRecords(minDate time.Time, maxDate time.Time, userId int) (
 		if err := rows.Scan(&record.Id, &record.Mood, &record.Date, &record.Notes, &record.UserId); err != nil {
 			return records, fmt.Errorf("fetchRecords(): %w", err)
 		}
+		records = append(records, &record)
 	}
 
 	return records, nil
@@ -179,7 +184,7 @@ func (dao *DAO) fetchRecords(minDate time.Time, maxDate time.Time, userId int) (
 func (dao *DAO) fetchActivities(records []*Record) ([]RecordActivity, error) {
 	var activities []RecordActivity
 	var placeholders string
-	values := make([]int, len(records))
+	values := make([]any, len(records))
 
 	for i, record := range records {
 		values[i] = record.Id
@@ -192,8 +197,8 @@ func (dao *DAO) fetchActivities(records []*Record) ([]RecordActivity, error) {
 		FROM activities
 		JOIN records_activities ON activities.id = records_activities.activity_id
 		JOIN records ON records_activities.record_id = records.id
-		WHERE records.id IN ?`,
-		placeholders,
+		WHERE records.id IN `+placeholders,
+		values...,
 	)
 	defer rows.Close()
 	if err != nil {
