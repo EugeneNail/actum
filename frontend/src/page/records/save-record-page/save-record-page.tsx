@@ -15,8 +15,8 @@ import Notes from "../../../component/notes/notes.tsx";
 import {useNavigate, useParams} from "react-router-dom";
 
 class Payload {
-    mood = 0
-    date = ""
+    mood = 3
+    date = new Date().toISOString().split("T")[0]
     notes = ""
     activities: number[] = []
 }
@@ -150,9 +150,9 @@ export default function SaveRecordPage() {
 
     return (
         <div className="save-record-page page">
-            <Form title={willStore ? "New record" : "Record"} subtitle={willStore ? "" : state.date}>
+            <Form title={willStore ? "New record" : "Record"}>
+                <DatePicker active={willStore} name="date" value={state.date} error={errors.date} onChange={setField}/>
                 <MoodSelect name="mood" value={state.mood} onChange={setField}/>
-                {willStore && <DatePicker name="date" label="Date" value={state.date} error={errors.date} onChange={setField}/>}
                 <ActivityPicker collections={collections} value={state.activities} toggleActivity={addActivity}/>
                 <Notes label="Notes" name="notes" max={5000} value={state.notes} onChange={setField}/>
                 <FormButtons>

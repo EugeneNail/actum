@@ -2,11 +2,11 @@ import "./date-picker.sass"
 import {ChangeEvent, useEffect, useState} from "react";
 import classNames from "classnames";
 import Icon from "../icon/icon.tsx";
-import buildCalendar, {monthNames, Year} from "./build-calendar.ts";
+import Button, {ButtonStyle} from "../button/button.tsx";
 
 type Props = {
     className?: string
-    label: string
+    active: boolean
     name: string
     value: string
     error: string
@@ -14,34 +14,107 @@ type Props = {
 }
 
 
-export function DatePicker({className, label, name, value, error, onChange}: Props) {
-    const [isCalendarVisible, setCalendarVisible] = useState(false)
-    const [calendar, setCalendar] = useState<Year[]>([])
+export function DatePicker({className, active, name, value, error, onChange}: Props) {
+    const [isVisible, setVisible] = useState(false)
+    const [year, setYear] = useState(new Date(value).getFullYear())
+    const [month, setMonth] = useState(new Date(value).getMonth())
+    const [days, setDays] = useState<number[]>([])
     className = classNames(
         "field",
         "date-picker",
         className,
         {invalid: error?.length > 0}
     )
+    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
 
     useEffect(() => {
-        if (calendar?.length == 0) {
-            setCalendar(buildCalendar)
+        if (days.length == 0) {
+            buildCalendar(year, month)
         }
     }, [])
 
 
-    function toggleCalendar() {
-        const form = document.getElementsByTagName("form")[0] as HTMLFormElement
-        form.style.overflow = "hidden"
-        if (isCalendarVisible) {
-            setCalendarVisible(!isCalendarVisible)
-            form.style.height = "fit-content"
-        } else {
-            form.style.height = "0px"
+    function goTo(back: boolean = false) {
+        let destinationMonth = month + (back ? -1 : 1)
+        let destinationYear = year
+
+        if (destinationMonth == -1) {
+            destinationMonth = 11
+            destinationYear--
         }
-        setCalendarVisible(!isCalendarVisible)
+        if (destinationMonth == 12) {
+            destinationYear++
+            destinationMonth = 0
+        }
+
+        setYear(destinationYear)
+        setMonth(destinationMonth)
+        buildCalendar(destinationYear, destinationMonth)
+    }
+
+
+    function buildCalendar(year: number, month: number) {
+        const days: number[] = [...Array(new Date(year, month, 1).getDay())]
+
+        let day = 1
+        let date = new Date(year, month, day)
+
+        while (date.getMonth() == month) {
+            days.push(date.getDate())
+            day++
+            date = new Date(year, month, day)
+        }
+
+        setDays([...days, ...Array(41 - days.length)])
+    }
+
+
+    function setDate(year: number, month: number, day: number) {
+        const input = document.getElementById(name) as HTMLInputElement
+        input.defaultValue = new Date(year, month, day).toISOString().split("T")[0]
+        input.dispatchEvent(new Event('input', {bubbles: true}))
+        toggleCalendar()
+    }
+
+
+    function toggleCalendar() {
+        if (isVisible) {
+            setVisible(false)
+            document.body.style.overflow = "auto"
+        } else {
+            setVisible(true)
+            document.body.style.overflow = "hidden"
+        }
+    }
+
+
+    function getDate(): string {
+        const date = new Date(value)
+
+        if (value == new Date().toISOString().split("T")[0]) {
+            return `Today, ${dateToUserFriendly(date)}`
+        }
+
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1)
+        if (value == yesterday.toISOString().split("T")[0]) {
+            return `Yesterday, ${dateToUserFriendly(date)}`
+        }
+
+        return dateToUserFriendly(date)
+    }
+
+
+    function dateToUserFriendly(date: Date): string {
+        return `${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}`
+    }
+
+
+    function checkUnavailability(year: number, month: number, day: number): boolean {
+        const date = new Date(year, month, day)
+
+        return date > new Date()
     }
 
 
@@ -50,50 +123,49 @@ export function DatePicker({className, label, name, value, error, onChange}: Pro
     }
 
 
-    function setDate(year: number, month: number, day: number) {
-        const input = document.getElementById(name) as HTMLInputElement
-        input.defaultValue = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`
-        input.dispatchEvent(new Event('input', {bubbles: true}))
-        toggleCalendar()
-    }
-
-
     return (
         <div className={className}>
-            {isCalendarVisible && <div className="date-picker__calendar">
-                {calendar && calendar.map(year =>
-                    year.months.map(month => (
-                        <div key={Math.random()} className="date-picker__month">
-                            <h6 className="date-picker__month-name">{monthNames[month.value]} {year.value}</h6>
-                            <div className="date-picker__month-days">
-                                <div className="date-picker__day weekday">Su</div>
-                                <div className="date-picker__day weekday">Mo</div>
-                                <div className="date-picker__day weekday">Tu</div>
-                                <div className="date-picker__day weekday">We</div>
-                                <div className="date-picker__day weekday">Th</div>
-                                <div className="date-picker__day weekday">Fr</div>
-                                <div className="date-picker__day weekday">Sa</div>
-                                {month.days && month.days.map(day => (
-                                    <div key={Math.random()} className={classNames("date-picker__day", {inactive: day == undefined}, {selected: checkSelection(year.value, month.value, day)})} onClick={() => setDate(year.value, month.value, day)}>{day ?? 0}</div>
-                                ))}
-                            </div>
-                        </div>
-                    )))
-                }
+            <div className={classNames("date-picker__label", {active: active})} onClick={toggleCalendar}>
+                <Icon className="date-picker__icon" name="event"/>
+                <p className="date-picker__date">{getDate()}</p>
             </div>
-            }
-            <div className="field__content">
-                <div className="field__icon-container">
-                    <Icon name="event"/>
+            <input type="text" id={name} name={name} className="date-picker__input" onChange={onChange}/>
+            {isVisible && <div className="date-picker__cover" onClick={toggleCalendar}></div>}
+            {isVisible && <div className="date-picker__calendar">
+                <div className="date-picker__calendar-header">
+                    <p className="date-picker__calendar-label">
+                        {monthNames[month]} {year}
+                    </p>
+                    <Button className="date-picker__button" style={ButtonStyle.Secondary} even onClick={() => goTo(true)}>
+                        <Icon bold name="west"/>
+                    </Button>
+                    <Button className="date-picker__button" style={ButtonStyle.Secondary} even onClick={() => goTo()}>
+                        <Icon bold name="east"/>
+                    </Button>
                 </div>
-                <input placeholder={label} onFocus={e => e.target.blur()} type="text" id={name} name={name} className="field__input date-picker__input" onChange={onChange} onClick={toggleCalendar}/>
-            </div>
-            <p className="field__error">{error}</p>
+
+                <div className="date-picker__days">
+                    <div className="date-picker__day weekday">Su</div>
+                    <div className="date-picker__day weekday">Mo</div>
+                    <div className="date-picker__day weekday">Tu</div>
+                    <div className="date-picker__day weekday">We</div>
+                    <div className="date-picker__day weekday">Th</div>
+                    <div className="date-picker__day weekday">Fr</div>
+                    <div className="date-picker__day weekday">Sa</div>
+                    {days && days.map(day => (
+                        <div key={Math.random()}
+                            className={classNames(
+                            "date-picker__day",
+                            {filler: day == undefined},
+                            {selected: checkSelection(year, month, day)},
+                            {unavailable: checkUnavailability(year, month, day)}
+                        )}
+                             onClick={() => setDate(year, month, day)}>
+                            {day ?? 0}
+                        </div>
+                    ))}
+                </div>
+            </div>}
         </div>
     )
-
-
-
-
-
 }

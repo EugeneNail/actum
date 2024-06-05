@@ -3,53 +3,89 @@
 .date-picker
   margin-bottom: 80px
 
+  &__label
+    display: flex
+    gap: 10px
+    justify-content: center
+    pointer-events: none
+    color: $font-strong
+
+    &.active
+      color: $accent-strong
+      pointer-events: auto
+
+  &__date
+    font-size: 20px
+    margin-top: 1px
+    color: inherit
+
+  &__label.active &__date
+    text-decoration: underline
+
   &__input
+    display: none
+
+  &__cover
+    position: fixed
+    z-index: 0
+    width: 100%
+    height: 100vh
+    background: #000000aa
+    top: 0
+    left: 0
 
   &__calendar
-    position: absolute
-    left: 0
-    top: 0
-    width: 100%
-    background: $background
-    min-height: 100vh
+    width: min(100% - 40px, 500px)
+    left: 50%
+    transform: translateX(-50%)
+    position: fixed
+    bottom: 60px
     z-index: 2
-    display: grid
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr))
-    justify-content: center
-    gap: 50px
-    padding: 30px
-
-  &__month
+    background: $background
+    padding: 10px
     border-radius: 10px
-    background: lighten($background, 2%)
 
-  &__month-name
+  &__calendar-header
+    display: flex
+    gap: 10px
+    align-items: center
+
+  &__button
+    height: 50px
+
+  &__calendar-label
+    font-size: 20px
+    font-weight: bold
+    color: $font-strong
+    margin-left: 30px
+    margin-right: auto
     text-align: center
-    padding: 20px
 
-  &__month-days
-    padding: 5px
+  &__days
     display: grid
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr
-    gap: 5px
+    grid-template-columns: repeat(7, 1fr)
+    padding: 10px
+    gap: 10px
 
   &__day
-    color: lighten($font-medium, 10%)
+    user-select: none
+    aspect-ratio: 1 / 1
     display: grid
     place-items: center
+    border-radius: 5px
     cursor: pointer
-    aspect-ratio: 1 / 1
-    border-radius: 3px
+    color: $font-strong
 
     &.weekday
       font-weight: bold
+      color: $font-medium
       pointer-events: none
 
     @media (pointer: fine)
       &:hover
         background: $accent-weak
 
-    &.inactive
+    &.filler
       pointer-events: none
       color: transparent
 
@@ -57,3 +93,6 @@
       background: $accent
       color: $font-strong
 
+    &.unavailable
+      pointer-events: none
+      color: darken($font-medium, 15%)
