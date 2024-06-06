@@ -72,7 +72,7 @@ export function DatePicker({className, active, name, value, error, onChange}: Pr
 
     function setDate(year: number, month: number, day: number) {
         const input = document.getElementById(name) as HTMLInputElement
-        input.defaultValue = new Date(year, month, day).toISOString().split("T")[0]
+        input.defaultValue = new Date(year, month, day+ 1).toISOString().split("T")[0]
         input.dispatchEvent(new Event('input', {bubbles: true}))
         toggleCalendar()
     }
