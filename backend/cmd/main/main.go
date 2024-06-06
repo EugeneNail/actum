@@ -33,7 +33,8 @@ func main() {
 	routing.Post("/api/users/login", userController.Login)
 
 	collectionDAO := collections.NewDAO(db)
-	collectionController := collectionController.New(db, collectionDAO)
+	collectionService := collections.NewService(db)
+	collectionController := collectionController.New(db, collectionDAO, collectionService)
 	routing.Post("/api/collections", collectionController.Store)
 	routing.Put("/api/collections/:id", collectionController.Update)
 	routing.Delete("/api/collections/:id", collectionController.Destroy)

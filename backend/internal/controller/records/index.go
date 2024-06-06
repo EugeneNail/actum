@@ -3,6 +3,7 @@ package records
 import (
 	"fmt"
 	"github.com/EugeneNail/actum/internal/database/resource/activities"
+	"github.com/EugeneNail/actum/internal/database/resource/collections"
 	"github.com/EugeneNail/actum/internal/service/jwt"
 	"github.com/EugeneNail/actum/internal/service/log"
 	"github.com/EugeneNail/actum/internal/service/response"
@@ -16,18 +17,11 @@ type indexInput struct {
 }
 
 type ShortRecord struct {
-	Id          int               `json:"id"`
-	Date        string            `json:"date"`
-	Mood        int               `json:"mood"`
-	Notes       string            `json:"notes"`
-	Collections []ShortCollection `json:"collections"`
-}
-
-type ShortCollection struct {
-	Id         int                        `json:"id"`
-	Name       string                     `json:"name"`
-	Color      int                        `json:"color"`
-	Activities []activities.IndexActivity `json:"activities"`
+	Id          int                           `json:"id"`
+	Date        string                        `json:"date"`
+	Mood        int                           `json:"mood"`
+	Notes       string                        `json:"notes"`
+	Collections []collections.IndexCollection `json:"collections"`
 }
 
 func (controller *Controller) Index(writer http.ResponseWriter, request *http.Request) {
@@ -90,7 +84,7 @@ func (controller *Controller) fetchRecords(start time.Time, end time.Time, userI
 		if err := rows.Scan(&record.Id, &record.Mood, &record.Date, &record.Notes); err != nil {
 			return records, fmt.Errorf("records.fetchRecords(): %w", err)
 		}
-		record.Collections = []ShortCollection{}
+		record.Collections = []collections.IndexCollection{}
 		records = append(records, &record)
 	}
 
@@ -108,7 +102,7 @@ func (controller *Controller) fetchCollections(records []*ShortRecord, userId in
 	}
 
 	for rows.Next() {
-		var collection ShortCollection
+		var collection collections.IndexCollection
 
 		if err := rows.Scan(&collection.Id, &collection.Name, &collection.Color); err != nil {
 			return fmt.Errorf("records.fetchCollections(): %w", err)
