@@ -12,6 +12,7 @@ import (
 	"path/filepath"
 	"slices"
 	"strings"
+	"time"
 )
 
 type migration struct {
@@ -22,36 +23,114 @@ type migration struct {
 func main() {
 	env.Load()
 	createTable()
-	checkMigrationsDirectory()
+	createDirectory()
+	args := os.Args[1:]
 
-	switch {
-	case len(os.Args) == 1:
-		migrate()
-	case os.Args[1] == "rollback":
-		rollback()
+	if len(args) == 0 {
+		printError("Expected create, apply, rollback or refresh subcommand")
+		return
+	}
+
+	switch args[0] {
+	case "create":
+		createMigration()
+	case "apply":
+		applyMigrations()
+	case "rollback":
+		rollbackCommand := flag.NewFlagSet("rollback", flag.ExitOnError)
+		steps := rollbackCommand.Int("steps", -1, "number of migrations to rollback")
+		err := rollbackCommand.Parse(os.Args[2:])
+		check(err)
+		rollback(*steps)
+	case "refresh":
+		rollback(-1)
+		applyMigrations()
 	default:
-		fmt.Println("invalid command arguments")
-		os.Exit(1)
+		printError("Expected create, apply, rollback or refresh subcommand")
+	}
+
+}
+
+func createTable() {
+	db, err := mysql.Connect()
+	check(err)
+	query := ` 
+	CREATE TABLE IF NOT EXISTS migrations (
+	    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+		migration VARCHAR(255) NOT NULL,
+		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		PRIMARY KEY (id)
+	);`
+	_, err = db.Exec(query)
+	check(err)
+}
+
+func createDirectory() {
+	pathToMigrations := filepath.Join(
+		os.Getenv("APP_PATH"), "internal", "database", "migrations",
+	)
+	_, err := os.Stat(pathToMigrations)
+	if err != nil && os.IsNotExist(err) {
+		err := os.MkdirAll(pathToMigrations, 0755)
+		check(err)
 	}
 }
 
-func rollback() {
-	rollbackCommand := flag.NewFlagSet("rollback", flag.ExitOnError)
-	steps := rollbackCommand.Int("steps", -1, "number of migrations to rollback")
-	err := rollbackCommand.Parse(os.Args[2:])
-	check(err)
+func createMigration() {
+	if len(os.Args) < 3 {
+		printError("Expected name of migration")
+		return
+	}
 
+	name := os.Args[3]
+	now := time.Now().Unix()
+	pathToMigrations := filepath.Join(
+		os.Getenv("APP_PATH"), "internal", "database", "migrations",
+	)
+	_, err := os.Stat(pathToMigrations)
+
+	if err != nil && os.IsNotExist(err) {
+		err := os.MkdirAll(pathToMigrations, 0755)
+		check(err)
+	}
+
+	up := fmt.Sprintf("%s/%d.%s.%s.sql", pathToMigrations, now, name, "up")
+	down := fmt.Sprintf("%s/%d.%s.%s.sql", pathToMigrations, now, name, "down")
+	_, err = os.Create(up)
+	check(err)
+	_, err = os.Create(down)
+	check(err)
+}
+
+func applyMigrations() {
+	var migrations = getMigrations("up")
+	appliedMigrations := getAppliedMigrations()
+	var isMigrated bool
+
+	for _, migration := range migrations {
+		if !slices.Contains(appliedMigrations, migration.name) {
+			isMigrated = true
+			applyMigration(migration)
+		}
+	}
+
+	if !isMigrated {
+		fmt.Println("Nothing to migrate")
+	}
+}
+
+func rollback(steps int) {
 	migrations := getMigrations("down")
 	appliedMigrations := getAppliedMigrations()
 	var isRolledBack bool
 
 	for i := len(appliedMigrations) - 1; i >= 0; i-- {
-		if *steps == 0 {
+		if steps == 0 {
 			break
 		}
 		currentMigration := getCurrentMigration(migrations, appliedMigrations[i])
-		apply(currentMigration)
-		*steps--
+		applyMigration(currentMigration)
+		steps--
 		isRolledBack = true
 	}
 
@@ -77,35 +156,7 @@ func getCurrentMigration(migrations []migration, appliedMigration string) migrat
 	return currentMigration
 }
 
-func migrate() {
-	var migrations = getMigrations("up")
-	appliedMigrations := getAppliedMigrations()
-	var isMigrated bool
-
-	for _, migration := range migrations {
-		if !slices.Contains(appliedMigrations, migration.name) {
-			isMigrated = true
-			apply(migration)
-		}
-	}
-
-	if !isMigrated {
-		fmt.Println("Nothing to migrate")
-	}
-}
-
-func checkMigrationsDirectory() {
-	pathToMigrations := filepath.Join(
-		os.Getenv("APP_PATH"), "internal", "database", "migrations",
-	)
-	_, err := os.Stat(pathToMigrations)
-	if err != nil && os.IsNotExist(err) {
-		err := os.MkdirAll(pathToMigrations, 0755)
-		check(err)
-	}
-}
-
-func apply(migration migration) {
+func applyMigration(migration migration) {
 	file, err := os.ReadFile(migration.path)
 	check(err)
 	queries := strings.Split(string(file), ";")
@@ -175,20 +226,6 @@ func getMigrations(direction string) []migration {
 	return migrations
 }
 
-func createTable() {
-	db, err := mysql.Connect()
-	check(err)
-	query := ` 
-	CREATE TABLE IF NOT EXISTS migrations (
-	    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-		migration VARCHAR(255) NOT NULL,
-		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-		PRIMARY KEY (id)
-	);`
-	_, err = db.Exec(query)
-	check(err)
-}
-
 func checkTransaction(err error, migration migration, transaction *sql.Tx) {
 	if err != nil {
 		transaction.Rollback()
@@ -201,4 +238,8 @@ func check(err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func printError(message string) {
+	fmt.Println("\033[31m" + message + "\033[0m")
 }
