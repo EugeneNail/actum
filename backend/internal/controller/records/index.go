@@ -2,8 +2,7 @@ package records
 
 import (
 	"fmt"
-	"github.com/EugeneNail/actum/internal/database/resource/activities"
-	"github.com/EugeneNail/actum/internal/database/resource/collections"
+	recordsPkg "github.com/EugeneNail/actum/internal/database/resource/records"
 	"github.com/EugeneNail/actum/internal/service/jwt"
 	"github.com/EugeneNail/actum/internal/service/log"
 	"github.com/EugeneNail/actum/internal/service/response"
@@ -14,14 +13,6 @@ import (
 
 type indexInput struct {
 	Cursor string `json:"cursor" rules:"required|date"`
-}
-
-type ShortRecord struct {
-	Id          int                           `json:"id"`
-	Date        string                        `json:"date"`
-	Mood        int                           `json:"mood"`
-	Notes       string                        `json:"notes"`
-	Collections []collections.IndexCollection `json:"collections"`
 }
 
 func (controller *Controller) Index(writer http.ResponseWriter, request *http.Request) {
@@ -66,8 +57,8 @@ func (controller *Controller) Index(writer http.ResponseWriter, request *http.Re
 	log.Info("User", user.Id, "fetched", len(records), "records from", start.Format("2006-01-02"), "to", input.Cursor)
 }
 
-func (controller *Controller) fetchRecords(start time.Time, end time.Time, userId int) ([]*ShortRecord, error) {
-	var records []*ShortRecord
+func (controller *Controller) fetchRecords(start time.Time, end time.Time, userId int) ([]*recordsPkg.IndexRecord, error) {
+	var records []*recordsPkg.IndexRecord
 
 	rows, err := controller.db.Query(
 		`SELECT id, mood, date, notes FROM records WHERE user_id = ? AND date > ? AND date <= ?`,
@@ -79,19 +70,19 @@ func (controller *Controller) fetchRecords(start time.Time, end time.Time, userI
 	}
 
 	for rows.Next() {
-		var record ShortRecord
+		var record recordsPkg.IndexRecord
 
 		if err := rows.Scan(&record.Id, &record.Mood, &record.Date, &record.Notes); err != nil {
 			return records, fmt.Errorf("records.fetchRecords(): %w", err)
 		}
-		record.Collections = []collections.IndexCollection{}
+		record.Collections = []recordsPkg.IndexCollection{}
 		records = append(records, &record)
 	}
 
 	return records, nil
 }
 
-func (controller *Controller) fetchCollections(records []*ShortRecord, userId int) error {
+func (controller *Controller) fetchCollections(records []*recordsPkg.IndexRecord, userId int) error {
 	rows, err := controller.db.Query(
 		`SELECT id, name, color FROM collections WHERE user_id = ?`,
 		userId,
@@ -102,7 +93,7 @@ func (controller *Controller) fetchCollections(records []*ShortRecord, userId in
 	}
 
 	for rows.Next() {
-		var collection collections.IndexCollection
+		var collection recordsPkg.IndexCollection
 
 		if err := rows.Scan(&collection.Id, &collection.Name, &collection.Color); err != nil {
 			return fmt.Errorf("records.fetchCollections(): %w", err)
@@ -116,7 +107,7 @@ func (controller *Controller) fetchCollections(records []*ShortRecord, userId in
 	return nil
 }
 
-func (controller *Controller) fetchActivities(records []*ShortRecord, userId int) error {
+func (controller *Controller) fetchActivities(records []*recordsPkg.IndexRecord, userId int) error {
 	query, values := controller.prepareActivitiesQuery(records, userId)
 	rows, err := controller.db.Query(query, values...)
 	defer rows.Close()
@@ -125,7 +116,7 @@ func (controller *Controller) fetchActivities(records []*ShortRecord, userId int
 	}
 
 	for rows.Next() {
-		var activity activities.IndexActivity
+		var activity recordsPkg.IndexActivity
 		if err := rows.Scan(&activity.RecordId, &activity.CollectionId, &activity.Name, &activity.Icon); err != nil {
 			return fmt.Errorf("records.fetchActivities(): %w", err)
 		}
@@ -135,7 +126,7 @@ func (controller *Controller) fetchActivities(records []*ShortRecord, userId int
 	return nil
 }
 
-func (controller *Controller) prepareActivitiesQuery(records []*ShortRecord, userId int) (string, []any) {
+func (controller *Controller) prepareActivitiesQuery(records []*recordsPkg.IndexRecord, userId int) (string, []any) {
 	var placeholders string
 	values := make([]any, len(records)+1)
 	values[0] = userId
@@ -162,7 +153,7 @@ func (controller *Controller) prepareActivitiesQuery(records []*ShortRecord, use
 	return query, values
 }
 
-func (controller *Controller) assignToRecords(records []*ShortRecord, activity activities.IndexActivity) {
+func (controller *Controller) assignToRecords(records []*recordsPkg.IndexRecord, activity recordsPkg.IndexActivity) {
 	for _, record := range records {
 		if activity.RecordId != record.Id {
 			continue

@@ -1,6 +1,8 @@
 package records
 
-import "database/sql"
+import (
+	"database/sql"
+)
 
 type Service struct {
 	db *sql.DB

@@ -12,13 +12,6 @@ type Collection struct {
 	Activities []activities.Activity `json:"activities"`
 }
 
-type IndexCollection struct {
-	Id         int                        `json:"id"`
-	Name       string                     `json:"name"`
-	Color      int                        `json:"color"`
-	Activities []activities.IndexActivity `json:"activities"`
-}
-
 func New(name string, color int, userId int) Collection {
 	return Collection{0, name, color, userId, []activities.Activity{}}
 }
