@@ -11,8 +11,15 @@ type Controller struct {
 	recordDAO       *records.DAO
 	activityDAO     *activities.DAO
 	activityService *activities.Service
+	recordService   *records.Service
 }
 
-func New(db *sql.DB, recordDAO *records.DAO, activityDAO *activities.DAO, activityService *activities.Service) Controller {
-	return Controller{db, recordDAO, activityDAO, activityService}
+func New(
+	db *sql.DB,
+	recordDAO *records.DAO,
+	activityDAO *activities.DAO,
+	activityService *activities.Service,
+	recordService *records.Service,
+) Controller {
+	return Controller{db, recordDAO, activityDAO, activityService, recordService}
 }

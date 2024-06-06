@@ -32,14 +32,15 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 	}
 
 	user := jwt.GetUser(request)
-	isDateTaken, err := controller.isDateTaken(input.Date, user.Id)
+	isDateTaken, err := controller.recordService.IsDateTaken(input.Date, user.Id)
 	if err != nil {
 		response.Send(err, http.StatusInternalServerError)
 		return
 	}
 
 	if isDateTaken {
-		response.Send(map[string]any{"date": "Record already exists"}, http.StatusConflict)
+		message := fmt.Sprintf("Record for date %s already exists", input.Date)
+		response.Send(map[string]any{"date": message}, http.StatusConflict)
 		return
 	}
 
@@ -73,18 +74,4 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 
 	response.Send(record.Id, http.StatusCreated)
 	log.Info("User", user.Id, "created record", record.Id, "for date", input.Date, "with", len(input.Activities), "activities")
-}
-
-func (controller *Controller) isDateTaken(date string, userId int) (bool, error) {
-	var count int
-
-	err := controller.db.QueryRow(
-		`SELECT COUNT(*) FROM records WHERE user_id = ? AND date = ?`,
-		userId, date,
-	).Scan(&count)
-	if err != nil {
-		return false, fmt.Errorf("isDateTaken(): %w", err)
-	}
-
-	return count > 0, nil
 }
