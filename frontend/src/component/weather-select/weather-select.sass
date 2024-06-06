@@ -1,0 +1,60 @@
+@import ../../variables
+
+.weather-select
+  margin-bottom: 80px
+
+  &__input
+    display: none
+
+  &__label
+    text-align: center
+    font-size: 24px
+    color: $font-strong
+
+
+  &__weathers
+    margin-top: 30px
+    display: flex
+    justify-content: center
+    flex-wrap: wrap
+    gap: 15px
+
+  &__weather
+    cursor: pointer
+    font-size: 80px
+    font-variation-settings: 'FILL' 0, 'wght' 200
+
+    @media (pointer: fine)
+      &:hover
+        font-variation-settings: 'wght' 300
+
+    &.selected
+      font-variation-settings: 'FILL' 1
+
+
+    &.heat
+      color: $orange-strong
+
+    &.sunny
+      color: $yellow-strong
+
+    &.cloudy
+      color: #8d8d8d
+
+    &.windy
+      color: #87CEFA
+
+    &.rainy
+      color: #40A4DF
+
+    &.thunder
+      color: $blue-strong
+
+    &.foggy
+      color: #D3D3D3
+
+    &.snowy
+      color: #FFFAFA
+
+    &.cold
+      color: #ADD8E6

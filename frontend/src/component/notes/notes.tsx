@@ -23,7 +23,7 @@ export default function Notes({className, label, name, max, value, onChange}: Pr
             <label  className="notes__label" htmlFor={name}>{label}</label>
             <textarea className="notes__textarea"
                       ref={ref}
-                      placeholder="What interesting things happened?"
+                      placeholder="Что интересного случилось?"
                       value={value}
                       name={name}
                       id={name}

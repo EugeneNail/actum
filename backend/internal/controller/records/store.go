@@ -12,6 +12,7 @@ import (
 
 type storeInput struct {
 	Mood       int    `json:"mood" rules:"required|integer|min:1|max:5"`
+	Weather    int    `json:"weather" rules:"required|integer|min:1|max:9"`
 	Notes      string `json:"notes" rules:"max:5000"`
 	Date       string `json:"date" rules:"required|date|today|after:2020-01-01"`
 	Activities []int  `json:"activities" rules:"required"`
@@ -56,7 +57,7 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 		return
 	}
 
-	record, err := records.New(input.Mood, input.Date, input.Notes, user.Id)
+	record, err := records.New(input.Mood, input.Weather, input.Date, input.Notes, user.Id)
 	if err != nil {
 		response.Send(err, http.StatusInternalServerError)
 		return

@@ -13,6 +13,7 @@ import (
 
 type updateInput struct {
 	Mood       int    `json:"mood" rules:"required|integer|min:1|max:5"`
+	Weather    int    `json:"weather" rules:"required|integer|min:1|max:9"`
 	Notes      string `json:"notes" rules:"max:5000"`
 	Activities []int  `json:"activities" rules:"required"`
 }
@@ -64,6 +65,7 @@ func (controller *Controller) Update(writer http.ResponseWriter, request *http.R
 	recordBefore := record
 	record.Notes = input.Notes
 	record.Mood = input.Mood
+	record.Weather = input.Weather
 	if err := controller.recordDAO.Save(&record); err != nil {
 		response.Send(err, http.StatusInternalServerError)
 		return
