@@ -11,7 +11,7 @@ func TestShow(t *testing.T) {
 
 	client.
 		Post("/api/collections", `{
-			"name": "Work",
+			"name": "Работа",
 			"color": 3
 		}`).
 		AssertStatus(http.StatusCreated)
@@ -19,14 +19,14 @@ func TestShow(t *testing.T) {
 	database.
 		AssertCount("collections", 1).
 		AssertHas("collections", map[string]any{
-			"name":    "Work",
+			"name":    "Работа",
 			"color":   3,
 			"user_id": 1,
 		})
 
 	client.
 		Post("/api/activities", `{
-			"name": "Sleep",
+			"name": "Сон",
 			"icon": 421,
 			"collectionId": 1
 		}`).
@@ -35,7 +35,7 @@ func TestShow(t *testing.T) {
 	database.
 		AssertCount("activities", 1).
 		AssertHas("activities", map[string]any{
-			"name":          "Sleep",
+			"name":          "Сон",
 			"icon":          421,
 			"user_id":       1,
 			"collection_id": 1,
@@ -59,7 +59,7 @@ func TestShowSomeonesActivity(t *testing.T) {
 
 	client.
 		Post("/api/collections", `{
-			"name": "Cooking",
+			"name": "Готовка",
 			"color": 3
 		}`).
 		AssertStatus(http.StatusCreated)
@@ -67,14 +67,14 @@ func TestShowSomeonesActivity(t *testing.T) {
 	database.
 		AssertCount("collections", 1).
 		AssertHas("collections", map[string]any{
-			"name":    "Cooking",
+			"name":    "Готовка",
 			"color":   3,
 			"user_id": 1,
 		})
 
 	client.
 		Post("/api/activities", `{
-			"name": "Make cake",
+			"name": "Испекла пирог",
 			"icon": 777,
 			"collectionId": 1
 		}`).
@@ -83,7 +83,7 @@ func TestShowSomeonesActivity(t *testing.T) {
 	database.
 		AssertCount("activities", 1).
 		AssertHas("activities", map[string]any{
-			"name":          "Make cake",
+			"name":          "Испекла пирог",
 			"icon":          777,
 			"user_id":       1,
 			"collection_id": 1,
@@ -100,7 +100,7 @@ func TestShowNotFound(t *testing.T) {
 
 	client.
 		Post("/api/collections", `{
-			"name": "Kill bugs",
+			"name": "Коллекционирование",
 			"color": 3
 		}`).
 		AssertStatus(http.StatusCreated)
@@ -108,14 +108,14 @@ func TestShowNotFound(t *testing.T) {
 	database.
 		AssertCount("collections", 1).
 		AssertHas("collections", map[string]any{
-			"name":    "Kill bugs",
+			"name":    "Коллекционирование",
 			"color":   3,
 			"user_id": 1,
 		})
 
 	client.
 		Post("/api/activities", `{
-			"name": "Run",
+			"name": "Бег",
 			"icon": 645,
 			"collectionId": 1
 		}`).
@@ -124,7 +124,7 @@ func TestShowNotFound(t *testing.T) {
 	database.
 		AssertCount("activities", 1).
 		AssertHas("activities", map[string]any{
-			"name":          "Run",
+			"name":          "Бег",
 			"icon":          645,
 			"user_id":       1,
 			"collection_id": 1,

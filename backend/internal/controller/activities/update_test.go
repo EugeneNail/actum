@@ -11,7 +11,7 @@ func TestUpdateValidData(t *testing.T) {
 
 	client.
 		Post("/api/collections", `{
-			"name": "lorem ipsum",
+			"name": "Что-то тут написано",
 			"color": 1
 		}`).
 		AssertStatus(http.StatusCreated)
@@ -19,14 +19,14 @@ func TestUpdateValidData(t *testing.T) {
 	database.
 		AssertCount("collections", 1).
 		AssertHas("collections", map[string]any{
-			"name":    "lorem ipsum",
+			"name":    "Что-то тут написано",
 			"color":   1,
 			"user_id": 1,
 		})
 
 	client.
 		Post("/api/activities", `{
-			"name": "Dolor sit amet",
+			"name": "И тут тоже",
 			"icon": 200,
 			"collectionId": 1
 		}`).
@@ -35,7 +35,7 @@ func TestUpdateValidData(t *testing.T) {
 	database.
 		AssertCount("activities", 1).
 		AssertHas("activities", map[string]any{
-			"name":          "Dolor sit amet",
+			"name":          "И тут тоже",
 			"icon":          200,
 			"collection_id": 1,
 		})
@@ -50,7 +50,7 @@ func TestUpdateValidData(t *testing.T) {
 	database.
 		AssertCount("activities", 1).
 		AssertLacks("activities", map[string]any{
-			"name":          "Dolor sit amet",
+			"name":          "И тут тоже",
 			"icon":          200,
 			"collection_id": 1,
 		}).
@@ -66,7 +66,7 @@ func TestUpdateInvalidData(t *testing.T) {
 
 	client.
 		Post("/api/collections", `{
-			"name": "Collection",
+			"name": "Коллекция",
 			"color": 1
 		}`).
 		AssertStatus(http.StatusCreated)
@@ -74,13 +74,13 @@ func TestUpdateInvalidData(t *testing.T) {
 	database.
 		AssertCount("collections", 1).
 		AssertHas("collections", map[string]any{
-			"name":  "Collection",
+			"name":  "Коллекция",
 			"color": 1,
 		})
 
 	client.
 		Post("/api/activities", `{
-			"name": "Look at me",
+			"name": "На меня смотри",
 			"icon": 401,
 			"collectionId": 1
 		}`).
@@ -89,7 +89,7 @@ func TestUpdateInvalidData(t *testing.T) {
 	database.
 		AssertCount("activities", 1).
 		AssertHas("activities", map[string]any{
-			"name":          "Look at me",
+			"name":          "На меня смотри",
 			"icon":          401,
 			"collection_id": 1,
 		})
@@ -104,7 +104,7 @@ func TestUpdateInvalidData(t *testing.T) {
 	database.
 		AssertCount("activities", 1).
 		AssertHas("activities", map[string]any{
-			"name":          "Look at me",
+			"name":          "На меня смотри",
 			"icon":          401,
 			"collection_id": 1,
 		})
@@ -115,7 +115,7 @@ func TestUpdateNotFound(t *testing.T) {
 
 	client.
 		Post("/api/collections", `{
-			"name": "lorem ipsum",
+			"name": "Что-то тут написано",
 			"color": 1
 		}`).
 		AssertStatus(http.StatusCreated)
@@ -123,7 +123,7 @@ func TestUpdateNotFound(t *testing.T) {
 	database.
 		AssertCount("collections", 1).
 		AssertHas("collections", map[string]any{
-			"name":  "lorem ipsum",
+			"name":  "Что-то тут написано",
 			"color": 1,
 		})
 
@@ -144,7 +144,7 @@ func TestUpdateSomeoneElses(t *testing.T) {
 
 	client.
 		Post("/api/collections", `{
-			"name": "Playing",
+			"name": "Видеоигры",
 			"color": 1
 		}`).
 		AssertStatus(http.StatusCreated)
@@ -152,13 +152,13 @@ func TestUpdateSomeoneElses(t *testing.T) {
 	database.
 		AssertCount("collections", 1).
 		AssertHas("collections", map[string]any{
-			"name":  "Playing",
+			"name":  "Видеоигры",
 			"color": 1,
 		})
 
 	client.
 		Post("/api/activities", `{
-			"name": "Creating something",
+			"name": "Майнкрафт",
 			"icon": 800,
 			"collectionId": 1
 		}`).
@@ -167,7 +167,7 @@ func TestUpdateSomeoneElses(t *testing.T) {
 	database.
 		AssertCount("activities", 1).
 		AssertHas("activities", map[string]any{
-			"name":          "Creating something",
+			"name":          "Майнкрафт",
 			"icon":          800,
 			"collection_id": 1,
 		})
@@ -183,7 +183,7 @@ func TestUpdateSomeoneElses(t *testing.T) {
 	database.
 		AssertCount("activities", 1).
 		AssertHas("activities", map[string]any{
-			"name":          "Creating something",
+			"name":          "Майнкрафт",
 			"icon":          800,
 			"collection_id": 1,
 		})

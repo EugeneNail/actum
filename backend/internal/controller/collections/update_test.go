@@ -12,7 +12,7 @@ func TestUpdateValidData(t *testing.T) {
 
 	client.
 		Post("/api/collections", `{
-			"name": "Exercises",
+			"name": "Упражнения",
 			"color": 2
 		}`).
 		AssertStatus(http.StatusCreated)
@@ -21,14 +21,14 @@ func TestUpdateValidData(t *testing.T) {
 		AssertCount("collections", 1).
 		AssertHas("collections", map[string]any{
 			"id":      1,
-			"name":    "Exercises",
+			"name":    "Упражнения",
 			"color":   2,
 			"user_id": 1,
 		})
 
 	client.
 		Put("/api/collections/1", `{
-			"name": "Sport",
+			"name": "Спорт",
 			"color": 3
 		}`).
 		AssertStatus(http.StatusNoContent)
@@ -36,7 +36,7 @@ func TestUpdateValidData(t *testing.T) {
 	database.
 		AssertHas("collections", map[string]any{
 			"id":      1,
-			"name":    "Sport",
+			"name":    "Спорт",
 			"color":   3,
 			"user_id": 1,
 		}).
@@ -67,7 +67,7 @@ func TestUpdateNotFound(t *testing.T) {
 
 	client.
 		Post("/api/collections", `{
-			"name": "Wor",
+			"name": "Раб",
 			"color": 2
 		}`).
 		AssertStatus(http.StatusCreated)
@@ -76,14 +76,14 @@ func TestUpdateNotFound(t *testing.T) {
 		AssertCount("collections", 1).
 		AssertHas("collections", map[string]any{
 			"id":      1,
-			"name":    "Wor",
+			"name":    "Раб",
 			"color":   2,
 			"user_id": 1,
 		})
 
 	client.
 		Put("/api/collections/2", `{
-			"name": "Work",
+			"name": "Работа",
 			"color": 3
 		}`).
 		AssertStatus(http.StatusNotFound)
@@ -92,7 +92,7 @@ func TestUpdateNotFound(t *testing.T) {
 		AssertCount("collections", 1).
 		AssertHas("collections", map[string]any{
 			"id":      1,
-			"name":    "Wor",
+			"name":    "Раб",
 			"color":   2,
 			"user_id": 1,
 		})
@@ -103,7 +103,7 @@ func TestUpdateSomeoneElsesCollection(t *testing.T) {
 
 	client.
 		Post("/api/collections", `{
-			"name": "Travelling",
+			"name": "Путешествия",
 			"color": 2
 		}`).
 		AssertStatus(http.StatusCreated)
@@ -112,7 +112,7 @@ func TestUpdateSomeoneElsesCollection(t *testing.T) {
 		AssertCount("collections", 1).
 		AssertHas("collections", map[string]any{
 			"id":      1,
-			"name":    "Travelling",
+			"name":    "Путешествия",
 			"color":   2,
 			"user_id": 1,
 		})
@@ -121,7 +121,7 @@ func TestUpdateSomeoneElsesCollection(t *testing.T) {
 
 	client.
 		Put("/api/collections/1", `{
-			"name": "LolIHackedYou",
+			"name": "Взломал тебя",
 			"color": 5
 		}`).
 		AssertStatus(http.StatusForbidden)
@@ -130,7 +130,7 @@ func TestUpdateSomeoneElsesCollection(t *testing.T) {
 		AssertCount("collections", 1).
 		AssertHas("collections", map[string]any{
 			"id":      1,
-			"name":    "Travelling",
+			"name":    "Путешествия",
 			"color":   2,
 			"user_id": 1,
 		})
@@ -138,13 +138,13 @@ func TestUpdateSomeoneElsesCollection(t *testing.T) {
 
 func TestUpdateValidation(t *testing.T) {
 	tests.AssertValidationSuccess[storeInput](t, []tests.ValidationTest{
-		{"name", "Short", "Sit"},
-		{"name", "One word", "Sleeping"},
-		{"name", "Multiple words", "Wake up early"},
-		{"name", "Numbers", "From 8 to 9"},
+		{"name", "Short", "Сон"},
+		{"name", "One word", "Сидение"},
+		{"name", "Multiple words", "Вставание рано"},
+		{"name", "Numbers", "От 8 до 9"},
 		{"name", "Only numbers", "234 4524"},
-		{"name", "Dash", "Too long-short"},
-		{"name", "Long", "Making my cat nice"},
+		{"name", "Dash", "С дефисом - во"},
+		{"name", "Long", "Принарядил   котейку"},
 		{"color", "Color 1", 1},
 		{"color", "Color 2", 2},
 		{"color", "Color 3", 3},
@@ -154,10 +154,10 @@ func TestUpdateValidation(t *testing.T) {
 	})
 
 	tests.AssertValidationFail[storeInput](t, []tests.ValidationTest{
-		{"name", "Too short", "Mb"},
-		{"name", "Too long", "The quick brown fox jumps"},
-		{"name", "Has comma", "Eating, sleeping and working"},
-		{"name", "Has period", "Today is today. Tomorrow is tomorrow"},
+		{"name", "Too short", "Мб"},
+		{"name", "Too long", "Тут написано что-то очень длинное"},
+		{"name", "Has comma", "Ем, сплю, работаю"},
+		{"name", "Has period", "Вчера. Сегодня"},
 		{"name", "Has other symbols", "@'!?;"},
 		{"color", "Less than min", 0},
 		{"color", "Nonexistent", 7},

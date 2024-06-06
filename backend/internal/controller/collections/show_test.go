@@ -11,7 +11,7 @@ func TestShow(t *testing.T) {
 
 	client.
 		Post("/api/collections", `{
-			"name": "Workout",
+			"name": "Тренировки",
 			"color": 6
 		}`).
 		AssertStatus(http.StatusCreated)
@@ -19,7 +19,7 @@ func TestShow(t *testing.T) {
 	database.
 		AssertCount("collections", 1).
 		AssertHas("collections", map[string]any{
-			"name":    "Workout",
+			"name":    "Тренировки",
 			"color":   6,
 			"user_id": 1,
 		})

@@ -13,7 +13,7 @@ func TestValidData(t *testing.T) {
 
 	client.
 		Post("/api/collections", `{
-			"name": "Sport",
+			"name": "Спорт",
 			"color": 1
 		}`).
 		AssertStatus(http.StatusCreated)
@@ -21,7 +21,7 @@ func TestValidData(t *testing.T) {
 	database.
 		AssertCount("collections", 1).
 		AssertHas("collections", map[string]any{
-			"name":  "Sport",
+			"name":  "Спорт",
 			"color": 1,
 		})
 }
@@ -32,7 +32,7 @@ func TestStoreUnauthorized(t *testing.T) {
 
 	client.
 		Post("/api/collections", `{
-			"name": "Sport",	
+			"name": "Спорт",	
 			"color": 1
 		}`).
 		AssertStatus(http.StatusUnauthorized)
@@ -40,7 +40,7 @@ func TestStoreUnauthorized(t *testing.T) {
 	database.
 		AssertEmpty("collections").
 		AssertLacks("collections", map[string]any{
-			"name":  "Sport",
+			"name":  "Спорт",
 			"color": 1,
 		})
 }
@@ -69,14 +69,14 @@ func TestStoreDuplicate(t *testing.T) {
 
 	client.
 		Post("/api/collections", `{
-			"name": "Sport",	
+			"name": "Спорт",	
 			"color": 1
 		}`).
 		AssertStatus(http.StatusCreated)
 
 	client.
 		Post("/api/collections", `{
-			"name": "SpOrt",	
+			"name": "СпОрт",	
 			"color": 1
 		}`).
 		AssertStatus(http.StatusConflict).
@@ -85,7 +85,7 @@ func TestStoreDuplicate(t *testing.T) {
 	database.
 		AssertCount("collections", 1).
 		AssertHas("collections", map[string]any{
-			"name":    "Sport",
+			"name":    "Спорт",
 			"color":   1,
 			"user_id": 1,
 		})
@@ -101,7 +101,7 @@ func TestStoreTooMany(t *testing.T) {
 
 	client.
 		Post("/api/collections", `{
-			"name": "Do something",	
+			"name": "Делать что-то",	
 			"color": 2
 		}`).
 		AssertStatus(http.StatusConflict)
@@ -109,20 +109,20 @@ func TestStoreTooMany(t *testing.T) {
 	database.
 		AssertCount("collections", 15).
 		AssertLacks("collections", map[string]any{
-			"name":  "Do something",
+			"name":  "Делать что-то",
 			"color": 2,
 		})
 }
 
 func TestStoreValidation(t *testing.T) {
 	tests.AssertValidationSuccess[storeInput](t, []tests.ValidationTest{
-		{"name", "Short", "Run"},
-		{"name", "One word", "Sport"},
-		{"name", "Multiple words", "Cut nails"},
-		{"name", "Numbers", "Gaming for 8 hours"},
+		{"name", "Short", "Бег"},
+		{"name", "One word", "Спорт"},
+		{"name", "Multiple words", "Уборка дома"},
+		{"name", "Numbers", "Играл 8 часов"},
 		{"name", "Only numbers", "1263 123 6662 123"},
-		{"name", "Dash", "Sleep for 3-4 hours"},
-		{"name", "Long", "Go to the store for"},
+		{"name", "Dash", "Спал 3-4 часа"},
+		{"name", "Long", "Ходил туда в магазин"},
 		{"color", "Color 1", 1},
 		{"color", "Color 2", 2},
 		{"color", "Color 3", 3},
@@ -133,9 +133,9 @@ func TestStoreValidation(t *testing.T) {
 
 	tests.AssertValidationFail[storeInput](t, []tests.ValidationTest{
 		{"name", "Too short", "Be"},
-		{"name", "Too long", "The quick brown fox jumps"},
-		{"name", "Has comma", "Work tomorrow, today"},
-		{"name", "Has period", "Run. Sleep."},
+		{"name", "Too long", "Поешь этих мягких булок"},
+		{"name", "Has comma", "Вчера, сегодня"},
+		{"name", "Has period", "Бегать. Спать."},
 		{"name", "Has other symbols", "@'!?;"},
 		{"color", "Less than min", 0},
 		{"color", "Nonexistent", 7},

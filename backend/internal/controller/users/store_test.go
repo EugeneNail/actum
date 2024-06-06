@@ -15,7 +15,7 @@ func TestStoreValidData(t *testing.T) {
 
 	client.
 		Post("/api/users", `{
-			"name": "John",
+			"name": "Вася",
 			"email": "blank@gmail.com",
 			"password": "Strong123",
 			"passwordConfirmation": "Strong123"
@@ -23,7 +23,7 @@ func TestStoreValidData(t *testing.T) {
 		AssertStatus(http.StatusCreated)
 
 	database.AssertHas("users", map[string]any{
-		"name":     "John",
+		"name":     "Вася",
 		"email":    "blank@gmail.com",
 		"password": hash.Password("Strong123"),
 	})
@@ -35,7 +35,7 @@ func TestStoreInvalidData(t *testing.T) {
 
 	client.
 		Post("/api/users", `{
-			"name": "Jo",
+			"name": "Ва",
 			"email": "blankgmail.com",
 			"password": "String1",
 			"passwordConfirmation": ""
@@ -50,7 +50,7 @@ func TestStoreDuplicateEmail(t *testing.T) {
 	client, database := startup.Users(t)
 
 	input := `{
-		"name": "John",
+		"name": "Вася",
 		"email": "blank@gmail.com",
 		"password": "Strong123",
 		"passwordConfirmation": "Strong123"
@@ -66,18 +66,17 @@ func TestStoreDuplicateEmail(t *testing.T) {
 		AssertHasValidationErrors([]string{"email"})
 
 	database.AssertCount("users", 1)
-
 }
 
 func TestStoreValidation(t *testing.T) {
 	env.Load()
 
 	tests.AssertValidationSuccess[storeInput](t, []tests.ValidationTest{
-		{"name", "Name 1", "Joe"},
-		{"name", "Name 2", "John"},
-		{"name", "Name 3", "William"},
-		{"name", "Name 4", "Bartholomew"},
-		{"name", "Name 5", "Benjamin"},
+		{"name", "Name 1", "Ева"},
+		{"name", "Name 2", "Вася"},
+		{"name", "Name 3", "Александр"},
+		{"name", "Name 4", "Евгений"},
+		{"name", "Name 5", "Максим"},
 		{"email", "Email 1", "user@domain.com"},
 		{"email", "Email 2", "user.a.user@domain.com"},
 		{"email", "Email 3", "user@106list.org"},
@@ -94,8 +93,8 @@ func TestStoreValidation(t *testing.T) {
 		{"name", "Empty name", ""},
 		{"name", "Too short name", "Jo"},
 		{"name", "Too long name", strings.Repeat("Very", 5) + "LongName"},
-		{"name", "Name has numbers", "John1"},
-		{"name", "Name has symbols", "John's"},
+		{"name", "Name has numbers", "Вася1"},
+		{"name", "Name has symbols", "Вася's"},
 		{"name", "Name has only numbers", "123"},
 		{"name", "Name has only symbols", "/*-+"},
 		{"email", "Empty email", ""},
