@@ -33,7 +33,7 @@ func (controller *Controller) Update(writer http.ResponseWriter, request *http.R
 	}
 
 	if record.Id == 0 {
-		response.Send(fmt.Sprintf("Record %d not found", id), http.StatusNotFound)
+		response.Send(fmt.Sprintf("Запись %d не найдена", id), http.StatusNotFound)
 		return
 	}
 
@@ -56,7 +56,7 @@ func (controller *Controller) Update(writer http.ResponseWriter, request *http.R
 	}
 
 	if !allExist {
-		errors := map[string]any{"activities": fmt.Sprintf("Activities %v not found", missingActivities)}
+		errors := map[string]any{"activities": fmt.Sprintf("Активности %v не найдены", missingActivities)}
 		response.Send(errors, http.StatusNotFound)
 		return
 	}

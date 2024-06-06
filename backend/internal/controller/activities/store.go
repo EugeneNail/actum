@@ -38,14 +38,14 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 	}
 
 	if collection.Id == 0 {
-		message := fmt.Sprintf("Collection %d not found", input.CollectionId)
+		message := fmt.Sprintf("Коллекция %d не найдена.", input.CollectionId)
 		response.Send(message, http.StatusNotFound)
 		return
 	}
 
 	user := jwt.GetUser(request)
 	if collection.UserId != user.Id {
-		response.Send("You are not allowed to manage other people's collections", http.StatusForbidden)
+		response.Send("Вы не можете добавить активность в чужую коллекцию.", http.StatusForbidden)
 		return
 	}
 
@@ -57,7 +57,7 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 	}
 
 	if exceedsLimit {
-		message := fmt.Sprintf("You can have only %d activities per collection", limit)
+		message := fmt.Sprintf("Вы превысили лимит (%d) активностей для этой коллекции. Удалите старые активности или измените уже имеющуюся.", limit)
 		response.Send(message, http.StatusConflict)
 		return
 	}
@@ -69,7 +69,7 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 	}
 
 	if hasDuplicate {
-		response.Send(map[string]string{"name": "Activity already exists"}, http.StatusConflict)
+		response.Send(map[string]string{"name": "У вас уже есть активность с таким именем."}, http.StatusConflict)
 		return
 	}
 

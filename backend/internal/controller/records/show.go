@@ -26,13 +26,13 @@ func (controller *Controller) Show(writer http.ResponseWriter, request *http.Req
 	}
 
 	if record.Id == 0 {
-		response.Send(fmt.Sprintf("Record %d not found", id), http.StatusNotFound)
+		response.Send(fmt.Sprintf("Запись %d не найдена", id), http.StatusNotFound)
 		return
 	}
 
 	user := jwt.GetUser(request)
 	if record.UserId != user.Id {
-		response.Send("You are not allowed to view other users' records", http.StatusForbidden)
+		response.Send("Вы не можете использовать чужую запись.", http.StatusForbidden)
 		return
 	}
 

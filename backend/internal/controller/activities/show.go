@@ -31,7 +31,7 @@ func (controller *Controller) Show(writer http.ResponseWriter, request *http.Req
 
 	user := jwt.GetUser(request)
 	if activity.UserId != user.Id {
-		response.Send("You are not allowed to view other people's activities", http.StatusForbidden)
+		response.Send("Вы не можете использовать чужую активность.", http.StatusForbidden)
 		return
 	}
 
