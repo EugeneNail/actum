@@ -2,6 +2,7 @@ package records
 
 import (
 	"fmt"
+	"github.com/EugeneNail/actum/internal/database/resource/activities"
 	"github.com/EugeneNail/actum/internal/service/jwt"
 	"github.com/EugeneNail/actum/internal/service/log"
 	"github.com/EugeneNail/actum/internal/service/response"
@@ -23,17 +24,10 @@ type ShortRecord struct {
 }
 
 type ShortCollection struct {
-	Id         int             `json:"id"`
-	Name       string          `json:"name"`
-	Color      int             `json:"color"`
-	Activities []ShortActivity `json:"activities"`
-}
-
-type ShortActivity struct {
-	RecordId     int    `json:"recordId"`
-	CollectionId int    `json:"collectionId"`
-	Icon         int    `json:"icon"`
-	Name         string `json:"name"`
+	Id         int                        `json:"id"`
+	Name       string                     `json:"name"`
+	Color      int                        `json:"color"`
+	Activities []activities.IndexActivity `json:"activities"`
 }
 
 func (controller *Controller) Index(writer http.ResponseWriter, request *http.Request) {
@@ -137,7 +131,7 @@ func (controller *Controller) fetchActivities(records []*ShortRecord, userId int
 	}
 
 	for rows.Next() {
-		var activity ShortActivity
+		var activity activities.IndexActivity
 		if err := rows.Scan(&activity.RecordId, &activity.CollectionId, &activity.Name, &activity.Icon); err != nil {
 			return fmt.Errorf("records.fetchActivities(): %w", err)
 		}
@@ -174,7 +168,7 @@ func (controller *Controller) prepareActivitiesQuery(records []*ShortRecord, use
 	return query, values
 }
 
-func (controller *Controller) assignToRecords(records []*ShortRecord, activity ShortActivity) {
+func (controller *Controller) assignToRecords(records []*ShortRecord, activity activities.IndexActivity) {
 	for _, record := range records {
 		if activity.RecordId != record.Id {
 			continue

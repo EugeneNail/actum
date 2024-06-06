@@ -41,7 +41,8 @@ func main() {
 	routing.Get("/api/collections", collectionController.Index)
 
 	activityDAO := activities.NewDAO(db)
-	activityController := activityController.New(db, activityDAO, collectionDAO)
+	activityService := activities.NewService(db)
+	activityController := activityController.New(db, activityDAO, collectionDAO, activityService)
 	routing.Post("/api/activities", activityController.Store)
 	routing.Put("/api/activities/:id", activityController.Update)
 	routing.Delete("/api/activities/:id", activityController.Destroy)

@@ -49,18 +49,20 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 		return
 	}
 
-	exceededLimit, err := controller.exceededLimit(collection.Id, user.Id)
+	const limit = 20
+	exceedsLimit, err := controller.activityService.ExceedsLimit(limit, collection.Id, user.Id)
 	if err != nil {
 		response.Send(err, http.StatusInternalServerError)
 		return
 	}
 
-	if exceededLimit {
-		response.Send("You can have only 20 activities per collection", http.StatusConflict)
+	if exceedsLimit {
+		message := fmt.Sprintf("You can have only %d activities per collection", limit)
+		response.Send(message, http.StatusConflict)
 		return
 	}
 
-	hasDuplicate, err := controller.hasDuplicate(input.Name, user.Id)
+	hasDuplicate, err := controller.activityService.HasDuplicate(input.Name, user.Id)
 	if err != nil {
 		response.Send(err, http.StatusInternalServerError)
 		return
@@ -72,7 +74,6 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 	}
 
 	activity := activities.New(input.Name, input.Icon, input.CollectionId, user.Id)
-
 	err = controller.activityDAO.Save(&activity)
 	if err != nil {
 		response.Send(err, http.StatusInternalServerError)
