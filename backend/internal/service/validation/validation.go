@@ -10,7 +10,7 @@ import (
 type field struct {
 	name      string
 	value     any
-	ruleFuncs []rule.RuleFunc
+	ruleFuncs []rule.Func
 }
 
 func Perform(data any) (map[string]string, error) {
@@ -20,7 +20,7 @@ func Perform(data any) (map[string]string, error) {
 	for _, field := range fields {
 	currentFieldLoop:
 		for _, applyRule := range field.ruleFuncs {
-			validationError, err := applyRule(field.name, field.value)
+			validationError, err := applyRule(field.value)
 
 			if err != nil {
 				return nil, fmt.Errorf("validate(): %w", err)
@@ -55,7 +55,7 @@ func extractFields(data any) []field {
 }
 
 func newField(name string, value any, pipeRules string) field {
-	var rules = make([]rule.RuleFunc, 0)
+	var rules = make([]rule.Func, 0)
 
 	for _, pipeRule := range strings.Split(pipeRules, "|") {
 		rules = append(rules, rule.Extract(pipeRule))
