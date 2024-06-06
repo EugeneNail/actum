@@ -26,6 +26,7 @@ func TestStoreValidData(t *testing.T) {
 		Post("/api/records", fmt.Sprintf(`{
 			"mood": 1,
 			"notes": "%s",
+			"weather": 7,
 			"date": "2024-05-29",
 			"activities": [1,2,3,5]
 		}`, notes)).
@@ -36,6 +37,7 @@ func TestStoreValidData(t *testing.T) {
 		AssertCount("records", 1).
 		AssertHas("records", map[string]any{
 			"mood":    1,
+			"weather": 7,
 			"notes":   notes,
 			"date":    "2024-05-29",
 			"user_id": 1,
@@ -61,6 +63,7 @@ func TestStoreInvalidData(t *testing.T) {
 	client.
 		Post("/api/records", fmt.Sprintf(`{
 			"mood": 0,
+			"weather": 4,
 			"notes": "%s",
 			"date": "2024-35-29"
 		}`, notes)).
@@ -71,6 +74,7 @@ func TestStoreInvalidData(t *testing.T) {
 		AssertCount("records", 0).
 		AssertLacks("records", map[string]any{
 			"mood":    0,
+			"weather": 4,
 			"notes":   notes,
 			"date":    "2024-35-29",
 			"user_id": 1,
@@ -88,6 +92,7 @@ func TestStoreMissingActivity(t *testing.T) {
 	client.
 		Post("/api/records", `{
 			"mood": 1,
+			"weather": 2,
 			"date": "2020-10-29",
 			"activities": [1,2,3]
 		}`).
@@ -108,6 +113,7 @@ func TestStoreConflictDate(t *testing.T) {
 	client.
 		Post("/api/records", fmt.Sprintf(`{
 			"mood": 1,
+			"weather": 3,
 			"notes": "%s",
 			"date": "2022-01-01",
 			"activities": [1,2,3,4,5]
@@ -119,6 +125,7 @@ func TestStoreConflictDate(t *testing.T) {
 		AssertCount("records", 1).
 		AssertHas("records", map[string]any{
 			"mood":    1,
+			"weather": 3,
 			"notes":   notes,
 			"date":    "2022-01-01",
 			"user_id": 1,
@@ -134,6 +141,7 @@ func TestStoreConflictDate(t *testing.T) {
 	client.
 		Post("/api/records", fmt.Sprintf(`{
 			"mood": 1,
+			"weather": 4,
 			"notes": "%s",
 			"date": "2022-01-01",
 			"activities": [1,2,3,4,5]
@@ -145,6 +153,7 @@ func TestStoreConflictDate(t *testing.T) {
 		AssertCount("records", 1).
 		AssertHas("records", map[string]any{
 			"mood":    1,
+			"weather": 3,
 			"notes":   notes,
 			"date":    "2022-01-01",
 			"user_id": 1,
@@ -169,6 +178,15 @@ func TestStoreValidation(t *testing.T) {
 		{"mood", "Mood 3", 3},
 		{"mood", "Mood 4", 4},
 		{"mood", "Mood 5", 5},
+		{"weather", "Weather 1", 1},
+		{"weather", "Weather 2", 2},
+		{"weather", "Weather 3", 3},
+		{"weather", "Weather 4", 4},
+		{"weather", "Weather 5", 5},
+		{"weather", "Weather 6", 6},
+		{"weather", "Weather 7", 7},
+		{"weather", "Weather 8", 8},
+		{"weather", "Weather 9", 9},
 		{"notes", "Short", fake.SentenceLength(1, 2)},
 		{"notes", "Average", fake.Sentence()},
 		{"notes", "Long", fake.Text()},
@@ -188,6 +206,10 @@ func TestStoreValidation(t *testing.T) {
 		{"mood", "Mood 3", 6},
 		{"mood", "Mood 4", 66},
 		{"mood", "Mood 5", 0.3},
+		{"weather", "Zero", 0},
+		{"weather", "Non integer", 1.1},
+		{"weather", "Negative", -1},
+		{"weather", "Nonexistent", 10},
 		{"notes", "Too long", strings.Repeat("Something", 600)},
 		{"date", "Too long ago", "2019-12-31"},
 		{"date", "Invalid year", "024-13-25"},

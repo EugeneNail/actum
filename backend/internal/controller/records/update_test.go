@@ -21,6 +21,7 @@ func TestUpdateValidData(t *testing.T) {
 	client.
 		Post("/api/records", `{
 			"mood": 1,
+			"weather": 1,
 			"date": "2024-01-01",
 			"notes": "Иисус, жги!",
 			"activities": [1, 2, 3, 4, 5]
@@ -31,6 +32,7 @@ func TestUpdateValidData(t *testing.T) {
 		AssertCount("records", 1).
 		AssertHas("records", map[string]any{
 			"mood":    1,
+			"weather": 1,
 			"date":    "2024-01-01",
 			"notes":   "Иисус, жги!",
 			"user_id": 1,
@@ -47,6 +49,7 @@ func TestUpdateValidData(t *testing.T) {
 	client.
 		Put("/api/records/1", `{
 			"mood": 5,
+			"weather": 2,
 			"notes": "Сюда смотри",
 			"activities": [1, 2, 4, 5]
 		}`).
@@ -55,9 +58,10 @@ func TestUpdateValidData(t *testing.T) {
 	database.
 		AssertCount("records", 1).
 		AssertHas("records", map[string]any{
-			"mood":  5,
-			"date":  "2024-01-01",
-			"notes": "Сюда смотри",
+			"mood":    5,
+			"weather": 2,
+			"date":    "2024-01-01",
+			"notes":   "Сюда смотри",
 		}).
 		AssertCount("records_activities", 4).
 		AssertLacks("records_activities", map[string]any{
@@ -77,6 +81,7 @@ func TestUpdateInvalidData(t *testing.T) {
 	client.
 		Post("/api/records", `{
 			"mood": 1,
+			"weather": 3,
 			"date": "2024-01-01",
 			"notes": "",
 			"activities": [1, 2, 3, 4, 5]
@@ -87,6 +92,7 @@ func TestUpdateInvalidData(t *testing.T) {
 		AssertCount("records", 1).
 		AssertHas("records", map[string]any{
 			"mood":    1,
+			"weather": 3,
 			"date":    "2024-01-01",
 			"notes":   "",
 			"user_id": 1,
@@ -103,6 +109,7 @@ func TestUpdateInvalidData(t *testing.T) {
 	client.
 		Put("/api/records/1", `{
 			"mood": 0,
+			"weather": 0,
 			"activities": []
 		}`).
 		AssertStatus(http.StatusUnprocessableEntity)
@@ -111,6 +118,7 @@ func TestUpdateInvalidData(t *testing.T) {
 		AssertCount("records", 1).
 		AssertHas("records", map[string]any{
 			"mood":    1,
+			"weather": 3,
 			"date":    "2024-01-01",
 			"notes":   "",
 			"user_id": 1,
@@ -124,6 +132,7 @@ func TestUpdateInvalidId(t *testing.T) {
 	client.
 		Put("/api/records/one", `{
 			"mood": 1,
+			"weather": 1,
 			"activities": [1]
 		}`).
 		AssertStatus(http.StatusBadRequest)
@@ -141,6 +150,7 @@ func TestUpdateNonexistentActivity(t *testing.T) {
 	client.
 		Put("/api/records/1", `{
 			"mood": 5,
+			"weather": 5,
 			"notes": "Сюда смотри",
 			"activities": [1, 2, 4, 5]
 		}`).
@@ -167,6 +177,7 @@ func TestUpdateWithSomeoneElsesActivities(t *testing.T) {
 		Post("/api/records", `{
 			"mood": 5,
 			"date": "2022-12-31",
+			"weather": 8,
 			"notes": "I was sad",
 			"activities": [2, 3, 4, 5, 6]
 		}`).
@@ -176,6 +187,7 @@ func TestUpdateWithSomeoneElsesActivities(t *testing.T) {
 		AssertCount("records", 1).
 		AssertHas("records", map[string]any{
 			"mood":    5,
+			"weather": 8,
 			"date":    "2022-12-31",
 			"notes":   "I was sad",
 			"user_id": 2,
@@ -192,6 +204,7 @@ func TestUpdateWithSomeoneElsesActivities(t *testing.T) {
 	client.
 		Put("/api/records/1", `{
 			"mood": 5,
+			"weather": 9,
 			"notes": "Сюда смотри",
 			"activities": [1, 2, 3, 4, 5, 6]
 		}`).
@@ -201,6 +214,7 @@ func TestUpdateWithSomeoneElsesActivities(t *testing.T) {
 		AssertCount("records", 1).
 		AssertHas("records", map[string]any{
 			"mood":    5,
+			"weather": 8,
 			"date":    "2022-12-31",
 			"notes":   "I was sad",
 			"user_id": 2,
@@ -219,6 +233,15 @@ func TestUpdateValidation(t *testing.T) {
 		{"mood", "Mood 3", 3},
 		{"mood", "Mood 4", 4},
 		{"mood", "Mood 5", 5},
+		{"weather", "Weather 1", 1},
+		{"weather", "Weather 2", 2},
+		{"weather", "Weather 3", 3},
+		{"weather", "Weather 4", 4},
+		{"weather", "Weather 5", 5},
+		{"weather", "Weather 6", 6},
+		{"weather", "Weather 7", 7},
+		{"weather", "Weather 8", 8},
+		{"weather", "Weather 9", 9},
 		{"notes", "Empty", ""},
 		{"notes", "Short", "Что-то было"},
 		{"notes", "Sentence 1", "Поешь этимх мягких булок да выпей час"},
@@ -231,6 +254,10 @@ func TestUpdateValidation(t *testing.T) {
 		{"mood", "Non integer", 1.1},
 		{"mood", "Negative", -1},
 		{"mood", "Nonexistent", 6},
+		{"weather", "Zero", 0},
+		{"weather", "Non integer", 1.1},
+		{"weather", "Negative", -1},
+		{"weather", "Nonexistent", 10},
 		{"notes", "Too long", strings.Repeat("Тут 15 символов", 350)},
 		{"activities", "Empty", []int{}},
 	})
