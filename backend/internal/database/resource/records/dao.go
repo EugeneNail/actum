@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"time"
 )
 
 type DAO struct {
@@ -136,94 +135,4 @@ func upsertRelations(tx *sql.Tx, recordId int, activities []int) error {
 	}
 
 	return nil
-}
-
-func (dao *DAO) List(minDate time.Time, maxDate time.Time, userId int) ([]*Record, error) {
-	records, err := dao.fetchRecords(minDate, maxDate, userId)
-	if err != nil {
-		return records, fmt.Errorf("records.List(): %w", err)
-	}
-
-	if len(records) == 0 {
-		return records, nil
-	}
-
-	activities, err := dao.fetchActivities(records)
-	if err != nil {
-		return records, fmt.Errorf("records.List(): %w", err)
-	}
-
-	allocateActivities(records, activities)
-
-	return records, nil
-}
-
-func (dao *DAO) fetchRecords(minDate time.Time, maxDate time.Time, userId int) ([]*Record, error) {
-	var records []*Record
-
-	rows, err := dao.db.Query(
-		`SELECT * FROM records WHERE user_id = ? AND date >= ? AND date <= ?`,
-		userId, minDate, maxDate,
-	)
-	defer rows.Close()
-	if err != nil {
-		return records, fmt.Errorf("fetchRecords(): %w", err)
-	}
-
-	for rows.Next() {
-		var record Record
-		if err := rows.Scan(&record.Id, &record.Mood, &record.Date, &record.Notes, &record.UserId); err != nil {
-			return records, fmt.Errorf("fetchRecords(): %w", err)
-		}
-		records = append(records, &record)
-	}
-
-	return records, nil
-}
-
-func (dao *DAO) fetchActivities(records []*Record) ([]RecordActivity, error) {
-	var activities []RecordActivity
-	var placeholders string
-	values := make([]any, len(records))
-
-	for i, record := range records {
-		values[i] = record.Id
-		placeholders += "?,"
-	}
-	placeholders = "(" + placeholders[:len(placeholders)-1] + ")"
-
-	rows, err := dao.db.Query(`
-		SELECT activities.id, activities.name, activities.icon, records_activities.record_id
-		FROM activities
-		JOIN records_activities ON activities.id = records_activities.activity_id
-		JOIN records ON records_activities.record_id = records.id
-		WHERE records.id IN `+placeholders,
-		values...,
-	)
-	defer rows.Close()
-	if err != nil {
-		return activities, fmt.Errorf("fetchActivities(): %w", err)
-	}
-
-	for rows.Next() {
-		var activity RecordActivity
-		if err := rows.Scan(&activity.Id, &activity.Name, &activity.Icon, &activity.RecordId); err != nil {
-			return activities, fmt.Errorf("fetchActivities(): %w", err)
-		}
-		activities = append(activities, activity)
-	}
-
-	return activities, nil
-}
-func allocateActivities(records []*Record, activities []RecordActivity) {
-	recordsById := make(map[int]*Record, len(records))
-
-	for _, record := range records {
-		recordsById[record.Id] = record
-	}
-
-	for _, activity := range activities {
-		record := recordsById[activity.RecordId]
-		record.Activities = append(record.Activities, activity)
-	}
 }

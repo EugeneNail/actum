@@ -21,6 +21,28 @@ type Record struct {
 	Activities []RecordActivity `json:"activities"`
 }
 
+type IndexRecord struct {
+	Id          int               `json:"id"`
+	Date        string            `json:"date"`
+	Mood        int               `json:"mood"`
+	Notes       string            `json:"notes"`
+	Collections []IndexCollection `json:"collections"`
+}
+
+type IndexCollection struct {
+	Id         int             `json:"id"`
+	Name       string          `json:"name"`
+	Color      int             `json:"color"`
+	Activities []IndexActivity `json:"activities"`
+}
+
+type IndexActivity struct {
+	RecordId     int    `json:"recordId"`
+	CollectionId int    `json:"collectionId"`
+	Icon         int    `json:"icon"`
+	Name         string `json:"name"`
+}
+
 func New(mood int, date string, notes string, userId int) (Record, error) {
 	time, err := time.Parse("2006-01-02", date)
 	if err != nil {

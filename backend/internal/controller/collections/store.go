@@ -29,8 +29,9 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 		return
 	}
 
+	const limit = 15
 	user := jwt.GetUser(request)
-	exceededLimit, err := controller.exceededLimit(user.Id)
+	exceededLimit, err := controller.service.ExceedsLimit(limit, user.Id)
 	if err != nil {
 		response.Send(err, http.StatusInternalServerError)
 		return
@@ -41,7 +42,7 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 		return
 	}
 
-	hasDuplicate, err := controller.hasDuplicate(input.Name, user)
+	hasDuplicate, err := controller.service.HasDuplicate(input.Name, user.Id)
 	if err != nil {
 		response.Send(err, http.StatusInternalServerError)
 		return
