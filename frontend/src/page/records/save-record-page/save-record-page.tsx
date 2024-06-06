@@ -29,7 +29,7 @@ class Errors {
 }
 
 export default function SaveRecordPage() {
-    const {state, setState, setField, errors, setErrors} = useFormState(new Payload(), new Errors())
+    const {state, setState, setField, errors} = useFormState(new Payload(), new Errors())
     const [collections, setCollections] = useState<Collection[]>([])
     const http = useHttp()
     const notification = useNotificationContext()
@@ -103,8 +103,16 @@ export default function SaveRecordPage() {
             mood: Number(state.mood)
         })
 
+        if (status == 422) {
+            window.scrollTo({top: 0, left: 0, behavior: "smooth"})
+            if (data.activities != null) {
+                notification.pop("Pick at least one activity")
+            }
+            return
+        }
+
         if (status == 409) {
-            setErrors(data)
+            notification.pop(data.date)
             window.scrollTo({top: 0, left: 0, behavior: "smooth"})
             return
         }
@@ -136,7 +144,10 @@ export default function SaveRecordPage() {
         })
 
         if (status == 422) {
-            setErrors(data)
+            if (data.activities != null) {
+                notification.pop("Pick at least one activity")
+            }
+            window.scrollTo({top: 0, left: 0, behavior: "smooth"})
             return
         }
 
@@ -147,6 +158,7 @@ export default function SaveRecordPage() {
 
         navigate("/records")
     }
+
 
     return (
         <div className="save-record-page page">
