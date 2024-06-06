@@ -133,12 +133,12 @@ export default function SaveActivityPage() {
 
     return (
         <div className="save-activity-page page">
-            <Form title={willStore ? "New activity" : "Activity"} subtitle={(initialActivityName ? `"${initialActivityName}" ` : "") + `of collection "${collectionName}"`}>
-                <Field name="name" label="Name" icon="webhook" value={state.name} error={errors.name} onChange={setField}/>
+            <Form title={willStore ? "Новая активность" : "Активность"} subtitle={(initialActivityName ? `"${initialActivityName}" ` : "") + `коллекции "${collectionName}"`}>
+                <Field name="name" label="Название" icon="webhook" value={state.name} error={errors.name} onChange={setField}/>
                 <IconSelect className="save-activity-page__icon-select" name="icon" value={state.icon} onChange={setField}/>
                 <FormButtons>
                     <FormBackButton/>
-                    <FormSubmitButton label="Save" onClick={save}/>
+                    <FormSubmitButton label="Сохранить" onClick={save}/>
                     {!willStore && <FormDeleteButton onClick={() => navigate("./delete")}/>}
                 </FormButtons>
             </Form>

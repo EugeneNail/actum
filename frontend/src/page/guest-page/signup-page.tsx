@@ -45,16 +45,16 @@ export default function SignupPage() {
 
     return (
         <div className="page">
-            <Form title="Sign up" subtitle={"to start working"}>
-                <Field name="name" label="What is your name?" icon="face" value={state.name} error={errors.name} onChange={setField}/>
-                <Field name="email" label="Email" icon="mail" value={state.email} error={errors.email} onChange={setField}/>
-                <Field name="password" label="Password" icon="lock" value={state.password} error={errors.password} onChange={setField} password/>
-                <Field name="passwordConfirmation" label="Confirm password" icon="lock" value={state.passwordConfirmation} error={errors.passwordConfirmation} onChange={setField} password/>
+            <Form title="Регистрация" subtitle={"это только начало"}>
+                <Field name="name" label="Как вас зовут?" icon="face" value={state.name} error={errors.name} onChange={setField}/>
+                <Field name="email" label="Электронная почта" icon="mail" value={state.email} error={errors.email} onChange={setField}/>
+                <Field name="password" label="Пароль" icon="lock" value={state.password} error={errors.password} onChange={setField} password/>
+                <Field name="passwordConfirmation" label="Повторите пароль" icon="lock" value={state.passwordConfirmation} error={errors.passwordConfirmation} onChange={setField} password/>
                 <FormButtons>
-                    <FormSubmitButton label="Sign up" onClick={signup}/>
+                    <FormSubmitButton label="Зарегистрироваться" onClick={signup}/>
                 </FormButtons>
             </Form>
-            <Link to="/login" className="guest-page-link">I already have an account</Link>
+            <Link to="/login" className="guest-page-link">У меня уже есть аккаунт</Link>
         </div>
     )
 }

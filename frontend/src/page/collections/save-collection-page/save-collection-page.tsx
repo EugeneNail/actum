@@ -105,11 +105,11 @@ export default function SaveCollectionPage() {
     return (
         <div className="save-collection-page page">
             <Form title={willStore ? "New collection" : "Collection"} subtitle={initialName ? initialName : ""}>
-                <Field name="name" label="Name" icon="category" value={state.name} error={errors.name} onChange={setField}/>
+                <Field name="name" label="Название" icon="category" value={state.name} error={errors.name} onChange={setField}/>
                 <Palette name="color" value={state.color} onChange={setField}/>
                 <FormButtons>
                     <FormBackButton/>
-                    <FormSubmitButton label="Save" onClick={save}/>
+                    <FormSubmitButton label="Сохранить" onClick={save}/>
                     {!willStore && <FormDeleteButton onClick={() => navigate("./delete")}/>}
                 </FormButtons>
             </Form>

@@ -37,7 +37,7 @@ func (controller *Controller) Login(writer http.ResponseWriter, request *http.Re
 	}
 
 	if user.Id == 0 || user.Password != hash.Password(input.Password) {
-		response.Send(map[string]string{"email": "Incorrect email address or password"}, http.StatusUnauthorized)
+		response.Send(map[string]string{"email": "Неверные адрес почты или пароль."}, http.StatusUnauthorized)
 		return
 	}
 

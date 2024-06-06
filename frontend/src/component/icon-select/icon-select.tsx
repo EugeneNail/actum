@@ -24,15 +24,15 @@ export default function IconSelect({className, name, value, onChange}: Props) {
     return (
         <div className={classNames("icon-select", className)}>
             <input id={inputId} className="icon-select__input" name={name} onChange={onChange}/>
-            <IconSelectList setIcon={setIcon} selectedIconId={value} group={100} label="People" />
-            <IconSelectList setIcon={setIcon} selectedIconId={value} group={200} label="Animals & Insects" />
-            <IconSelectList setIcon={setIcon} selectedIconId={value} group={300} label="Food & Drinks" />
-            <IconSelectList setIcon={setIcon} selectedIconId={value} group={400} label="Nature" />
-            <IconSelectList setIcon={setIcon} selectedIconId={value} group={500} label="Sport" />
-            <IconSelectList setIcon={setIcon} selectedIconId={value} group={600} label="Travel & Places" />
-            <IconSelectList setIcon={setIcon} selectedIconId={value} group={700} label="House & Houseyard" />
-            <IconSelectList setIcon={setIcon} selectedIconId={value} group={800} label="Body" />
-            <IconSelectList setIcon={setIcon} selectedIconId={value} group={900} label="Beauty & Fashion" />
+            <IconSelectList setIcon={setIcon} selectedIconId={value} group={100} label="Люди" />
+            <IconSelectList setIcon={setIcon} selectedIconId={value} group={200} label="Животные и Насекомые" />
+            <IconSelectList setIcon={setIcon} selectedIconId={value} group={300} label="Еда и Напитки" />
+            <IconSelectList setIcon={setIcon} selectedIconId={value} group={400} label="Природа" />
+            <IconSelectList setIcon={setIcon} selectedIconId={value} group={500} label="Спорт" />
+            <IconSelectList setIcon={setIcon} selectedIconId={value} group={600} label="Места и Путешествия" />
+            <IconSelectList setIcon={setIcon} selectedIconId={value} group={700} label="Дом и Двор" />
+            <IconSelectList setIcon={setIcon} selectedIconId={value} group={800} label="Тело" />
+            <IconSelectList setIcon={setIcon} selectedIconId={value} group={900} label="Красота и Мода" />
         </div>
     )
 }

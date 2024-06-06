@@ -106,7 +106,7 @@ export default function SaveRecordPage() {
         if (status == 422) {
             window.scrollTo({top: 0, left: 0, behavior: "smooth"})
             if (data.activities != null) {
-                notification.pop("Pick at least one activity")
+                notification.pop("Выберите хотя бы одну активность")
             }
             return
         }
@@ -145,7 +145,7 @@ export default function SaveRecordPage() {
 
         if (status == 422) {
             if (data.activities != null) {
-                notification.pop("Pick at least one activity")
+                notification.pop("Выберите хотя бы одну активность")
             }
             window.scrollTo({top: 0, left: 0, behavior: "smooth"})
             return
@@ -166,10 +166,10 @@ export default function SaveRecordPage() {
                 <DatePicker active={willStore} name="date" value={state.date} error={errors.date} onChange={setField}/>
                 <MoodSelect name="mood" value={state.mood} onChange={setField}/>
                 <ActivityPicker collections={collections} value={state.activities} toggleActivity={addActivity}/>
-                <Notes label="Notes" name="notes" max={5000} value={state.notes} onChange={setField}/>
+                <Notes label="Заметки" name="notes" max={5000} value={state.notes} onChange={setField}/>
                 <FormButtons>
                     <FormBackButton/>
-                    <FormSubmitButton label="Save" onClick={save}/>
+                    <FormSubmitButton label="Сохранить" onClick={save}/>
                 </FormButtons>
             </Form>
         </div>

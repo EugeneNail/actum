@@ -53,7 +53,7 @@ export default function CollectionCard({collection}: Props) {
                     <div className={buttonIconContainerClassName} >
                         <Icon className={buttonIconClassName} name="add" bold/>
                     </div>
-                    <p className="collection-card-button__label">Add activity</p>
+                    <p className="collection-card-button__label">Добавить активность</p>
                 </div>}
             </div>
         </div>

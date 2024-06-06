@@ -8,7 +8,7 @@ type Props = {
     onClick: () => void
 }
 
-export default function FormSubmitButton({label, color = Color.Green, onClick}: Props) {
+export default function FormSubmitButton({label, color = Color.Accent, onClick}: Props) {
     return (
         <Button className="form__submit-button" submit style={ButtonStyle.Primary} color={color} onClick={onClick}>
             {label}

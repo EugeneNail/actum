@@ -33,6 +33,7 @@ export default function Button({className, color = Color.Green, submit, even, ro
         {blue: color == Color.Blue},
         {orange: color == Color.Orange},
         {purple: color == Color.Purple},
+        {accent: color == Color.Accent},
         {primary: style == ButtonStyle.Primary},
         {secondary: style == ButtonStyle.Secondary}
     )
