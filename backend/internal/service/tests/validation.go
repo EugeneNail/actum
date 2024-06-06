@@ -40,7 +40,7 @@ func AssertValidationFail[T any](t *testing.T, validationTests []ValidationTest)
 func getValidationErrorsCount[T any](test ValidationTest) int {
 	structField := getStructFieldByName[T](test.Field)
 
-	var ruleFuncs []rule.RuleFunc
+	var ruleFuncs []rule.Func
 
 	validationRules := structField.Tag.Get("rules")
 	if len(validationRules) == 0 {
@@ -54,7 +54,7 @@ func getValidationErrorsCount[T any](test ValidationTest) int {
 	errorCount := 0
 
 	for _, ruleFunc := range ruleFuncs {
-		validationError, err := ruleFunc(test.Field, test.Value)
+		validationError, err := ruleFunc(test.Value)
 		Check(err)
 
 		if validationError != nil {

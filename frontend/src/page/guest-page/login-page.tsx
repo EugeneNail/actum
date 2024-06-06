@@ -40,18 +40,18 @@ export default function LoginPage() {
     }
 
     const username = localStorage.getItem("username")
-    const greetings = username != null ? `Hello, ${username}!` : "Hello!"
+    const greetings = username != null ? `Привет, ${username}!` : "Привет!"
 
     return (
         <div className="page">
-            <Form title={greetings} subtitle={"Log in to continue"}>
-                <Field name="email" label="Email" icon="mail" value={state.email} error={errors.email} onChange={setField}/>
-                <Field name="password" label="Password" icon="lock" value={state.password} error={errors.password} onChange={setField} password/>
+            <Form title={greetings} subtitle={"Войдите, чтобы продолжить"}>
+                <Field name="email" label="Электронная почта" icon="mail" value={state.email} error={errors.email} onChange={setField}/>
+                <Field name="password" label="Пароль" icon="lock" value={state.password} error={errors.password} onChange={setField} password/>
                 <FormButtons>
-                    <FormSubmitButton label="Log in" onClick={login}/>
+                    <FormSubmitButton label="Войти" onClick={login}/>
                 </FormButtons>
             </Form>
-            <Link to="/signup" className="guest-page-link">I don't have an account</Link>
+            <Link to="/signup" className="guest-page-link">У меня нет аккаунта</Link>
         </div>
     )
 }

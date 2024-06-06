@@ -39,7 +39,7 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 	}
 
 	if isDateTaken {
-		message := fmt.Sprintf("Record for date %s already exists", input.Date)
+		message := fmt.Sprintf("У вас уже есть запись на дату %s.", input.Date)
 		response.Send(map[string]any{"date": message}, http.StatusConflict)
 		return
 	}
@@ -51,7 +51,7 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 	}
 
 	if !allExist {
-		errors := map[string]any{"activities": fmt.Sprintf("Activities %v not found", missingActivities)}
+		errors := map[string]any{"activities": fmt.Sprintf("Активности %v не найдены.", missingActivities)}
 		response.Send(errors, http.StatusNotFound)
 		return
 	}

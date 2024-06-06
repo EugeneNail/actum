@@ -22,7 +22,7 @@ func TestUpdateValidData(t *testing.T) {
 		Post("/api/records", `{
 			"mood": 1,
 			"date": "2024-01-01",
-			"notes": "There is not one to save the humanity",
+			"notes": "Иисус, жги!",
 			"activities": [1, 2, 3, 4, 5]
 		}`).
 		AssertStatus(http.StatusCreated)
@@ -32,7 +32,7 @@ func TestUpdateValidData(t *testing.T) {
 		AssertHas("records", map[string]any{
 			"mood":    1,
 			"date":    "2024-01-01",
-			"notes":   "There is not one to save the humanity",
+			"notes":   "Иисус, жги!",
 			"user_id": 1,
 		}).
 		AssertCount("records_activities", 5)
@@ -47,7 +47,7 @@ func TestUpdateValidData(t *testing.T) {
 	client.
 		Put("/api/records/1", `{
 			"mood": 5,
-			"notes": "Look over here",
+			"notes": "Сюда смотри",
 			"activities": [1, 2, 4, 5]
 		}`).
 		AssertStatus(http.StatusNoContent)
@@ -57,7 +57,7 @@ func TestUpdateValidData(t *testing.T) {
 		AssertHas("records", map[string]any{
 			"mood":  5,
 			"date":  "2024-01-01",
-			"notes": "Look over here",
+			"notes": "Сюда смотри",
 		}).
 		AssertCount("records_activities", 4).
 		AssertLacks("records_activities", map[string]any{
@@ -141,7 +141,7 @@ func TestUpdateNonexistentActivity(t *testing.T) {
 	client.
 		Put("/api/records/1", `{
 			"mood": 5,
-			"notes": "Look over here",
+			"notes": "Сюда смотри",
 			"activities": [1, 2, 4, 5]
 		}`).
 		AssertStatus(http.StatusNotFound)
@@ -192,7 +192,7 @@ func TestUpdateWithSomeoneElsesActivities(t *testing.T) {
 	client.
 		Put("/api/records/1", `{
 			"mood": 5,
-			"notes": "Look over here",
+			"notes": "Сюда смотри",
 			"activities": [1, 2, 3, 4, 5, 6]
 		}`).
 		AssertStatus(http.StatusNotFound)
@@ -220,9 +220,9 @@ func TestUpdateValidation(t *testing.T) {
 		{"mood", "Mood 4", 4},
 		{"mood", "Mood 5", 5},
 		{"notes", "Empty", ""},
-		{"notes", "Short", "Something good happened"},
-		{"notes", "Sentence 1", "The quick brown fox jumps over the lazy dog."},
-		{"notes", "Sentence 1", "Today i was arriving from Mexico on airplane №34"},
+		{"notes", "Short", "Что-то было"},
+		{"notes", "Sentence 1", "Поешь этимх мягких булок да выпей час"},
+		{"notes", "Sentence 1", "Я прилетел вчера. Причем, летел слишком долго, как это бывает на боингах №707"},
 		{"activities", "Activities 1", []int{1, 2, 3}},
 	})
 
@@ -231,7 +231,7 @@ func TestUpdateValidation(t *testing.T) {
 		{"mood", "Non integer", 1.1},
 		{"mood", "Negative", -1},
 		{"mood", "Nonexistent", 6},
-		{"notes", "Too long", strings.Repeat("Here are 23 characters", 250)},
+		{"notes", "Too long", strings.Repeat("Тут 15 символов", 350)},
 		{"activities", "Empty", []int{}},
 	})
 }

@@ -33,13 +33,13 @@ func (controller *Controller) Update(writer http.ResponseWriter, request *http.R
 	}
 
 	if collection.Id == 0 {
-		response.Send(fmt.Sprintf("Collection %d not found", id), http.StatusNotFound)
+		response.Send(fmt.Sprintf("Коллекция %d не найдена.", id), http.StatusNotFound)
 		return
 	}
 
 	user := jwt.GetUser(request)
 	if user.Id != collection.UserId {
-		response.Send("You are not allowed to manage other people's collections", http.StatusForbidden)
+		response.Send("Мы не можете изменить чужую коллекцию.", http.StatusForbidden)
 		return
 	}
 

@@ -25,7 +25,7 @@ export default function CollectionsPage() {
             <div className="collections-page-button" onClick={() => navigate("./new")}>
                 <div className="collections-page-button__title-container">
                     <Icon name="add" className="collections-page-button__icon" bold/>
-                    <p className="collections-page-button__label">Add collection</p>
+                    <p className="collections-page-button__label">Добавить коллекцию</p>
                 </div>
             </div>
         </div>

@@ -5,7 +5,6 @@ import (
 	"github.com/EugeneNail/actum/internal/service/tests"
 	"github.com/EugeneNail/actum/internal/service/tests/startup"
 	"net/http"
-	"strings"
 	"testing"
 )
 
@@ -14,7 +13,7 @@ func TestStoreValidData(t *testing.T) {
 
 	client.
 		Post("/api/collections", `{
-			"name": "Habits",
+			"name": "Привычки",
 			"color": 3
 		}`).
 		AssertStatus(http.StatusCreated)
@@ -22,14 +21,14 @@ func TestStoreValidData(t *testing.T) {
 	database.
 		AssertCount("collections", 1).
 		AssertHas("collections", map[string]any{
-			"name":    "Habits",
+			"name":    "Привычки",
 			"color":   3,
 			"user_id": 1,
 		})
 
 	client.
 		Post("/api/activities", `{
-			"name": "Clean teeth",
+			"name": "Чистка зубов",
 			"icon": 100,
 			"collectionId": 1
 		}`).
@@ -38,7 +37,7 @@ func TestStoreValidData(t *testing.T) {
 	database.
 		AssertCount("activities", 1).
 		AssertHas("activities", map[string]any{
-			"name":          "Clean teeth",
+			"name":          "Чистка зубов",
 			"icon":          100,
 			"collection_id": 1,
 			"user_id":       1,
@@ -50,7 +49,7 @@ func TestStoreInvalidData(t *testing.T) {
 
 	client.
 		Post("/api/collections", `{
-			"name": "Work",
+			"name": "Работа",
 			"color": 3
 		}`).
 		AssertStatus(http.StatusCreated)
@@ -58,19 +57,19 @@ func TestStoreInvalidData(t *testing.T) {
 	database.
 		AssertCount("collections", 1).
 		AssertHas("collections", map[string]any{
-			"name":    "Work",
+			"name":    "Работа",
 			"color":   3,
 			"user_id": 1,
 		})
 
 	client.
 		Post("/api/activities", `{
-			"name": "Very long name of the activity",
+			"name": "Очень длинное название активности",
 			"icon": 1001,
 			"collectionId": -99
 		}`).
 		AssertStatus(http.StatusUnprocessableEntity).
-		AssertHasValidationErrors([]string{"name", "collectionId"})
+		AssertHasValidationErrors([]string{"name", "icon", "collectionId"})
 
 	database.AssertCount("activities", 0)
 }
@@ -80,7 +79,7 @@ func TestStoreDuplicate(t *testing.T) {
 
 	client.
 		Post("/api/collections", `{
-			"name": "Sleep",
+			"name": "Сон",
 			"color": 3
 		}`).
 		AssertStatus(http.StatusCreated)
@@ -88,14 +87,14 @@ func TestStoreDuplicate(t *testing.T) {
 	database.
 		AssertCount("collections", 1).
 		AssertHas("collections", map[string]any{
-			"name":    "Sleep",
+			"name":    "Сон",
 			"color":   3,
 			"user_id": 1,
 		})
 
 	client.
 		Post("/api/activities", `{
-			"name": "Sleep good",
+			"name": "Хорошо поспал",
 			"icon": 700,
 			"collectionId": 1
 		}`).
@@ -104,7 +103,7 @@ func TestStoreDuplicate(t *testing.T) {
 	database.
 		AssertCount("activities", 1).
 		AssertHas("activities", map[string]any{
-			"name":          "Sleep good",
+			"name":          "Хорошо поспал",
 			"icon":          700,
 			"collection_id": 1,
 			"user_id":       1,
@@ -112,7 +111,7 @@ func TestStoreDuplicate(t *testing.T) {
 
 	client.
 		Post("/api/activities", `{
-			"name": "sleEp goOd",
+			"name": "ХоРоШо поспаЛ",
 			"icon": 700,
 			"collectionId": 1
 		}`).
@@ -122,7 +121,7 @@ func TestStoreDuplicate(t *testing.T) {
 	database.
 		AssertCount("activities", 1).
 		AssertHas("activities", map[string]any{
-			"name":          "Sleep good",
+			"name":          "Хорошо поспал",
 			"icon":          700,
 			"collection_id": 1,
 			"user_id":       1,
@@ -134,7 +133,7 @@ func TestStoreToSomeonesCollection(t *testing.T) {
 
 	client.
 		Post("/api/collections", `{
-			"name":"Household",
+			"name":"Хозяйство",
 			"color": 3
 		}`).
 		AssertStatus(http.StatusCreated)
@@ -142,7 +141,7 @@ func TestStoreToSomeonesCollection(t *testing.T) {
 	database.
 		AssertCount("collections", 1).
 		AssertHas("collections", map[string]any{
-			"name":    "Household",
+			"name":    "Хозяйство",
 			"color":   3,
 			"user_id": 1,
 		})
@@ -150,7 +149,7 @@ func TestStoreToSomeonesCollection(t *testing.T) {
 	client.ChangeUser()
 	client.
 		Post("/api/activities", `{
-			"name": "Cut grass",
+			"name": "Косил траву",
 			"icon": 610,
 			"collectionId": 1
 		}`).
@@ -164,7 +163,7 @@ func TestStoreToNonexistentCollection(t *testing.T) {
 
 	client.
 		Post("/api/collections", `{
-			"name": "Workout",
+			"name": "Тренировки",
 			"color": 3
 		}`).
 		AssertStatus(http.StatusCreated)
@@ -172,14 +171,14 @@ func TestStoreToNonexistentCollection(t *testing.T) {
 	database.
 		AssertCount("collections", 1).
 		AssertHas("collections", map[string]any{
-			"name":    "Workout",
+			"name":    "Тренировки",
 			"color":   3,
 			"user_id": 1,
 		})
 
 	client.
 		Post("/api/activities", `{
-			"name": "Lightweight",
+			"name": "Многоповторные",
 			"icon": 112,
 			"collectionId": 2
 		}`).
@@ -194,7 +193,7 @@ func TestStoreTooMany(t *testing.T) {
 
 	client.
 		Post("/api/collections", `{
-			"name":"Health",
+			"name":"Здоровье",
 			"color": 3
 		}`).
 		AssertStatus(http.StatusCreated)
@@ -202,7 +201,7 @@ func TestStoreTooMany(t *testing.T) {
 	database.
 		AssertCount("collections", 1).
 		AssertHas("collections", map[string]any{
-			"name":    "Health",
+			"name":    "Здоровье",
 			"user_id": 1,
 		})
 
@@ -214,7 +213,7 @@ func TestStoreTooMany(t *testing.T) {
 
 	client.
 		Post("/api/activities", `{
-			"name": "Wash hands",
+			"name": "Мыл руки",
 			"icon": 502,
 			"collectionId": 1
 		}`).
@@ -240,13 +239,13 @@ func TestStoreValidation(t *testing.T) {
 		})
 
 	tests.AssertValidationSuccess[storeInput](t, []tests.ValidationTest{
-		{"name", "Short", "Run"},
-		{"name", "Long", "VeryEnoughLongName"},
-		{"name", "One word", "Washing"},
-		{"name", "Multiple words", "Wake up early"},
-		{"name", "Numbers", "Wake p at 6 am"},
+		{"name", "Short", "Бег"},
+		{"name", "Long", "Название  активности"},
+		{"name", "One word", "Душ"},
+		{"name", "Multiple words", "Встал рано"},
+		{"name", "Numbers", "Встал в 6 утра"},
 		{"name", "Only numbers", "123534"},
-		{"name", "Dash", "Work for 9-10 hours"},
+		{"name", "Dash", "Работал 9-10 часов"},
 		{"icon", "First group", 100},
 		{"icon", "Ninth group", 903},
 		{"icon", "Third group", 333},
@@ -254,10 +253,10 @@ func TestStoreValidation(t *testing.T) {
 	})
 
 	tests.AssertValidationFail[storeInput](t, []tests.ValidationTest{
-		{"name", "Too short", "Ha"},
-		{"name", "Too long", strings.Repeat("Very", 5) + "LongName"},
-		{"name", "Has comma", "Sleep, sleep and sleep"},
-		{"name", "Period", "Better. Faster. Stronger."},
+		{"name", "Too short", "Не"},
+		{"name", "Too long", "Очень длинное название"},
+		{"name", "Has comma", "Спать, спать и спать"},
+		{"name", "Period", "Лучше. Быстрее."},
 		{"name", "Other symbols", "[]/\\?!"},
 		{"icon", "Zero group", 99},
 		{"icon", "Negative group", -100},

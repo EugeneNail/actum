@@ -10,17 +10,16 @@ import (
 	"strings"
 	"time"
 	"unicode"
+	"unicode/utf8"
 )
 
-type RuleFunc func(string, any) (error, error)
+type Func func(any) (error, error)
 
-func Extract(pipeRule string) RuleFunc {
+func Extract(pipeRule string) Func {
 	rule := strings.Split(pipeRule, ":")
 	switch rule[0] {
 	case "required":
 		return required
-	case "accepted":
-		return accepted
 	case "word":
 		return word
 	case "sentence":
@@ -50,57 +49,49 @@ func Extract(pipeRule string) RuleFunc {
 	case "integer":
 		return integer
 	default:
-		return func(string, any) (error, error) { return nil, fmt.Errorf("unknown rule %s", rule[0]) }
+		return func(any) (error, error) { return nil, fmt.Errorf("unknown rule %s", rule[0]) }
 	}
 }
 
-func required(name string, value any) (error, error) {
+func required(value any) (error, error) {
 	if value == 0 || value == "" {
-		return fmt.Errorf("The %s field is required", name), nil
+		return fmt.Errorf("Заполните это поле."), nil
 	}
 
 	reflectValue := reflect.ValueOf(value)
 	if reflectValue.Kind() == reflect.Slice && reflectValue.Len() == 0 {
-		return fmt.Errorf("The %s field is required", name), nil
+		return fmt.Errorf("Заполните это поле."), nil
 	}
 
 	return nil, nil
 }
 
-func accepted(name string, value any) (error, error) {
-	if value != true {
-		return fmt.Errorf("The %s field must be accepted", name), nil
-	}
-
-	return nil, nil
-}
-
-func word(name string, value any) (error, error) {
-	match, err := regexp.MatchString("^[a-zA-Z]+$", value.(string))
+func word(value any) (error, error) {
+	match, err := regexp.MatchString("^[a-zA-Zа-яА-Я]+$", value.(string))
 
 	if err != nil || !match {
-		return fmt.Errorf("The %s field be one word, only containing letters", name), nil
+		return fmt.Errorf("Введите одно слово, состоящее только из букв."), nil
 	}
 
 	return nil, nil
 }
 
-func sentence(name string, value any) (error, error) {
-	match, err := regexp.MatchString("^[a-zA-Z0-9 -]+$", value.(string))
+func sentence(value any) (error, error) {
+	match, err := regexp.MatchString("^[a-zA-Zа-яА-Я0-9 -]+$", value.(string))
 
 	if err != nil {
 		return nil, fmt.Errorf("sentence(): %w", err)
 	}
 
 	if !match {
-		return fmt.Errorf("The %s field must be a sentence containing letters, number, spaces, slashes or dashes", name), nil
+		return fmt.Errorf("Введите предложение. Оно может содержать сколько угодно слов, цифры и тире."), nil
 	}
 
 	return nil, nil
 }
 
-func date(name string, value any) (error, error) {
-	message := fmt.Sprintf("The %s field must be a valid YYYY-MM-DD date value", name)
+func date(value any) (error, error) {
+	message := "Введите дату в формате YYYY-MM-DD"
 
 	match, err := regexp.MatchString("^20[0-9]{2}-(0[0-9]|1[0-2])-([0-2][0-9]|3[0-1])$", value.(string))
 	if err != nil {
@@ -119,7 +110,7 @@ func date(name string, value any) (error, error) {
 	return nil, nil
 }
 
-func email(name string, value any) (error, error) {
+func email(value any) (error, error) {
 	match, err := regexp.MatchString("^\\S+@\\S+\\.\\S+$", value.(string))
 
 	if err != nil {
@@ -127,13 +118,13 @@ func email(name string, value any) (error, error) {
 	}
 
 	if !match {
-		return fmt.Errorf("The %s field must be a valid email address", name), nil
+		return fmt.Errorf("Введите действующий адрес электронной почты."), nil
 	}
 
 	return nil, nil
 }
 
-func newMinRuleFunc(rule []string) RuleFunc {
+func newMinRuleFunc(rule []string) Func {
 	limit := 0
 	if len(rule) == 2 {
 		parsed, err := strconv.Atoi(rule[1])
@@ -143,15 +134,15 @@ func newMinRuleFunc(rule []string) RuleFunc {
 		}
 	}
 
-	return func(name string, value any) (error, error) {
+	return func(value any) (error, error) {
 		switch value.(type) {
 		case string:
-			if len(value.(string)) < limit {
-				return fmt.Errorf("The %s field must be at least %d characters", name, limit), nil
+			if utf8.RuneCountInString(value.(string)) < limit {
+				return fmt.Errorf("Длина должная быть не менее %d символов.", limit), nil
 			}
 		case int:
 			if value.(int) < limit {
-				return fmt.Errorf("The %s field must be greater than %d", name, limit), nil
+				return fmt.Errorf("Значение должно быть больше или равно %d.", limit), nil
 			}
 		}
 
@@ -159,7 +150,7 @@ func newMinRuleFunc(rule []string) RuleFunc {
 	}
 }
 
-func newMaxRuleFunc(rule []string) RuleFunc {
+func newMaxRuleFunc(rule []string) Func {
 	limit := 0
 	if len(rule) == 2 {
 		parsed, err := strconv.Atoi(rule[1])
@@ -169,15 +160,15 @@ func newMaxRuleFunc(rule []string) RuleFunc {
 		}
 	}
 
-	return func(name string, value any) (error, error) {
+	return func(value any) (error, error) {
 		switch value.(type) {
 		case string:
-			if len(value.(string)) > limit {
-				return fmt.Errorf("The %s field must not be greater than %d characters", name, limit), nil
+			if utf8.RuneCountInString(value.(string)) > limit {
+				return fmt.Errorf("Длина не должна превышать %d символов.", limit), nil
 			}
 		case int:
 			if value.(int) > limit {
-				return fmt.Errorf("The %s field must be less than %d", name, limit), nil
+				return fmt.Errorf("Значение должно быть больше или равно %d.", limit), nil
 			}
 		}
 
@@ -185,13 +176,13 @@ func newMaxRuleFunc(rule []string) RuleFunc {
 	}
 }
 
-func newRegexRuleFunc(rule []string) RuleFunc {
+func newRegexRuleFunc(rule []string) Func {
 	pattern := ".*"
 	if len(rule) == 2 {
 		pattern = rule[1]
 	}
 
-	return func(name string, value any) (error, error) {
+	return func(value any) (error, error) {
 		match, err := regexp.MatchString(pattern, value.(string))
 
 		if err != nil {
@@ -199,14 +190,14 @@ func newRegexRuleFunc(rule []string) RuleFunc {
 		}
 
 		if !match {
-			return fmt.Errorf("The %s field format is invalid", name), nil
+			return fmt.Errorf("Введите данные в правильном формате."), nil
 		}
 
 		return nil, nil
 	}
 }
 
-func newUniqueRuleFunc(rule []string) RuleFunc {
+func newUniqueRuleFunc(rule []string) Func {
 	table, column := "", ""
 
 	if len(rule) == 2 {
@@ -219,7 +210,7 @@ func newUniqueRuleFunc(rule []string) RuleFunc {
 		}
 	}
 
-	return func(name string, value any) (error, error) {
+	return func(value any) (error, error) {
 		db, err := mysql.Connect()
 		if err != nil {
 			return nil, fmt.Errorf("newUniqueRuleFunc(): %w", err)
@@ -242,14 +233,14 @@ func newUniqueRuleFunc(rule []string) RuleFunc {
 		}
 
 		if count > 0 {
-			return fmt.Errorf("The %s has already been taken", name), nil
+			return fmt.Errorf("Запись с таким значением уже существует."), nil
 		}
 
 		return nil, nil
 	}
 }
 
-func mixedCase(name string, value any) (error, error) {
+func mixedCase(value any) (error, error) {
 	hasLower := false
 	hasUpper := false
 
@@ -263,13 +254,13 @@ func mixedCase(name string, value any) (error, error) {
 	}
 
 	if !(hasLower && hasUpper) {
-		return fmt.Errorf("The %s field must contain at least one uppercase and one lowercase letter", name), nil
+		return fmt.Errorf("Введите хотя бы по одной строчной и заглавной букве."), nil
 	}
 
 	return nil, nil
 }
 
-func newExistsRuleFunc(rule []string) RuleFunc {
+func newExistsRuleFunc(rule []string) Func {
 	table, column := "", ""
 
 	if len(rule) == 2 {
@@ -282,7 +273,7 @@ func newExistsRuleFunc(rule []string) RuleFunc {
 		}
 	}
 
-	return func(name string, value any) (error, error) {
+	return func(value any) (error, error) {
 		db, err := mysql.Connect()
 		defer db.Close()
 		if err != nil {
@@ -305,24 +296,24 @@ func newExistsRuleFunc(rule []string) RuleFunc {
 		}
 
 		if count < 1 {
-			return errors.New("The selected value is not found"), nil
+			return errors.New("Запись с таким значением не существует."), nil
 		}
 
 		return nil, nil
 	}
 }
 
-func newBeforeRuleFunc(rule []string) RuleFunc {
+func newBeforeRuleFunc(rule []string) Func {
 	conditionDate, err := time.Parse("2006-01-02", rule[1])
 	if err != nil {
-		return func(string, any) (error, error) {
+		return func(any) (error, error) {
 			return nil, err
 		}
 	}
 	conditionDate.Add(time.Second*60*60*24 - 1)
 
-	return func(name string, value any) (error, error) {
-		validationError, err := date(name, value)
+	return func(value any) (error, error) {
+		validationError, err := date(value)
 		if validationError != nil || err != nil {
 			return validationError, err
 		}
@@ -333,23 +324,23 @@ func newBeforeRuleFunc(rule []string) RuleFunc {
 		}
 
 		if inputDate.After(conditionDate) {
-			return errors.New(fmt.Sprintf("The %s field must be a date before %s", name, rule[1])), nil
+			return errors.New(fmt.Sprintf("Введите дату до %s", rule[1])), nil
 		}
 
 		return nil, nil
 	}
 }
 
-func newAfterRuleFunc(rule []string) RuleFunc {
+func newAfterRuleFunc(rule []string) Func {
 	conditionDate, err := time.Parse("2006-01-02", rule[1])
 	if err != nil {
-		return func(string, any) (error, error) {
+		return func(any) (error, error) {
 			return nil, err
 		}
 	}
 
-	return func(name string, value any) (error, error) {
-		validationError, err := date(name, value)
+	return func(value any) (error, error) {
+		validationError, err := date(value)
 		if validationError != nil || err != nil {
 			return validationError, err
 		}
@@ -360,22 +351,22 @@ func newAfterRuleFunc(rule []string) RuleFunc {
 		}
 
 		if inputDate.Before(conditionDate) {
-			return errors.New(fmt.Sprintf("The %s field must be a date after %s", name, rule[1])), nil
+			return errors.New(fmt.Sprintf("Введите дату не ранее %s.", rule[1])), nil
 		}
 
 		return nil, nil
 	}
 }
 
-func integer(name string, value any) (error, error) {
+func integer(value any) (error, error) {
 	switch value.(type) {
 	case float32:
 		if int(value.(float32)) != value {
-			return fmt.Errorf("The %s field must be an integer", name), nil
+			return fmt.Errorf("Введите целое число."), nil
 		}
 	case float64:
 		if int(value.(float64)) != value {
-			return fmt.Errorf("The %s field must be an integer", name), nil
+			return fmt.Errorf("Введите целое число."), nil
 		}
 	}
 

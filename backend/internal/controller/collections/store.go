@@ -1,6 +1,7 @@
 package collections
 
 import (
+	"fmt"
 	"github.com/EugeneNail/actum/internal/database/resource/collections"
 	"github.com/EugeneNail/actum/internal/service/jwt"
 	"github.com/EugeneNail/actum/internal/service/log"
@@ -38,7 +39,8 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 	}
 
 	if exceededLimit {
-		response.Send("You can have only 15 collections", http.StatusConflict)
+		message := fmt.Sprintf("Похоже, вы превысили лимит (%d) коллекций. Попробуйте удалить старые коллекции или изменить уже имеющиеся.", limit)
+		response.Send(message, http.StatusConflict)
 		return
 	}
 

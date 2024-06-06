@@ -34,7 +34,7 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 	}
 
 	if input.Password != input.PasswordConfirmation {
-		response.Send(map[string]string{"passwordConfirmation": "Passwords do not match"}, http.StatusUnprocessableEntity)
+		response.Send(map[string]string{"passwordConfirmation": "Пароли не совпадают."}, http.StatusUnprocessableEntity)
 		return
 	}
 

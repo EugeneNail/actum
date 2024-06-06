@@ -25,7 +25,7 @@ export function DatePicker({className, active, name, value, error, onChange}: Pr
         className,
         {invalid: error?.length > 0}
     )
-    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    const monthNames = ["Января", "Февраля", "Марта", "Апреля", "Мая", "Июня", "Июля", "Августа", "Сентября", "Октября", "Ноября", "Декабря"]
 
 
     useEffect(() => {
@@ -55,7 +55,7 @@ export function DatePicker({className, active, name, value, error, onChange}: Pr
 
 
     function buildCalendar(year: number, month: number) {
-        const days: number[] = [...Array(new Date(year, month, 1).getDay())]
+        const days: number[] = [...Array(new Date(year, month, 1).getDay() - 1)]
 
         let day = 1
         let date = new Date(year, month, day)
@@ -66,7 +66,8 @@ export function DatePicker({className, active, name, value, error, onChange}: Pr
             date = new Date(year, month, day)
         }
 
-        setDays([...days, ...Array(41 - days.length)])
+        const minCalendarSize = 41
+        setDays([...days, ...Array(minCalendarSize - days.length)])
     }
 
 
@@ -93,13 +94,13 @@ export function DatePicker({className, active, name, value, error, onChange}: Pr
         const date = new Date(value)
 
         if (value == new Date().toISOString().split("T")[0]) {
-            return `Today, ${dateToUserFriendly(date)}`
+            return `Сегодня, ${dateToUserFriendly(date)}`
         }
 
         const yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1)
         if (value == yesterday.toISOString().split("T")[0]) {
-            return `Yesterday, ${dateToUserFriendly(date)}`
+            return `Вчера, ${dateToUserFriendly(date)}`
         }
 
         return dateToUserFriendly(date)
@@ -145,13 +146,13 @@ export function DatePicker({className, active, name, value, error, onChange}: Pr
                 </div>
 
                 <div className="date-picker__days">
-                    <div className="date-picker__day weekday">Su</div>
-                    <div className="date-picker__day weekday">Mo</div>
-                    <div className="date-picker__day weekday">Tu</div>
-                    <div className="date-picker__day weekday">We</div>
-                    <div className="date-picker__day weekday">Th</div>
-                    <div className="date-picker__day weekday">Fr</div>
-                    <div className="date-picker__day weekday">Sa</div>
+                    <div className="date-picker__day weekday">Пн</div>
+                    <div className="date-picker__day weekday">Вт</div>
+                    <div className="date-picker__day weekday">Ср</div>
+                    <div className="date-picker__day weekday">Чт</div>
+                    <div className="date-picker__day weekday">Пт</div>
+                    <div className="date-picker__day weekday">Сб</div>
+                    <div className="date-picker__day weekday">Вс</div>
                     {days && days.map(day => (
                         <div key={Math.random()}
                             className={classNames(

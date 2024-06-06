@@ -26,14 +26,14 @@ func (controller *Controller) Destroy(writer http.ResponseWriter, request *http.
 	}
 
 	if activity.Id == 0 {
-		message := fmt.Sprintf("Activity %d not found", activity.Id)
+		message := fmt.Sprintf("Активность %d не найдена", activity.Id)
 		response.Send(message, http.StatusNotFound)
 		return
 	}
 
 	user := jwt.GetUser(request)
 	if activity.UserId != user.Id {
-		response.Send("You are not allowed to manage other people's activities", http.StatusForbidden)
+		response.Send("Вы пытаетесь использовать чужую активность.", http.StatusForbidden)
 		return
 	}
 

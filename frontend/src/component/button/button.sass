@@ -10,6 +10,7 @@
   gap: 10px
   padding: 24px 32px
   cursor: pointer
+  text-shadow: 0 0 3px #00000088
 
   &.even
     padding: 0
@@ -83,6 +84,15 @@
       &:active
         background: darken($purple-strong, 3%)
 
+    &.accent
+      background: $accent-strong
+
+      @media (pointer: fine)
+        &:hover
+          background: darken($accent-strong, 5%)
+
+      &:active
+        background: darken($accent-strong, 3%)
 
   &.secondary
 
@@ -145,3 +155,13 @@
 
       &:active
         background: darken($purple-weak, 4%)
+
+    &.accent
+      color: $accent-strong
+      background: $accent-weak
+
+      &:hover
+        background: darken($accent-weak, 3%)
+
+      &:active
+        background: darken($accent-weak, 4%)

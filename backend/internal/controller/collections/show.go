@@ -31,7 +31,7 @@ func (controller *Controller) Show(writer http.ResponseWriter, request *http.Req
 
 	user := jwt.GetUser(request)
 	if collection.UserId != user.Id {
-		response.Send("You are not allowed to view other people's collections", http.StatusForbidden)
+		response.Send("Вы не можете использовать чужую коллекцию.", http.StatusForbidden)
 		return
 	}
 
