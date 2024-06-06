@@ -41,7 +41,7 @@ func (service *Service) fetchRecords(start time.Time, end time.Time, userId int)
 	var records []*IndexRecord
 
 	rows, err := service.db.Query(
-		`SELECT id, mood, date, notes FROM records WHERE user_id = ? AND date > ? AND date <= ?`,
+		`SELECT id, mood, weather, date, notes FROM records WHERE user_id = ? AND date > ? AND date <= ?`,
 		userId, start, end,
 	)
 	defer rows.Close()
@@ -52,7 +52,7 @@ func (service *Service) fetchRecords(start time.Time, end time.Time, userId int)
 	for rows.Next() {
 		var record IndexRecord
 
-		if err := rows.Scan(&record.Id, &record.Mood, &record.Date, &record.Notes); err != nil {
+		if err := rows.Scan(&record.Id, &record.Mood, &record.Weather, &record.Date, &record.Notes); err != nil {
 			return records, fmt.Errorf("records.fetchRecords(): %w", err)
 		}
 		record.Collections = []IndexCollection{}

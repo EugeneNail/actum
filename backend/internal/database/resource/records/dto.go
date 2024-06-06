@@ -5,25 +5,19 @@ import (
 	"time"
 )
 
-type RecordActivity struct {
-	Id       int    `json:"id"`
-	Name     string `json:"name"`
-	Icon     string `json:"icon"`
-	RecordId int    `json:"recordId"`
-}
-
 type Record struct {
-	Id         int              `json:"id"`
-	Mood       int              `json:"mood"`
-	Date       time.Time        `json:"date"`
-	Notes      string           `json:"notes"`
-	UserId     int              `json:"userId"`
-	Activities []RecordActivity `json:"activities"`
+	Id      int       `json:"id"`
+	Mood    int       `json:"mood"`
+	Date    time.Time `json:"date"`
+	Weather int       `json:"weather"`
+	Notes   string    `json:"notes"`
+	UserId  int       `json:"userId"`
 }
 
 type IndexRecord struct {
 	Id          int               `json:"id"`
 	Date        string            `json:"date"`
+	Weather     int               `json:"weather"`
 	Mood        int               `json:"mood"`
 	Notes       string            `json:"notes"`
 	Collections []IndexCollection `json:"collections"`
@@ -41,13 +35,14 @@ type IndexActivity struct {
 	CollectionId int    `json:"collectionId"`
 	Icon         int    `json:"icon"`
 	Name         string `json:"name"`
+	Weather      int    `json:"weather"`
 }
 
-func New(mood int, date string, notes string, userId int) (Record, error) {
+func New(mood int, weather int, date string, notes string, userId int) (Record, error) {
 	time, err := time.Parse("2006-01-02", date)
 	if err != nil {
 		return Record{}, fmt.Errorf("records.New(): %w", err)
 	}
 
-	return Record{0, mood, time, notes, userId, []RecordActivity{}}, nil
+	return Record{0, mood, time, weather, notes, userId}, nil
 }

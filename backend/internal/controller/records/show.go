@@ -45,6 +45,7 @@ func (controller *Controller) Show(writer http.ResponseWriter, request *http.Req
 	output := make(map[string]any, 5)
 	output["date"] = record.Date.Format("2006-01-02")
 	output["mood"] = record.Mood
+	output["weather"] = record.Weather
 	output["notes"] = record.Notes
 	output["id"] = record.Id
 	output["activities"] = activities
