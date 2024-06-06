@@ -7,11 +7,12 @@ import (
 )
 
 type Service struct {
-	db *sql.DB
+	db  *sql.DB
+	dao *DAO
 }
 
-func NewService(db *sql.DB) *Service {
-	return &Service{db}
+func NewService(db *sql.DB, dao *DAO) *Service {
+	return &Service{db, dao}
 }
 
 func (service *Service) HasDuplicate(name string, userId int) (bool, error) {
@@ -38,4 +39,26 @@ func (service *Service) ExceedsLimit(limit int, collectionId int, userId int) (b
 	}
 
 	return count >= limit, nil
+}
+
+func (service *Service) CheckExistence(needleActivities []int, userId int) (bool, []int, error) {
+	existing, err := service.dao.ListIn(needleActivities, userId)
+	if err != nil {
+		return false, []int{}, fmt.Errorf("checkExistence(): %w", err)
+	}
+
+	var missing []int
+	activitiesById := make(map[int]struct{}, len(existing))
+
+	for _, activity := range existing {
+		activitiesById[activity.Id] = struct{}{}
+	}
+
+	for _, needleId := range needleActivities {
+		if _, found := activitiesById[needleId]; !found {
+			missing = append(missing, needleId)
+		}
+	}
+
+	return len(missing) == 0, missing, nil
 }

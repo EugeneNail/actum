@@ -49,7 +49,7 @@ func (controller *Controller) Update(writer http.ResponseWriter, request *http.R
 	}
 
 	user := jwt.GetUser(request)
-	allExist, missingActivities, err := controller.checkExistence(input.Activities, user.Id)
+	allExist, missingActivities, err := controller.activityService.CheckExistence(input.Activities, user.Id)
 	if err != nil {
 		response.Send(err, http.StatusInternalServerError)
 		return

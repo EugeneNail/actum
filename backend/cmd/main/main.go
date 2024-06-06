@@ -42,7 +42,7 @@ func main() {
 	routing.Get("/api/collections", collectionController.Index)
 
 	activityDAO := activities.NewDAO(db)
-	activityService := activities.NewService(db)
+	activityService := activities.NewService(db, activityDAO)
 	activityController := activityController.New(db, activityDAO, collectionDAO, activityService)
 	routing.Post("/api/activities", activityController.Store)
 	routing.Put("/api/activities/:id", activityController.Update)
@@ -50,7 +50,7 @@ func main() {
 	routing.Get("/api/activities/:id", activityController.Show)
 
 	recordDAO := records.NewDAO(db)
-	recordController := recordController.New(db, recordDAO, activityDAO)
+	recordController := recordController.New(db, recordDAO, activityDAO, activityService)
 	routing.Post("/api/records", recordController.Store)
 	routing.Put("/api/records/:id", recordController.Update)
 	routing.Get("/api/records/:id", recordController.Show)
