@@ -52,6 +52,7 @@ func main() {
 	routing.Post("/api/records", recordController.Store)
 	routing.Put("/api/records/:id", recordController.Update)
 	routing.Get("/api/records/:id", recordController.Show)
+	routing.Post("/api/records-list", recordController.Index)
 
 	handler := middleware.BuildPipeline(db, []middleware.Middleware{
 		middleware.SetHeaders,
