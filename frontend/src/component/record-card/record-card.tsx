@@ -5,6 +5,7 @@ import {Mood, MoodIcons} from "../../model/mood.ts";
 import classNames from "classnames";
 import RecordCardCollection from "./record-card-collection.tsx";
 import {useNavigate} from "react-router-dom";
+import {Weather, WeatherIcons, WeatherNames} from "../../model/weather.ts";
 
 type Props = {
     record: ShortRecord
@@ -25,6 +26,20 @@ export default function RecordCard({record}: Props) {
     )
 
 
+    const weatherClassName = classNames(
+        "record-card__weather",
+        {heat: record.weather == Weather.Heat},
+        {sunny: record.weather == Weather.Sunny},
+        {cloudy: record.weather == Weather.Cloudy},
+        {windy: record.weather == Weather.Windy},
+        {rainy: record.weather == Weather.Rainy},
+        {thunder: record.weather == Weather.Thunder},
+        {foggy: record.weather == Weather.Foggy},
+        {snowy: record.weather == Weather.Snowy},
+        {cold: record.weather == Weather.Cold},
+    )
+
+
     function formatDate(): string {
         const date = new Date(record.date)
         return `${weekdays[date.getDay()]}, ${date.getDate()} ${months[date.getMonth()]}`
@@ -35,7 +50,11 @@ export default function RecordCard({record}: Props) {
         <div className="record-card">
             <div className="record-card__header" onClick={() => navigate(`./${record.id}`)}>
                 <Icon className={moodClassName} name={MoodIcons[record.mood]}/>
-                <p className="record-card__date">{formatDate()}</p>
+                <Icon className={weatherClassName} name={WeatherIcons[record.weather]}/>
+                <div className="record-card__label">
+                    <p className="record-card__date">{formatDate()}</p>
+                    <p className="record-card__weather-name">{WeatherNames[record.weather]}</p>
+                </div>
             </div>
             <div className="record-card__collections">
                 {record.collections && record.collections.map(collection =>
