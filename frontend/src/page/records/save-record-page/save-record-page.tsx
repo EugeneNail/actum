@@ -43,6 +43,7 @@ export default function SaveRecordPage() {
 
 
     useEffect(() => {
+        document.title = "Новая запись"
         if (!willStore) {
             fetchRecord()
         }
@@ -64,6 +65,7 @@ export default function SaveRecordPage() {
             notes: data.notes,
             activities: data.activities
         })
+        document.title = data.date + " - Записи"
     }
 
 
@@ -169,7 +171,7 @@ export default function SaveRecordPage() {
 
     return (
         <div className="save-record-page page">
-            <Form title={willStore ? "New record" : "Record"}>
+            <Form title={willStore ? "Новая запись" : "Запись"}>
                 <DatePicker active={willStore} name="date" value={state.date} error={errors.date} onChange={setField}/>
                 <MoodSelect name="mood" value={state.mood} onChange={setField}/>
                 <WeatherSelect name="weather" value={state.weather} onChange={setField}/>

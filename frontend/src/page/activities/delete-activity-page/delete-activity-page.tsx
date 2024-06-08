@@ -26,9 +26,8 @@ export default function DeleteActivityPage() {
             return
         }
 
-        console.log(data)
-
         setName(data.name)
+        document.title = data.name + " - Активности"
     }
 
     async function destroy() {

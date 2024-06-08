@@ -12,6 +12,7 @@ export default function CollectionsPage() {
     const navigate = useNavigate()
 
     useEffect(() => {
+        document.title = "Коллекции"
         http.get("/api/collections").then(({data}) => {
             setCollections(data)
         })

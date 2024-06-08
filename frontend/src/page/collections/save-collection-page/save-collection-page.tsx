@@ -34,6 +34,7 @@ export default function SaveCollectionPage() {
 
 
     useEffect(() => {
+        document.title = "Новая коллекция"
         if (!willStore) {
             fetchCollection()
         }
@@ -56,6 +57,7 @@ export default function SaveCollectionPage() {
                 color: data.color
             })
         }
+        document.title = data.name + " - Коллекции"
     }
 
 
@@ -104,7 +106,7 @@ export default function SaveCollectionPage() {
 
     return (
         <div className="save-collection-page page">
-            <Form title={willStore ? "New collection" : "Collection"} subtitle={initialName ? initialName : ""}>
+            <Form title={willStore ? "Новая коллекция" : "Коллекция"} subtitle={initialName ? initialName : ""}>
                 <Field name="name" label="Название" icon="category" value={state.name} error={errors.name} onChange={setField}/>
                 <Palette name="color" value={state.color} onChange={setField}/>
                 <FormButtons>

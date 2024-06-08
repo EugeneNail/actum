@@ -27,6 +27,7 @@ export default function DeleteCollectionPage() {
         }
 
         setName(data.name)
+        document.title = data.name + " - Коллекции"
     }
 
     async function destroy() {

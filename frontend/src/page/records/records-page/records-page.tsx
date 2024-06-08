@@ -9,6 +9,7 @@ export default function RecordsPage() {
     const [records, setRecords] = useState<ShortRecord[]>([])
 
     useEffect(() => {
+        document.title = "Записи"
         if (records.length == 0) {
             fetchRecords()
         }

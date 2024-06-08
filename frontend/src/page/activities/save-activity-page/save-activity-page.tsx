@@ -36,6 +36,7 @@ export default function SaveActivityPage() {
 
 
     useEffect(() => {
+        document.title = "Новая активность"
         setState({
             ...state,
             collectionId: parseInt(collectionId ?? "0"),
@@ -73,6 +74,7 @@ export default function SaveActivityPage() {
             name: data.name,
             icon: data.icon
         })
+        document.title = data.name + " - Активности"
     }
 
 
