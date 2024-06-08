@@ -57,7 +57,7 @@ func getValidationErrorsCount[T any](test ValidationTest) int {
 		validationError, err := ruleFunc(test.Value)
 		Check(err)
 
-		if validationError != nil {
+		if len(validationError) > 0 {
 			errorCount++
 		}
 	}

@@ -26,8 +26,8 @@ func Perform(data any) (map[string]string, error) {
 				return nil, fmt.Errorf("validate(): %w", err)
 			}
 
-			if validationError != nil {
-				validationErrors[field.name] = validationError.Error()
+			if len(validationError) > 0 {
+				validationErrors[field.name] = validationError
 				break currentFieldLoop
 			}
 		}
