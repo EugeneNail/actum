@@ -46,10 +46,10 @@ export default function SignupPage() {
     return (
         <div className="page">
             <Form title="Регистрация" subtitle={"это только начало"}>
-                <Field name="name" label="Как вас зовут?" icon="face" value={state.name} error={errors.name} onChange={setField}/>
-                <Field name="email" label="Электронная почта" icon="mail" value={state.email} error={errors.email} onChange={setField}/>
-                <Field name="password" label="Пароль" icon="lock" value={state.password} error={errors.password} onChange={setField} password/>
-                <Field name="passwordConfirmation" label="Повторите пароль" icon="lock" value={state.passwordConfirmation} error={errors.passwordConfirmation} onChange={setField} password/>
+                <Field name="name" label="Как вас зовут?" icon="face" value={state.name} max={20} error={errors.name} onChange={setField}/>
+                <Field name="email" label="Электронная почта" icon="mail" value={state.email} max={100} error={errors.email} onChange={setField}/>
+                <Field name="password" label="Пароль" icon="lock" value={state.password} max={100} error={errors.password} onChange={setField} password/>
+                <Field name="passwordConfirmation" label="Повторите пароль" icon="lock" value={state.passwordConfirmation} max={100} error={errors.passwordConfirmation} onChange={setField} password/>
                 <FormButtons>
                     <FormSubmitButton label="Зарегистрироваться" onClick={signup}/>
                 </FormButtons>

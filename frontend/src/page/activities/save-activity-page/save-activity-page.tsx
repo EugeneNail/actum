@@ -146,7 +146,7 @@ export default function SaveActivityPage() {
             {!isActivityLoading && !isCollectionLoading &&
                 <div className="save-activity-page page">
                     <Form title={willStore ? "Новая активность" : state.name} subtitle={(willStore ? "" : "Активность") + ` коллекции "${collectionName}"`}>
-                        <Field name="name" label="Название" icon="webhook" value={state.name} error={errors.name} onChange={setField}/>
+                        <Field name="name" label="Название" icon="webhook" value={state.name} max={20} error={errors.name} onChange={setField}/>
                         <IconSelect className="save-activity-page__icon-select" name="icon" value={state.icon} onChange={setField}/>
                         <FormButtons>
                             <FormBackButton/>

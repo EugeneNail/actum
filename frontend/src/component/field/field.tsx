@@ -8,13 +8,14 @@ type FieldProps = {
     icon?: string
     name: string
     label: string
+    max?: number
     className?: string
     error?: string
     password?: boolean
     onChange: (event: ChangeEvent<HTMLInputElement>) => void
 }
 
-export default function Field({value, icon = "", name, label, className, error = "", password, onChange}: FieldProps) {
+export default function Field({value, icon = "", name, label, max = 100, className, error = "", password, onChange}: FieldProps) {
     const [isVisible, setVisible] = useState(true)
     className = classNames(
         "field",
@@ -35,7 +36,7 @@ export default function Field({value, icon = "", name, label, className, error =
                 <div className="field__icon-container">
                     <Icon name={icon}/>
                 </div>
-                <input autoComplete="off" value={value} placeholder={label} type={isVisible ? "text" : "password"} id={name} name={name} className="field__input" onChange={onChange}/>
+                <input autoComplete="off" value={value} placeholder={label} maxLength={max} type={isVisible ? "text" : "password"} id={name} name={name} className="field__input" onChange={onChange}/>
                 {password && <Icon className="field__visibility" name={isVisible ? "visibility_off" : "visibility"} onClick={() => setVisible(!isVisible)}/>}
             </div>
             <p className="field__error">{error}</p>

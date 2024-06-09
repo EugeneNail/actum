@@ -111,7 +111,7 @@ export default function SaveCollectionPage() {
             {!isLoading &&
                 <>
                     <Form title={willStore ? "Новая коллекция" : state.name} subtitle={willStore ? "" : "Коллекция"}>
-                        <Field name="name" label="Название" icon="category" value={state.name} error={errors.name} onChange={setField}/>
+                        <Field name="name" label="Название" icon="category" value={state.name} max={20} error={errors.name} onChange={setField}/>
                         <Palette name="color" value={state.color} onChange={setField}/>
                         <FormButtons>
                             <FormBackButton/>
