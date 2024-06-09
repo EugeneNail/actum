@@ -82,7 +82,7 @@ func createMigration() {
 		return
 	}
 
-	name := os.Args[3]
+	name := os.Args[2]
 	now := time.Now().Unix()
 	pathToMigrations := filepath.Join(
 		os.Getenv("APP_PATH"), "internal", "database", "migrations",

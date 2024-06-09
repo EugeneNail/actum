@@ -5,3 +5,4 @@ backend/create
 backend/migrate
 backend/main
 /backend/logs
+backend/migrations
