@@ -3,22 +3,44 @@
 .header
   height: 50px
   position: fixed
-  bottom: 0
+  bottom: 20px
   left: 50%
   transform: translateX(-50%)
-  width: 100%
   max-width: 500px
   background: $background
-  box-shadow: 0 0 40px rgba(0, 0, 0, 0.2)
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.4)
   display: flex
-  justify-content: space-around
+  justify-content: space-between
   align-items: center
   transition: border-radius 0.5s
+  border-radius: 50px
+  padding: 0 10px
+  gap: 10px
+  animation: push-and-pop 0.5s linear
 
-  @media screen and (min-width: 500px)
-    border-radius: 20px 20px 0 0
+  &__placeholder
+    height: 100%
+    position: relative
+    width: 70px
 
+  &__button-container
+    width: 70px
+    height: 70px
+    display: grid
+    place-items: center
+    border-radius: 50px
+    background: $background
+    position: absolute
+    top: 50%
+    transform: translateY(-50%)
 
+  &__button
+    text-shadow: none
+    height: 50px
+    width: 50px
+
+  &__button-icon
+    color: black
 
 .header-link
   display: block
@@ -29,7 +51,13 @@
   &:not(.active):hover
     margin: 0
     padding: 5px
-    background: $accent-weak
+    color: $accent
 
   &.active
     color: $accent-strong
+
+@keyframes push-and-pop
+  0%
+    opacity: 0
+  100%
+    opacity: 1
