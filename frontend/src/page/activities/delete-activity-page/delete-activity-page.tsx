@@ -7,8 +7,10 @@ import FormButtons from "../../../component/form/form-button-container";
 import FormBackButton from "../../../component/form/form-back-button";
 import FormSubmitButton from "../../../component/form/form-submit-button.tsx";
 import {Color} from "../../../model/color.tsx";
+import Throbber from "../../../component/throbber/throbber.tsx";
 
 export default function DeleteActivityPage() {
+    const [isLoading, setLoading] = useState(true)
     const {activityId} = useParams<string>()
     const http = useHttp()
     const navigate = useNavigate()
@@ -28,6 +30,7 @@ export default function DeleteActivityPage() {
 
         setName(data.name)
         document.title = data.name + " - Активности"
+        setLoading(false)
     }
 
     async function destroy() {
@@ -39,15 +42,18 @@ export default function DeleteActivityPage() {
 
     return (
         <div className="delete-activity-page page">
-            <Form title={`Delete activity "${name}"?`}>
-                <p className="justified">Deleting activity will remove it from all records.</p>
-                <br/>
-                <p className="justified">You can also edit activity. Do you want to delete the activity?</p>
-                <FormButtons>
-                    <FormBackButton/>
-                    <FormSubmitButton label="Delete" color={Color.Red} onClick={destroy}/>
-                </FormButtons>
-            </Form>
+            {isLoading && <Throbber/>}
+            {!isLoading &&
+                <Form title={`Delete activity "${name}"?`}>
+                    <p className="justified">Deleting activity will remove it from all records.</p>
+                    <br/>
+                    <p className="justified">You can also edit activity. Do you want to delete the activity?</p>
+                    <FormButtons>
+                        <FormBackButton/>
+                        <FormSubmitButton label="Delete" color={Color.Red} onClick={destroy}/>
+                    </FormButtons>
+                </Form>
+            }
         </div>
     )
 }

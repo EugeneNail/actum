@@ -11,6 +11,7 @@ import FormBackButton from "../../../component/form/form-back-button.tsx";
 import FormSubmitButton from "../../../component/form/form-submit-button.tsx";
 import FormDeleteButton from "../../../component/form/form-delete-button.tsx";
 import IconSelect from "../../../component/icon-select/icon-select.tsx";
+import Throbber from "../../../component/throbber/throbber.tsx";
 
 class Payload {
     name: string = ""
@@ -25,15 +26,15 @@ class Errors {
 }
 
 export default function SaveActivityPage() {
+    const [isCollectionLoading, setCollectionLoading] = useState(true)
+    const [isActivityLoading, setActivityLoading] = useState(false)
     const http = useHttp()
     const {state, setState, setField, errors, setErrors} = useFormState(new Payload(), new Errors())
     const willStore = window.location.pathname.includes("/new")
     const navigate = useNavigate()
     const notification = useNotificationContext()
     const {collectionId, activityId} = useParams<string>()
-    const [initialActivityName, setInitialActivityName] = useState("")
-    const [collectionName, setCollectionName] = useState("")
-
+    const [collectionName, setCollectionName] = useState<string>()
 
     useEffect(() => {
         document.title = "Новая активность"
@@ -42,10 +43,11 @@ export default function SaveActivityPage() {
             collectionId: parseInt(collectionId ?? "0"),
             icon: 100
         })
-        fetchCollection()
+        fetchCollection().then()
 
         if (!willStore) {
-            fetchActivity()
+            setActivityLoading(true)
+            fetchActivity().then()
         }
     }, [])
 
@@ -57,6 +59,7 @@ export default function SaveActivityPage() {
             navigate("/collections")
         }
         setCollectionName(data.name)
+        setCollectionLoading(false)
     }
 
 
@@ -68,13 +71,13 @@ export default function SaveActivityPage() {
             return
         }
 
-        setInitialActivityName(data.name)
         setState({
             ...state,
             name: data.name,
             icon: data.icon
         })
         document.title = data.name + " - Активности"
+        setActivityLoading(false)
     }
 
 
@@ -134,17 +137,26 @@ export default function SaveActivityPage() {
 
 
     return (
-        <div className="save-activity-page page">
-            <Form title={willStore ? "Новая активность" : "Активность"} subtitle={(initialActivityName ? `"${initialActivityName}" ` : "") + `коллекции "${collectionName}"`}>
-                <Field name="name" label="Название" icon="webhook" value={state.name} error={errors.name} onChange={setField}/>
-                <IconSelect className="save-activity-page__icon-select" name="icon" value={state.icon} onChange={setField}/>
-                <FormButtons>
-                    <FormBackButton/>
-                    <FormSubmitButton label="Сохранить" onClick={save}/>
-                    {!willStore && <FormDeleteButton onClick={() => navigate("./delete")}/>}
-                </FormButtons>
-            </Form>
-            <Outlet/>
-        </div>
+        <>
+            {(isActivityLoading || isCollectionLoading) &&
+                <div className="page">
+                    <Throbber/>
+                </div>
+            }
+            {!isActivityLoading && !isCollectionLoading &&
+                <div className="save-activity-page page">
+                    <Form title={willStore ? "Новая активность" : state.name} subtitle={(willStore ? "" : "Активность") + ` коллекции "${collectionName}"`}>
+                        <Field name="name" label="Название" icon="webhook" value={state.name} error={errors.name} onChange={setField}/>
+                        <IconSelect className="save-activity-page__icon-select" name="icon" value={state.icon} onChange={setField}/>
+                        <FormButtons>
+                            <FormBackButton/>
+                            <FormSubmitButton label="Сохранить" onClick={save}/>
+                            {!willStore && <FormDeleteButton onClick={() => navigate("./delete")}/>}
+                        </FormButtons>
+                    </Form>
+                    <Outlet/>
+                </div>
+            }
+        </>
     )
 }

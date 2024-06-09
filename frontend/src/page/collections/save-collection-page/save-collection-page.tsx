@@ -12,6 +12,7 @@ import FormSubmitButton from "../../../component/form/form-submit-button.tsx";
 import FormDeleteButton from "../../../component/form/form-delete-button.tsx";
 import Palette from "../../../component/palette/palette.tsx";
 import {Color} from "../../../model/color.tsx";
+import Throbber from "../../../component/throbber/throbber.tsx";
 
 class Payload {
     name = ""
@@ -24,19 +25,19 @@ class Errors {
 }
 
 export default function SaveCollectionPage() {
+    const willStore = window.location.pathname.includes("/new")
+    const [isLoading, setLoading] = useState(!willStore)
     const http = useHttp()
     const {state, setState, setField, errors, setErrors} = useFormState(new Payload(), new Errors())
-    const willStore = window.location.pathname.includes("/new")
     const navigate = useNavigate()
     const notification = useNotificationContext()
     const {id} = useParams()
-    const [initialName, setInitialName] = useState("")
 
 
     useEffect(() => {
         document.title = "Новая коллекция"
         if (!willStore) {
-            fetchCollection()
+            fetchCollection().then()
         }
     }, [])
 
@@ -51,11 +52,11 @@ export default function SaveCollectionPage() {
         }
 
         if (status == 200) {
-            setInitialName(data.name)
             setState({
                 name: data.name,
                 color: data.color
             })
+            setLoading(false)
         }
         document.title = data.name + " - Коллекции"
     }
@@ -106,16 +107,21 @@ export default function SaveCollectionPage() {
 
     return (
         <div className="save-collection-page page">
-            <Form title={willStore ? "Новая коллекция" : "Коллекция"} subtitle={initialName ? initialName : ""}>
-                <Field name="name" label="Название" icon="category" value={state.name} error={errors.name} onChange={setField}/>
-                <Palette name="color" value={state.color} onChange={setField}/>
-                <FormButtons>
-                    <FormBackButton/>
-                    <FormSubmitButton label="Сохранить" onClick={save}/>
-                    {!willStore && <FormDeleteButton onClick={() => navigate("./delete")}/>}
-                </FormButtons>
-            </Form>
-            <Outlet/>
+            {isLoading && <Throbber/>}
+            {!isLoading &&
+                <>
+                    <Form title={willStore ? "Новая коллекция" : state.name} subtitle={willStore ? "" : "Коллекция"}>
+                        <Field name="name" label="Название" icon="category" value={state.name} error={errors.name} onChange={setField}/>
+                        <Palette name="color" value={state.color} onChange={setField}/>
+                        <FormButtons>
+                            <FormBackButton/>
+                            <FormSubmitButton label="Сохранить" onClick={save}/>
+                            {!willStore && <FormDeleteButton onClick={() => navigate("./delete")}/>}
+                        </FormButtons>
+                    </Form>
+                    <Outlet/>
+                </>
+            }
         </div>
     )
 }

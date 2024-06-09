@@ -16,6 +16,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import WeatherSelect from "../../../component/weather-select/weather-select.tsx";
 import {Mood} from "../../../model/mood.ts";
 import {Weather} from "../../../model/weather.ts";
+import Throbber from "../../../component/throbber/throbber.tsx";
 
 class Payload {
     mood = Mood.Neutral
@@ -33,6 +34,8 @@ class Errors {
 }
 
 export default function SaveRecordPage() {
+    const [isRecordLoading, setRecordLoading] = useState(false)
+    const [areCollectionsLoading, setCollectionsLoading] = useState(false)
     const {state, setState, setField, errors} = useFormState(new Payload(), new Errors())
     const [collections, setCollections] = useState<Collection[]>([])
     const http = useHttp()
@@ -44,10 +47,12 @@ export default function SaveRecordPage() {
 
     useEffect(() => {
         document.title = "Новая запись"
+        setCollectionsLoading(true)
         if (!willStore) {
-            fetchRecord()
+            setRecordLoading(true)
+            fetchRecord().then()
         }
-        fetchCollections()
+        fetchCollections().then()
     }, [])
 
 
@@ -66,6 +71,8 @@ export default function SaveRecordPage() {
             activities: data.activities
         })
         document.title = data.date + " - Записи"
+
+        setRecordLoading(false)
     }
 
 
@@ -73,6 +80,7 @@ export default function SaveRecordPage() {
         const {data, status} = await http.get("/api/collections")
         if (status == 200) {
             setCollections(data)
+            setCollectionsLoading(false)
             return
         }
 
@@ -84,7 +92,7 @@ export default function SaveRecordPage() {
         if (state.activities.includes(id)) {
             setState({
                 ...state,
-                activities: state.activities.filter(activityId => activityId!= id)
+                activities: state.activities.filter(activityId => activityId != id)
             })
         } else {
             setState({
@@ -171,17 +179,23 @@ export default function SaveRecordPage() {
 
     return (
         <div className="save-record-page page">
-            <Form title={willStore ? "Новая запись" : "Запись"}>
-                <DatePicker active={willStore} name="date" value={state.date} error={errors.date} onChange={setField}/>
-                <MoodSelect name="mood" value={state.mood} onChange={setField}/>
-                <WeatherSelect name="weather" value={state.weather} onChange={setField}/>
-                <ActivityPicker collections={collections} value={state.activities} toggleActivity={addActivity}/>
-                <Notes label="Заметки" name="notes" max={5000} value={state.notes} onChange={setField}/>
-                <FormButtons>
-                    <FormBackButton/>
-                    <FormSubmitButton label="Сохранить" onClick={save}/>
-                </FormButtons>
-            </Form>
+            {isRecordLoading && <Throbber/>}
+            {!isRecordLoading &&
+                <Form title={willStore ? "Новая запись" : "Запись"}>
+                    <DatePicker active={willStore} name="date" value={state.date} error={errors.date} onChange={setField}/>
+                    <MoodSelect name="mood" value={state.mood} onChange={setField}/>
+                    <WeatherSelect name="weather" value={state.weather} onChange={setField}/>
+                    {areCollectionsLoading && <Throbber/>}
+                    {!areCollectionsLoading &&
+                        <ActivityPicker collections={collections} value={state.activities} toggleActivity={addActivity}/>
+                    }
+                    <Notes label="Заметки" name="notes" max={5000} value={state.notes} onChange={setField}/>
+                    <FormButtons>
+                        <FormBackButton/>
+                        <FormSubmitButton label="Сохранить" onClick={save}/>
+                    </FormButtons>
+                </Form>
+            }
         </div>
     )
 }
