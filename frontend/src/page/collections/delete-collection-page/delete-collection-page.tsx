@@ -44,13 +44,13 @@ export default function DeleteCollectionPage() {
         <div className="delete-collection-page page">
             {isLoading && <Throbber/>}
             {!isLoading &&
-                <Form title={`Delete collection "${name}"?`}>
-                    <p className="justified">Deleting collection will remove all activities within.</p>
+                <Form title={`Удалить коллекцию "${name}"?`}>
+                    <p className="justified">Удаление коллекции удалит все ее активности.</p>
                     <br/>
-                    <p className="justified">Activities will also be removed from your records. You can also edit collection. Do you want to delete the collection?</p>
+                    <p className="justified">Активности также будут удалены из всех ваших записей. Это действие необратимо. Вы действительно хотите удалить коллекцию?</p>
                     <FormButtons>
                         <FormBackButton/>
-                        <FormSubmitButton label="Delete" color={Color.Red} onClick={destroy}/>
+                        <FormSubmitButton label="Удалить" color={Color.Red} onClick={destroy}/>
                     </FormButtons>
                 </Form>
             }

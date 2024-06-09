@@ -17,7 +17,7 @@ export default function DeleteActivityPage() {
     const [name, setName] = useState("")
 
     useEffect(() => {
-        fetchActivity()
+        fetchActivity().then()
     }, [])
 
     async function fetchActivity() {
@@ -44,13 +44,13 @@ export default function DeleteActivityPage() {
         <div className="delete-activity-page page">
             {isLoading && <Throbber/>}
             {!isLoading &&
-                <Form title={`Delete activity "${name}"?`}>
-                    <p className="justified">Deleting activity will remove it from all records.</p>
+                <Form title={`Удалить активность "${name}"?`}>
+                    <p className="justified">Удаление активности также удалит ее из всех ваших записей.</p>
                     <br/>
-                    <p className="justified">You can also edit activity. Do you want to delete the activity?</p>
+                    <p className="justified">Это действие необратимо. Вы действительно хотите удалить активность?</p>
                     <FormButtons>
                         <FormBackButton/>
-                        <FormSubmitButton label="Delete" color={Color.Red} onClick={destroy}/>
+                        <FormSubmitButton label="Удалить" color={Color.Red} onClick={destroy}/>
                     </FormButtons>
                 </Form>
             }

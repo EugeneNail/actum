@@ -39,14 +39,14 @@ func Authenticate(db *sql.DB, next http.Handler) http.Handler {
 
 		parts := strings.Split(request.Header.Get("Authorization"), " ")
 		if len(parts) < 2 {
-			response.Send("Bearer token is not present", http.StatusUnauthorized)
+			response.Send("Токен отсутствует", http.StatusUnauthorized)
 			return
 		}
 
 		token := parts[1]
 
 		if !jwt.IsValid(token) {
-			response.Send("Bearer token is invalid", http.StatusUnauthorized)
+			response.Send("Неправильный токен", http.StatusUnauthorized)
 			return
 		}
 
@@ -57,7 +57,7 @@ func Authenticate(db *sql.DB, next http.Handler) http.Handler {
 		}
 
 		if payload.Exp < time.Now().Unix() {
-			response.Send("Bearer token has expired", http.StatusUnauthorized)
+			response.Send("Срок действия токена истек", http.StatusUnauthorized)
 			return
 		}
 
@@ -68,7 +68,7 @@ func Authenticate(db *sql.DB, next http.Handler) http.Handler {
 
 		if user.Id == 0 {
 			writer.WriteHeader(http.StatusUnauthorized)
-			message := []byte(fmt.Sprintf(`"User %d not found"`, user.Id))
+			message := []byte(fmt.Sprintf(`"Пользователь %d не найден"`, user.Id))
 
 			if _, err := writer.Write(message); err != nil {
 				http.Error(writer, err.Error(), http.StatusInternalServerError)
