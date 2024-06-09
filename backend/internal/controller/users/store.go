@@ -41,14 +41,14 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 	user := users.New(
 		input.Name,
 		strings.ToLower(input.Email),
-		hash.Password(input.Password),
+		hash.New(input.Password),
 	)
 	if err := controller.dao.Save(&user); err != nil {
 		response.Send(err, http.StatusUnprocessableEntity)
 		return
 	}
 
-	token, err := jwt.Make(user)
+	token, err := jwt.Make(user.Id)
 	if err != nil {
 		response.Send(err, http.StatusInternalServerError)
 		return

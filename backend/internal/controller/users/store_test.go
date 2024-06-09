@@ -25,7 +25,7 @@ func TestStoreValidData(t *testing.T) {
 	database.AssertHas("users", map[string]any{
 		"name":     "Вася",
 		"email":    "blank@gmail.com",
-		"password": hash.Password("Strong123"),
+		"password": hash.New("Strong123"),
 	})
 
 }

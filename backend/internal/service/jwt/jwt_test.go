@@ -5,7 +5,6 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
-	"github.com/EugeneNail/actum/internal/database/resource/users"
 	"github.com/EugeneNail/actum/internal/service/env"
 	"strings"
 	"testing"
@@ -22,11 +21,11 @@ func TestBuildHeader(t *testing.T) {
 }
 
 func TestBuildPayload(t *testing.T) {
-	user := users.New("John", "blank@mail.com", "")
-	payload, err := buildPayload(user)
+	const userId = 100
+	payload, err := buildPayload(userId)
 	check(err)
 	expires := time.Now().Add(time.Hour * 6).Unix()
-	json := fmt.Sprintf(`{"id":0,"name":"John","exp":%d}`, expires)
+	json := fmt.Sprintf(`{"id":100,"exp":%d}`, expires)
 
 	encoded := base64.URLEncoding.EncodeToString([]byte(json))
 	if payload != encoded {
@@ -35,12 +34,12 @@ func TestBuildPayload(t *testing.T) {
 }
 
 func TestBuildSignature(t *testing.T) {
-	user := users.New("John", "blank@mail.com", "")
+	const userId = 1
 	base64Header := base64.URLEncoding.EncodeToString([]byte(`{"alg":"SH256","typ":"JWT"}`))
 	expires := time.Now().Add(time.Hour * 6).Unix()
-	jsonPayload := fmt.Sprintf(`{"id":0,"name":"John","exp":%d}`, expires)
+	jsonPayload := fmt.Sprintf(`{"id":1,"exp":%d}`, expires)
 	base64Payload := base64.URLEncoding.EncodeToString([]byte(jsonPayload))
-	signature, err := buildSignature(user)
+	signature, err := buildSignature(userId)
 	check(err)
 
 	signatureBytes := hmac.
@@ -56,7 +55,7 @@ func TestBuildSignature(t *testing.T) {
 func TestMake(t *testing.T) {
 	header := base64.URLEncoding.EncodeToString([]byte(`{"alg":"SH256","typ":"JWT"}`))
 	expires := time.Now().Add(time.Hour * 6).Unix()
-	jsonPayload := fmt.Sprintf(`{"id":0,"name":"John","exp":%d}`, expires)
+	jsonPayload := fmt.Sprintf(`{"id":333,"exp":%d}`, expires)
 	payload := base64.URLEncoding.EncodeToString([]byte(jsonPayload))
 
 	signatureBytes := hmac.
@@ -64,9 +63,8 @@ func TestMake(t *testing.T) {
 		Sum([]byte(header + "." + payload))
 	signature := base64.URLEncoding.EncodeToString(signatureBytes)
 
-	user := users.New("John", "blank@mail.com", "")
-
-	token, err := Make(user)
+	const userId = 333
+	token, err := Make(userId)
 	check(err)
 	parts := strings.Split(token, ".")
 
@@ -88,14 +86,13 @@ func TestMake(t *testing.T) {
 }
 
 func TestIsValid(t *testing.T) {
-	user := users.New("John", "blank@mail.com", "")
-
 	token := "header.payload,signature"
 	if IsValid(token) {
 		t.Error("Token must have 3 parts")
 	}
 
-	token, err := Make(user)
+	const userId = 4
+	token, err := Make(userId)
 	check(err)
 	if !IsValid(token) {
 		t.Errorf("A valid token %s is considered invalid", token)
