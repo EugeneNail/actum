@@ -39,7 +39,7 @@ export default function LoginPage() {
     return (
         <div className="page">
             <Form title="Привет!" subtitle={"Войдите, чтобы продолжить"}>
-                <Field name="email" label="Электронная почта" icon="mail" value={state.email} max={100} error={errors.email} onChange={setField}/>
+                <Field name="email" label="Электронная почта" icon="mail" value={state.email} email max={100} error={errors.email} onChange={setField}/>
                 <Field name="password" label="Пароль" icon="lock" value={state.password} max={100} error={errors.password} onChange={setField} password/>
                 <FormButtons>
                     <FormSubmitButton label="Войти" onClick={login}/>
