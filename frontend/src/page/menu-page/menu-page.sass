@@ -1,0 +1,74 @@
+@import ../../variables
+
+.menu-page
+
+  &__menu
+    width: min(100%, 500px)
+    height: 500px
+
+  &__group
+    margin-top: 30px
+    overflow: hidden
+    background: $background
+    border-radius: 20px
+
+    @media screen and (max-width: 500px)
+      border-radius: 0
+
+.menu-option
+  display: grid
+  grid-template-columns: auto 1fr
+  gap: 6px
+  transition: background .3s
+  cursor: pointer
+
+  &:hover
+    background: lighten($background, 1.5%)
+
+  &__icon-container
+    margin: 10px 7px 10px 15px
+    display: grid
+    place-items: center
+    height: 35px
+    width: 35px
+    border-radius: 8px
+
+  &.red &__icon-container
+    background: $red-strong
+
+  &.orange &__icon-container
+    background: $orange-strong
+
+  &.yellow &__icon-container
+    background: $yellow-strong
+
+  &.green &__icon-container
+    background: $green-strong
+
+  &.blue &__icon-container
+    background: $blue-strong
+
+  &.purple &__icon-container
+    background: $purple-strong
+
+  &.accent &__icon-container
+    background: $accent-strong
+
+  &__icon
+    font-variation-settings: 'FILL' 1, 'wght' 500
+    color: black
+
+  &__label
+    border-bottom: 1px solid darken($delimiter, 5%)
+    text-transform: capitalize
+    display: flex
+    align-items: center
+    color: $font-strong
+
+  &:last-child &__label
+    border-bottom: 0
+
+  &__chevron
+    color: $delimiter
+    margin-left: auto
+    margin-right: 5px

@@ -10,6 +10,7 @@ import SaveActivityPage from "./page/activities/save-activity-page/save-activity
 import DeleteActivityPage from "./page/activities/delete-activity-page/delete-activity-page.tsx";
 import SaveRecordPage from "./page/records/save-record-page/save-record-page.tsx";
 import RecordsPage from "./page/records/records-page/records-page.tsx";
+import MenuPage from "./page/menu-page/menu-page.tsx";
 
 export default function Routing() {
     return (
@@ -29,6 +30,7 @@ export default function Routing() {
                         <Route path="/records/new" element={<SaveRecordPage/>}/>
                         <Route path="/records/:id" element={<SaveRecordPage/>}/>
                         <Route path="/records" element={<RecordsPage/>}/>
+                        <Route path="/menu" element={<MenuPage/>}/>
                     </Route>
                     <Route path="/" element={<Navigate to="/records"/>}/>
                 </Routes>
