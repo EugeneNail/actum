@@ -14,6 +14,7 @@ import (
 	"github.com/EugeneNail/actum/internal/service/log"
 	"github.com/EugeneNail/actum/internal/service/middleware"
 	"github.com/EugeneNail/actum/internal/service/middleware/routing"
+	"github.com/EugeneNail/actum/internal/service/refresh"
 	"net/http"
 	"os"
 )
@@ -28,9 +29,11 @@ func main() {
 	}
 
 	userDAO := users.NewDAO(db)
-	userController := userController.New(userDAO)
+	refreshService := refresh.NewService(db)
+	userController := userController.New(db, userDAO, refreshService)
 	routing.Post("/api/users", userController.Store)
 	routing.Post("/api/users/login", userController.Login)
+	routing.Post("/api/users/refresh-token", userController.RefreshToken)
 
 	collectionDAO := collections.NewDAO(db)
 	collectionService := collections.NewService(db)

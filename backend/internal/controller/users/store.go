@@ -48,12 +48,21 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 		return
 	}
 
-	token, err := jwt.Make(user.Id)
+	accessToken, err := jwt.Make(user.Id)
 	if err != nil {
 		response.Send(err, http.StatusInternalServerError)
 		return
 	}
 
-	response.Send(token, http.StatusCreated)
+	refreshToken, err := controller.refreshService.MakeToken(user.Id)
+	if err != nil {
+		response.Send(err, http.StatusInternalServerError)
+		return
+	}
+
+	response.Send(map[string]string{
+		"access":  accessToken,
+		"refresh": refreshToken,
+	}, http.StatusCreated)
 	log.Info("Created user", user.Id)
 }

@@ -41,12 +41,21 @@ func (controller *Controller) Login(writer http.ResponseWriter, request *http.Re
 		return
 	}
 
-	token, err := jwt.Make(user.Id)
+	accessToken, err := jwt.Make(user.Id)
 	if err != nil {
 		response.Send(err, http.StatusInternalServerError)
 		return
 	}
 
-	response.Send(token, http.StatusOK)
+	refreshToken, err := controller.refreshService.MakeToken(user.Id)
+	if err != nil {
+		response.Send(err, http.StatusInternalServerError)
+		return
+	}
+
+	response.Send(map[string]string{
+		"access":  accessToken,
+		"refresh": refreshToken,
+	}, http.StatusOK)
 	log.Info("User", user.Id, "logged in")
 }

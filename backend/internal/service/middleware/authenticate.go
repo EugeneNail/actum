@@ -23,6 +23,7 @@ func init() {
 	unprotectedRoutes = []route{
 		{"POST", "/api/users/login"},
 		{"POST", "/api/users"},
+		{"POST", "/api/users/refresh-token"},
 	}
 }
 
