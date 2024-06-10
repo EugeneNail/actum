@@ -55,8 +55,8 @@ export default function Header() {
                 <NavLink className="header-link" to="/collections">
                     <Icon className="header-link__icon" name="category"/>
                 </NavLink>
-                <NavLink className="header-link" to="/setting">
-                    <Icon className="header-link__icon" name="settings"/>
+                <NavLink className="header-link" to="/more">
+                    <Icon className="header-link__icon" bold name="more_horiz"/>
                 </NavLink>
             </header>
             }
