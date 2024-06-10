@@ -60,7 +60,7 @@ func buildHeader() (string, error) {
 }
 
 func buildPayload(userId int) (string, error) {
-	expires := time.Now().Add(time.Hour * 6).Unix()
+	expires := time.Now().Add(time.Hour).Unix()
 	jsonPayload, err := json.Marshal(Payload{userId, expires})
 
 	if err != nil {

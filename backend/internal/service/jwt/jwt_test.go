@@ -24,7 +24,7 @@ func TestBuildPayload(t *testing.T) {
 	const userId = 100
 	payload, err := buildPayload(userId)
 	check(err)
-	expires := time.Now().Add(time.Hour * 6).Unix()
+	expires := time.Now().Add(time.Hour).Unix()
 	json := fmt.Sprintf(`{"id":100,"exp":%d}`, expires)
 
 	encoded := base64.URLEncoding.EncodeToString([]byte(json))
@@ -36,7 +36,7 @@ func TestBuildPayload(t *testing.T) {
 func TestBuildSignature(t *testing.T) {
 	const userId = 1
 	base64Header := base64.URLEncoding.EncodeToString([]byte(`{"alg":"SH256","typ":"JWT"}`))
-	expires := time.Now().Add(time.Hour * 6).Unix()
+	expires := time.Now().Add(time.Hour).Unix()
 	jsonPayload := fmt.Sprintf(`{"id":1,"exp":%d}`, expires)
 	base64Payload := base64.URLEncoding.EncodeToString([]byte(jsonPayload))
 	signature, err := buildSignature(userId)
@@ -54,7 +54,7 @@ func TestBuildSignature(t *testing.T) {
 
 func TestMake(t *testing.T) {
 	header := base64.URLEncoding.EncodeToString([]byte(`{"alg":"SH256","typ":"JWT"}`))
-	expires := time.Now().Add(time.Hour * 6).Unix()
+	expires := time.Now().Add(time.Hour).Unix()
 	jsonPayload := fmt.Sprintf(`{"id":333,"exp":%d}`, expires)
 	payload := base64.URLEncoding.EncodeToString([]byte(jsonPayload))
 
