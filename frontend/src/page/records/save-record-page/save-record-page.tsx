@@ -6,7 +6,7 @@ import FormSubmitButton from "../../../component/form/form-submit-button.tsx";
 import {useFormState} from "../../../service/use-form-state.ts";
 import {useEffect, useState} from "react";
 import Collection from "../../../model/collection.ts";
-import {useHttp} from "../../../service/use-http.ts";
+import {useApi} from "../../../service/use-api.ts";
 import {useNotificationContext} from "../../../component/notification/notification.tsx";
 import ActivityPicker from "../../../component/activity-picker/activity-picker.tsx";
 import {DatePicker} from "../../../component/date-picker/date-picker.tsx";
@@ -38,7 +38,7 @@ export default function SaveRecordPage() {
     const [areCollectionsLoading, setCollectionsLoading] = useState(false)
     const {state, setState, setField, errors} = useFormState(new Payload(), new Errors())
     const [collections, setCollections] = useState<Collection[]>([])
-    const http = useHttp()
+    const api = useApi()
     const notification = useNotificationContext()
     const willStore = window.location.pathname.includes("/new")
     const navigate = useNavigate()
@@ -57,7 +57,7 @@ export default function SaveRecordPage() {
 
 
     async function fetchRecord() {
-        const {data, status} = await http.get(`/api/records/${id}`)
+        const {data, status} = await api.get(`/api/records/${id}`)
         if (status != 200) {
             notification.pop(data)
             return
@@ -77,7 +77,7 @@ export default function SaveRecordPage() {
 
 
     async function fetchCollections() {
-        const {data, status} = await http.get("/api/collections")
+        const {data, status} = await api.get("/api/collections")
         if (status == 200) {
             setCollections(data)
             setCollectionsLoading(false)
@@ -113,7 +113,7 @@ export default function SaveRecordPage() {
 
 
     async function store() {
-        const {data, status} = await http.post("/api/records", {
+        const {data, status} = await api.post("/api/records", {
             ...state,
             mood: Number(state.mood),
             weather: Number(state.weather),
@@ -153,7 +153,7 @@ export default function SaveRecordPage() {
 
 
     async function update() {
-        const {data, status} = await http.put(`/api/records/${id}`, {
+        const {data, status} = await api.put(`/api/records/${id}`, {
             mood: Number(state.mood),
             weather: Number(state.weather),
             notes: state.notes,

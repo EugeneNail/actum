@@ -19,9 +19,8 @@ type header struct {
 }
 
 type Payload struct {
-	Id   int    `json:"id"`
-	Name string `json:"name"`
-	Exp  int64  `json:"exp"`
+	Id  int   `json:"id"`
+	Exp int64 `json:"exp"`
 }
 
 type CtxKey string
@@ -30,18 +29,18 @@ func GetUser(request *http.Request) users.User {
 	return request.Context().Value(CtxKey("user")).(users.User)
 }
 
-func Make(user users.User) (string, error) {
+func Make(userId int) (string, error) {
 	header, err := buildHeader()
 	if err != nil {
 		return "", fmt.Errorf("jwt.Make(): %w", err)
 	}
 
-	payload, err := buildPayload(user)
+	payload, err := buildPayload(userId)
 	if err != nil {
 		return "", fmt.Errorf("jwt.Make(): %w", err)
 	}
 
-	signature, err := buildSignature(user)
+	signature, err := buildSignature(userId)
 	if err != nil {
 		return "", fmt.Errorf("jwt.Make(): %w", err)
 	}
@@ -60,9 +59,9 @@ func buildHeader() (string, error) {
 	return base64.URLEncoding.EncodeToString(jsonHeader), nil
 }
 
-func buildPayload(user users.User) (string, error) {
-	expires := time.Now().Add(time.Hour * 6).Unix()
-	jsonPayload, err := json.Marshal(Payload{user.Id, user.Name, expires})
+func buildPayload(userId int) (string, error) {
+	expires := time.Now().Add(time.Hour).Unix()
+	jsonPayload, err := json.Marshal(Payload{userId, expires})
 
 	if err != nil {
 		return "", fmt.Errorf("buildPayload(): %w", err)
@@ -71,13 +70,13 @@ func buildPayload(user users.User) (string, error) {
 	return base64.URLEncoding.EncodeToString(jsonPayload), nil
 }
 
-func buildSignature(user users.User) (string, error) {
+func buildSignature(userId int) (string, error) {
 	header, err := buildHeader()
 	if err != nil {
 		return "", fmt.Errorf("buildSignature(): %w", err)
 	}
 
-	payload, err := buildPayload(user)
+	payload, err := buildPayload(userId)
 	if err != nil {
 		return "", fmt.Errorf("buildSignature(): %w", err)
 	}

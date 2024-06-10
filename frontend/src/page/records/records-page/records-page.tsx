@@ -1,26 +1,26 @@
 import "./records-page.sass"
 import {useEffect, useState} from "react";
-import {useHttp} from "../../../service/use-http.ts";
+import {useApi} from "../../../service/use-api.ts";
 import RecordCard from "../../../component/record-card/record-card.tsx";
 import ShortRecord from "../../../model/short-record.ts";
 import Throbber from "../../../component/throbber/throbber.tsx";
 
 export default function RecordsPage() {
     const [isLoading, setLoading] = useState(true)
-    const http = useHttp()
+    const api = useApi()
     const [records, setRecords] = useState<ShortRecord[]>([])
 
 
     useEffect(() => {
         document.title = "Записи"
-        if (records.length == 0) {
+        if (records?.length == 0) {
             setLoading(true)
             fetchRecords().then()
         }
     }, [])
 
     async function fetchRecords() {
-        const {data, status} = await http.post("/api/records-list", {
+        const {data, status} = await api.post("/api/records-list", {
             cursor: new Date().toISOString().split("T")[0]
         })
 

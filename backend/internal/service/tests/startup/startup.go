@@ -21,7 +21,7 @@ func Collections(t *testing.T) (tests.Client, tests.Database) {
 	env.Load()
 
 	t.Cleanup(func() {
-		tests.Check(mysql.TruncateMany(tests.DB, []string{"users", "collections"}))
+		tests.Check(mysql.TruncateMany(tests.DB, []string{"user_refresh_tokens", "users", "collections"}))
 	})
 
 	client := tests.NewClient(t)
@@ -38,7 +38,7 @@ func Activities(t *testing.T) (tests.Client, tests.Database) {
 	env.Load()
 
 	t.Cleanup(func() {
-		tests.Check(mysql.TruncateMany(tests.DB, []string{"activities", "collections", "users"}))
+		tests.Check(mysql.TruncateMany(tests.DB, []string{"user_refresh_tokens", "activities", "collections", "users"}))
 	})
 
 	client := tests.NewClient(t)
@@ -55,7 +55,7 @@ func Records(t *testing.T) (tests.Client, tests.Database) {
 	env.Load()
 
 	t.Cleanup(func() {
-		tests.Check(mysql.TruncateMany(tests.DB, []string{"records", "activities", "collections", "users"}))
+		tests.Check(mysql.TruncateMany(tests.DB, []string{"user_refresh_tokens", "records", "activities", "collections", "users"}))
 	})
 
 	client := tests.NewClient(t)

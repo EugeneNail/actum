@@ -1,5 +1,5 @@
 import "./save-collection-page.sass"
-import {useHttp} from "../../../service/use-http.ts";
+import {useApi} from "../../../service/use-api.ts";
 import {useFormState} from "../../../service/use-form-state.ts";
 import {useEffect, useState} from "react";
 import {Outlet, useNavigate, useParams} from "react-router-dom";
@@ -27,7 +27,7 @@ class Errors {
 export default function SaveCollectionPage() {
     const willStore = window.location.pathname.includes("/new")
     const [isLoading, setLoading] = useState(!willStore)
-    const http = useHttp()
+    const api = useApi()
     const {state, setState, setField, errors, setErrors} = useFormState(new Payload(), new Errors())
     const navigate = useNavigate()
     const notification = useNotificationContext()
@@ -43,7 +43,7 @@ export default function SaveCollectionPage() {
 
 
     async function fetchCollection() {
-        const {data, status} = await http.get(`/api/collections/${id}`)
+        const {data, status} = await api.get(`/api/collections/${id}`)
 
         if (status == 403) {
             notification.pop(data)
@@ -72,7 +72,7 @@ export default function SaveCollectionPage() {
 
 
     async function store() {
-        const {data, status} = await http.post("/api/collections", {
+        const {data, status} = await api.post("/api/collections", {
             name: state.name,
             color: Number(state.color)
         })
@@ -87,7 +87,7 @@ export default function SaveCollectionPage() {
 
 
     async function update() {
-        const {data, status} = await http.put(`/api/collections/${id}`, {
+        const {data, status} = await api.put(`/api/collections/${id}`, {
             name: state.name,
             color: Number(state.color)
         })

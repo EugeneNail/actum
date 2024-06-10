@@ -36,17 +36,26 @@ func (controller *Controller) Login(writer http.ResponseWriter, request *http.Re
 		return
 	}
 
-	if user.Id == 0 || user.Password != hash.Password(input.Password) {
+	if user.Id == 0 || user.Password != hash.New(input.Password) {
 		response.Send(map[string]string{"email": "Неверные адрес почты или пароль."}, http.StatusUnauthorized)
 		return
 	}
 
-	token, err := jwt.Make(user)
+	accessToken, err := jwt.Make(user.Id)
 	if err != nil {
 		response.Send(err, http.StatusInternalServerError)
 		return
 	}
 
-	response.Send(token, http.StatusOK)
+	refreshToken, err := controller.refreshService.MakeToken(user.Id)
+	if err != nil {
+		response.Send(err, http.StatusInternalServerError)
+		return
+	}
+
+	response.Send(map[string]string{
+		"access":  accessToken,
+		"refresh": refreshToken,
+	}, http.StatusOK)
 	log.Info("User", user.Id, "logged in")
 }

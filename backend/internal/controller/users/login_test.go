@@ -24,7 +24,7 @@ func TestLoginValidData(t *testing.T) {
 	database.AssertHas("users", map[string]any{
 		"name":     "Антон",
 		"email":    "jodame3394@agafx.com",
-		"password": hash.Password("Strong123"),
+		"password": hash.New("Strong123"),
 	})
 
 	client.
@@ -39,7 +39,7 @@ func TestLoginValidData(t *testing.T) {
 		AssertHas("users", map[string]any{
 			"name":     "Антон",
 			"email":    "jodame3394@agafx.com",
-			"password": hash.Password("Strong123"),
+			"password": hash.New("Strong123"),
 		})
 }
 
@@ -72,7 +72,7 @@ func TestLoginIncorrectEmail(t *testing.T) {
 	database.AssertHas("users", map[string]any{
 		"name":     "Владислав",
 		"email":    "doleya5976@agafx.com",
-		"password": hash.Password("w24V,KY$f2YSIPQ"),
+		"password": hash.New("w24V,KY$f2YSIPQ"),
 	})
 
 	client.
@@ -101,7 +101,7 @@ func TestLoginIncorrectPassword(t *testing.T) {
 	database.AssertHas("users", map[string]any{
 		"name":     "Петр",
 		"email":    "pleonius@sentimentdate.com",
-		"password": hash.Password("L00k@tmEImHer3"),
+		"password": hash.New("L00k@tmEImHer3"),
 	})
 
 	client.
