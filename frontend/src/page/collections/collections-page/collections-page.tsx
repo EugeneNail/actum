@@ -1,7 +1,7 @@
 import "./collections-page.sass"
 import {useEffect, useState} from "react";
 import Collection from "../../../model/collection";
-import {useHttp} from "../../../service/use-http.ts";
+import {useApi} from "../../../service/use-api.ts";
 import CollectionCard from "../../../component/collection-card/collection-card.tsx";
 import Icon from "../../../component/icon/icon.tsx";
 import {useNavigate} from "react-router-dom";
@@ -10,13 +10,13 @@ import Throbber from "../../../component/throbber/throbber.tsx";
 export default function CollectionsPage() {
     const [isLoading, setLoading] = useState(true)
     const [collections, setCollections] = useState<Collection[]>([])
-    const http = useHttp()
+    const api = useApi()
     const navigate = useNavigate()
 
     useEffect(() => {
         document.title = "Коллекции"
         setLoading(true)
-        http.get("/api/collections").then(({data}) => {
+        api.get("/api/collections").then(({data}) => {
             setCollections(data)
             setLoading(false)
         })

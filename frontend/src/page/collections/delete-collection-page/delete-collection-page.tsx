@@ -1,7 +1,7 @@
 import "./delete-collection-page.sass"
 import {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
-import {useHttp} from "../../../service/use-http";
+import {useApi} from "../../../service/use-api.ts";
 import Form from "../../../component/form/form";
 import FormButtons from "../../../component/form/form-button-container";
 import FormBackButton from "../../../component/form/form-back-button";
@@ -12,7 +12,7 @@ import Throbber from "../../../component/throbber/throbber.tsx";
 export default function DeleteCollectionPage() {
     const [isLoading, setLoading] = useState(true)
     const {id} = useParams<string>()
-    const http = useHttp()
+    const api = useApi()
     const navigate = useNavigate()
     const [name, setName] = useState("")
 
@@ -21,7 +21,7 @@ export default function DeleteCollectionPage() {
     }, [])
 
     async function fetchCollection() {
-        const {data, status} = await http.get(`/api/collections/${id}`)
+        const {data, status} = await api.get(`/api/collections/${id}`)
 
         if (status == 403) {
             navigate("/collections")
@@ -34,7 +34,7 @@ export default function DeleteCollectionPage() {
     }
 
     async function destroy() {
-        const {status} = await http.delete(`/api/collections/${id}`)
+        const {status} = await api.delete(`/api/collections/${id}`)
         if (status == 204) {
             navigate("/collections")
         }

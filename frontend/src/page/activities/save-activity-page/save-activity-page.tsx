@@ -1,7 +1,7 @@
 import "./save-activity-page.sass"
 import Form from "../../../component/form/form.tsx";
 import {useEffect, useState} from "react";
-import {useHttp} from "../../../service/use-http.ts";
+import {useApi} from "../../../service/use-api.ts";
 import {useFormState} from "../../../service/use-form-state.ts";
 import {Outlet, useNavigate, useParams} from "react-router-dom";
 import {useNotificationContext} from "../../../component/notification/notification.tsx";
@@ -28,7 +28,7 @@ class Errors {
 export default function SaveActivityPage() {
     const [isCollectionLoading, setCollectionLoading] = useState(true)
     const [isActivityLoading, setActivityLoading] = useState(false)
-    const http = useHttp()
+    const api = useApi()
     const {state, setState, setField, errors, setErrors} = useFormState(new Payload(), new Errors())
     const willStore = window.location.pathname.includes("/new")
     const navigate = useNavigate()
@@ -53,7 +53,7 @@ export default function SaveActivityPage() {
 
 
     async function fetchCollection() {
-        const {data, status} = await http.get(`/api/collections/${collectionId}`)
+        const {data, status} = await api.get(`/api/collections/${collectionId}`)
         if (status == 403 || status == 404) {
             notification.pop(data)
             navigate("/collections")
@@ -64,7 +64,7 @@ export default function SaveActivityPage() {
 
 
     async function fetchActivity() {
-        const {data, status} = await http.get(`/api/activities/${activityId}`)
+        const {data, status} = await api.get(`/api/activities/${activityId}`)
         if (status == 403) {
             notification.pop(data)
             navigate("/collections")
@@ -91,7 +91,7 @@ export default function SaveActivityPage() {
 
 
     async function store() {
-        const {data, status} = await http.post("/api/activities", {
+        const {data, status} = await api.post("/api/activities", {
             name: state.name,
             icon: Number(state.icon),
             collectionId: parseInt(collectionId ?? "0")
@@ -112,7 +112,7 @@ export default function SaveActivityPage() {
 
 
     async function update() {
-        const {data, status} = await http.put(`/api/activities/${activityId}`, {
+        const {data, status} = await api.put(`/api/activities/${activityId}`, {
             name: state.name,
             icon: Number(state.icon)
         })
