@@ -10,7 +10,6 @@
   gap: 10px
   padding: 24px 32px
   cursor: pointer
-  text-shadow: 0 0 3px #00000088
 
   &.even
     padding: 0
@@ -24,68 +23,70 @@
     color: $font-strong
 
     &.red
-      background: $red-strong
+      background: $red
       color: $font-strong
 
       @media (pointer: fine)
         &:hover
-          background: darken($red-strong, 5%)
+          background: darken($red, 5%)
 
       &:active
-        background: darken($red-strong, 3%)
+        background: darken($red, 3%)
 
     &.orange
-      background: $orange-strong
+      background: $orange
 
       @media (pointer: fine)
         &:hover
-          background: darken($orange-strong, 5%)
+          background: darken($orange, 5%)
 
       &:active
-        background: darken($orange-strong, 3%)
+        background: darken($orange, 3%)
 
     &.yellow
-      background: $yellow-strong
+      background: $yellow
+      color: #444
 
       @media (pointer: fine)
         &:hover
-          background: darken($yellow-strong, 5%)
+          background: darken($yellow, 5%)
 
       &:active
-        background: darken($yellow-strong, 3%)
+        background: darken($yellow, 3%)
 
     &.green
-      background: $green-strong
+      background: $green
 
       @media (pointer: fine)
         &:hover
-          background: darken($green-strong, 5%)
+          background: darken($green, 5%)
 
       &:active
-        background: darken($green-strong, 3%)
+        background: darken($green, 3%)
 
     &.blue
-      background: $blue-strong
+      background: $blue
 
       @media (pointer: fine)
         &:hover
-          background: darken($blue-strong, 5%)
+          background: darken($blue, 5%)
 
       &:active
-        background: darken($blue-strong, 3%)
+        background: darken($blue, 3%)
 
     &.purple
-      background: $purple-strong
+      background: $purple
 
       @media (pointer: fine)
         &:hover
-          background: darken($purple-strong, 5%)
+          background: darken($purple, 5%)
 
       &:active
-        background: darken($purple-strong, 3%)
+        background: darken($purple, 3%)
 
     &.accent
       background: $accent-strong
+      text-shadow: 0 0 3px #00000088
 
       @media (pointer: fine)
         &:hover
@@ -97,17 +98,17 @@
   &.secondary
 
     &.red
-      color: $red-strong
+      color: $red
       background: $red-weak
 
       &:hover
-        background: darken($red-weak, 3%)
+        background: lighten($red-weak, 3%)
 
       &:active
-        background: darken($red-weak, 4%)
+        background: lighten($red-weak, 4%)
 
     &.orange
-      color: $orange-strong
+      color: $orange
       background: $orange-weak
 
       &:hover
@@ -117,7 +118,7 @@
         background: darken($orange-weak, 4%)
 
     &.yellow
-      color: $yellow-strong
+      color: $yellow
       background: $yellow-weak
 
       &:hover
@@ -127,7 +128,7 @@
         background: darken($yellow-weak, 4%)
 
     &.green
-      color: $green-strong
+      color: $green
       background: $green-weak
 
       &:hover
@@ -137,7 +138,7 @@
         background: darken($green-weak, 4%)
 
     &.blue
-      color: $blue-strong
+      color: $blue
       background: $blue-weak
 
       &:hover
@@ -147,7 +148,7 @@
         background: darken($blue-weak, 4%)
 
     &.purple
-      color: $purple-strong
+      color: $purple
       background: $purple-weak
 
       &:hover
@@ -158,10 +159,10 @@
 
     &.accent
       color: $accent-strong
-      background: $accent-weak
+      background: $accent
 
       &:hover
-        background: darken($accent-weak, 3%)
+        background: darken($accent, 3%)
 
       &:active
-        background: darken($accent-weak, 4%)
+        background: darken($accent, 4%)
