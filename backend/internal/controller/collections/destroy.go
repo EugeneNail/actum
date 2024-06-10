@@ -15,29 +15,32 @@ func (controller *Controller) Destroy(writer http.ResponseWriter, request *http.
 
 	id, err := strconv.Atoi(routing.GetVariable(request, 0))
 	if err != nil {
-		response.Send(err, http.StatusBadRequest)
+		response.Send(fmt.Errorf("UserController.Destroy(): %w", err), http.StatusBadRequest)
 		return
 	}
 
 	collection, err := controller.dao.Find(id)
 	if err != nil {
-		response.Send(err, http.StatusInternalServerError)
+		response.Send(fmt.Errorf("UserController.Destroy(): %w", err), http.StatusInternalServerError)
 		return
 	}
 
 	if collection.Id == 0 {
-		response.Send(fmt.Sprintf("Коллекция %d не найдена.", id), http.StatusNotFound)
+		response.Send(
+			fmt.Sprintf("Коллекция %d не найдена.", id),
+			http.StatusNotFound,
+		)
 		return
 	}
 
 	user := jwt.GetUser(request)
 	if user.Id != collection.UserId {
-		response.Send("Вы не удалить чужую коллекцию.", http.StatusForbidden)
+		response.Send("Вы можете не удалить чужую коллекцию.", http.StatusForbidden)
 		return
 	}
 
 	if err := controller.dao.Delete(collection); err != nil {
-		response.Send(err, http.StatusInternalServerError)
+		response.Send(fmt.Errorf("UserController.Destroy(): %w", err), http.StatusInternalServerError)
 		return
 	}
 

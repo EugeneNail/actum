@@ -1,6 +1,7 @@
 package activities
 
 import (
+	"fmt"
 	"github.com/EugeneNail/actum/internal/service/jwt"
 	"github.com/EugeneNail/actum/internal/service/log"
 	"github.com/EugeneNail/actum/internal/service/middleware/routing"
@@ -14,13 +15,13 @@ func (controller *Controller) Show(writer http.ResponseWriter, request *http.Req
 
 	id, err := strconv.Atoi(routing.GetVariable(request, 0))
 	if err != nil {
-		response.Send(err, http.StatusBadRequest)
+		response.Send(fmt.Errorf("ActivityController.Show(): %w", err), http.StatusBadRequest)
 		return
 	}
 
 	activity, err := controller.activityDAO.Find(id)
 	if err != nil {
-		response.Send(err, http.StatusInternalServerError)
+		response.Send(fmt.Errorf("ActivityController.Show(): %w", err), http.StatusInternalServerError)
 		return
 	}
 

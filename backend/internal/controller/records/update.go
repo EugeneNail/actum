@@ -23,13 +23,13 @@ func (controller *Controller) Update(writer http.ResponseWriter, request *http.R
 
 	id, err := strconv.Atoi(routing.GetVariable(request, 0))
 	if err != nil {
-		response.Send(err, http.StatusBadRequest)
+		response.Send(fmt.Errorf("RecordController.Update(): %w", err), http.StatusBadRequest)
 		return
 	}
 
 	record, err := controller.recordDAO.Find(id)
 	if err != nil {
-		response.Send(err, http.StatusInternalServerError)
+		response.Send(fmt.Errorf("RecordController.Update(): %w", err), http.StatusInternalServerError)
 		return
 	}
 
@@ -40,7 +40,7 @@ func (controller *Controller) Update(writer http.ResponseWriter, request *http.R
 
 	errors, input, err := validation.NewValidator[updateInput]().Validate(request)
 	if err != nil {
-		response.Send(err, http.StatusBadRequest)
+		response.Send(fmt.Errorf("RecordController.Update(): %w", err), http.StatusBadRequest)
 		return
 	}
 
@@ -52,7 +52,7 @@ func (controller *Controller) Update(writer http.ResponseWriter, request *http.R
 	user := jwt.GetUser(request)
 	allExist, missingActivities, err := controller.activityService.CheckExistence(input.Activities, user.Id)
 	if err != nil {
-		response.Send(err, http.StatusInternalServerError)
+		response.Send(fmt.Errorf("RecordController.Update(): %w", err), http.StatusInternalServerError)
 		return
 	}
 
@@ -67,12 +67,12 @@ func (controller *Controller) Update(writer http.ResponseWriter, request *http.R
 	record.Mood = input.Mood
 	record.Weather = input.Weather
 	if err := controller.recordDAO.Save(&record); err != nil {
-		response.Send(err, http.StatusInternalServerError)
+		response.Send(fmt.Errorf("RecordController.Update(): %w", err), http.StatusInternalServerError)
 		return
 	}
 
 	if err := controller.recordDAO.SyncRelations(record.Id, input.Activities); err != nil {
-		response.Send(err, http.StatusInternalServerError)
+		response.Send(fmt.Errorf("RecordController.Update(): %w", err), http.StatusInternalServerError)
 		return
 	}
 

@@ -22,13 +22,13 @@ func (controller *Controller) Update(writer http.ResponseWriter, request *http.R
 
 	id, err := strconv.Atoi(routing.GetVariable(request, 0))
 	if err != nil {
-		response.Send(err, http.StatusBadRequest)
+		response.Send(fmt.Errorf("CollectionController.Update(): %w", err), http.StatusBadRequest)
 		return
 	}
 
 	collection, err := controller.dao.Find(id)
 	if err != nil {
-		response.Send(err, http.StatusInternalServerError)
+		response.Send(fmt.Errorf("CollectionController.Update(): %w", err), http.StatusInternalServerError)
 		return
 	}
 
@@ -45,7 +45,7 @@ func (controller *Controller) Update(writer http.ResponseWriter, request *http.R
 
 	errors, input, err := validator.Validate(request)
 	if err != nil {
-		response.Send(err, http.StatusBadRequest)
+		response.Send(fmt.Errorf("CollectionController.Update(): %w", err), http.StatusBadRequest)
 		return
 	}
 
@@ -57,7 +57,7 @@ func (controller *Controller) Update(writer http.ResponseWriter, request *http.R
 	collection.Name = input.Name
 	collection.Color = input.Color
 	if err := controller.dao.Save(&collection); err != nil {
-		response.Send(err, http.StatusInternalServerError)
+		response.Send(fmt.Errorf("CollectionController.Update(): %w", err), http.StatusInternalServerError)
 		return
 	}
 

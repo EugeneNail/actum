@@ -23,7 +23,7 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 
 	errors, input, err := validation.NewValidator[storeInput]().Validate(request)
 	if err != nil {
-		response.Send(err, http.StatusBadRequest)
+		response.Send(fmt.Errorf("RecordController.Store(): %w", err), http.StatusBadRequest)
 		return
 	}
 
@@ -35,7 +35,7 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 	user := jwt.GetUser(request)
 	isDateTaken, err := controller.recordService.IsDateTaken(input.Date, user.Id)
 	if err != nil {
-		response.Send(err, http.StatusInternalServerError)
+		response.Send(fmt.Errorf("RecordController.Store(): %w", err), http.StatusInternalServerError)
 		return
 	}
 
@@ -47,7 +47,7 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 
 	allExist, missingActivities, err := controller.activityService.CheckExistence(input.Activities, user.Id)
 	if err != nil {
-		response.Send(err, http.StatusInternalServerError)
+		response.Send(fmt.Errorf("RecordController.Store(): %w", err), http.StatusInternalServerError)
 		return
 	}
 
@@ -59,17 +59,17 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 
 	record, err := records.New(input.Mood, input.Weather, input.Date, input.Notes, user.Id)
 	if err != nil {
-		response.Send(err, http.StatusInternalServerError)
+		response.Send(fmt.Errorf("RecordController.Store(): %w", err), http.StatusInternalServerError)
 		return
 	}
 
 	if err := controller.recordDAO.Save(&record); err != nil {
-		response.Send(err, http.StatusInternalServerError)
+		response.Send(fmt.Errorf("RecordController.Store(): %w", err), http.StatusInternalServerError)
 		return
 	}
 
 	if err = controller.recordDAO.SyncRelations(record.Id, input.Activities); err != nil {
-		response.Send(err, http.StatusInternalServerError)
+		response.Send(fmt.Errorf("RecordController.Store(): %w", err), http.StatusInternalServerError)
 		return
 	}
 

@@ -1,6 +1,7 @@
 package users
 
 import (
+	"fmt"
 	"github.com/EugeneNail/actum/internal/database/resource/users"
 	"github.com/EugeneNail/actum/internal/service/hash"
 	"github.com/EugeneNail/actum/internal/service/jwt"
@@ -24,7 +25,7 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 
 	errors, input, err := validator.Validate(request)
 	if err != nil {
-		response.Send(err, http.StatusBadRequest)
+		response.Send(fmt.Errorf("UserController.Store(): %w", err), http.StatusBadRequest)
 		return
 	}
 
@@ -44,19 +45,19 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 		hash.New(input.Password),
 	)
 	if err := controller.dao.Save(&user); err != nil {
-		response.Send(err, http.StatusUnprocessableEntity)
+		response.Send(fmt.Errorf("UserController.Store(): %w", err), http.StatusUnprocessableEntity)
 		return
 	}
 
 	accessToken, err := jwt.Make(user.Id)
 	if err != nil {
-		response.Send(err, http.StatusInternalServerError)
+		response.Send(fmt.Errorf("UserController.Store(): %w", err), http.StatusInternalServerError)
 		return
 	}
 
 	refreshToken, err := controller.refreshService.MakeToken(user.Id)
 	if err != nil {
-		response.Send(err, http.StatusInternalServerError)
+		response.Send(fmt.Errorf("UserController.Store(): %w", err), http.StatusInternalServerError)
 		return
 	}
 

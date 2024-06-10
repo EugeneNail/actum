@@ -15,13 +15,13 @@ func (controller *Controller) Show(writer http.ResponseWriter, request *http.Req
 
 	id, err := strconv.Atoi(routing.GetVariable(request, 0))
 	if err != nil {
-		response.Send(err, http.StatusBadRequest)
+		response.Send(fmt.Errorf("RecordController.Show(): %w", err), http.StatusBadRequest)
 		return
 	}
 
 	record, err := controller.recordDAO.Find(id)
 	if err != nil {
-		response.Send(err, http.StatusInternalServerError)
+		response.Send(fmt.Errorf("RecordController.Show(): %w", err), http.StatusInternalServerError)
 		return
 	}
 
@@ -38,7 +38,7 @@ func (controller *Controller) Show(writer http.ResponseWriter, request *http.Req
 
 	activities, err := controller.fetchIdsOfActivities(record.Id)
 	if err != nil {
-		response.Send(err, http.StatusInternalServerError)
+		response.Send(fmt.Errorf("RecordController.Show(): %w", err), http.StatusInternalServerError)
 		return
 	}
 

@@ -1,6 +1,7 @@
 package collections
 
 import (
+	"fmt"
 	"github.com/EugeneNail/actum/internal/service/jwt"
 	"github.com/EugeneNail/actum/internal/service/log"
 	"github.com/EugeneNail/actum/internal/service/response"
@@ -14,7 +15,7 @@ func (controller *Controller) Index(writer http.ResponseWriter, request *http.Re
 
 	collections, err := controller.service.CollectCollections(user.Id)
 	if err != nil {
-		response.Send(err, http.StatusInternalServerError)
+		response.Send(fmt.Errorf("CollectionController.index(): %w", err), http.StatusInternalServerError)
 		return
 	}
 

@@ -21,7 +21,7 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 
 	errors, input, err := validator.Validate(request)
 	if err != nil {
-		response.Send(err, http.StatusBadRequest)
+		response.Send(fmt.Errorf("CollectionController.Store(): %w", err), http.StatusBadRequest)
 		return
 	}
 
@@ -34,7 +34,7 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 	user := jwt.GetUser(request)
 	exceededLimit, err := controller.service.ExceedsLimit(limit, user.Id)
 	if err != nil {
-		response.Send(err, http.StatusInternalServerError)
+		response.Send(fmt.Errorf("CollectionController.Store(): %w", err), http.StatusInternalServerError)
 		return
 	}
 
@@ -46,7 +46,7 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 
 	hasDuplicate, err := controller.service.HasDuplicate(input.Name, user.Id)
 	if err != nil {
-		response.Send(err, http.StatusInternalServerError)
+		response.Send(fmt.Errorf("CollectionController.Store(): %w", err), http.StatusInternalServerError)
 		return
 	}
 
@@ -57,7 +57,7 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 
 	collection := collections.New(input.Name, input.Color, user.Id)
 	if err := controller.dao.Save(&collection); err != nil {
-		response.Send(err, http.StatusInternalServerError)
+		response.Send(fmt.Errorf("CollectionController.Store(): %w", err), http.StatusInternalServerError)
 		return
 	}
 

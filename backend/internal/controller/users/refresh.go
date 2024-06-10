@@ -1,6 +1,7 @@
 package users
 
 import (
+	"fmt"
 	"github.com/EugeneNail/actum/internal/service/jwt"
 	"github.com/EugeneNail/actum/internal/service/log"
 	"github.com/EugeneNail/actum/internal/service/response"
@@ -18,7 +19,7 @@ func (controller *Controller) RefreshToken(writer http.ResponseWriter, request *
 
 	errors, input, err := validation.NewValidator[refreshInput]().Validate(request)
 	if err != nil {
-		response.Send(err, http.StatusBadRequest)
+		response.Send(fmt.Errorf("UserController.Refresh(): %w", err), http.StatusBadRequest)
 		return
 	}
 
@@ -29,7 +30,7 @@ func (controller *Controller) RefreshToken(writer http.ResponseWriter, request *
 
 	isValid, err := controller.refreshService.IsValid(input.Uuid, input.UserId)
 	if err != nil {
-		response.Send(err, http.StatusInternalServerError)
+		response.Send(fmt.Errorf("UserController.Refresh(): %w", err), http.StatusInternalServerError)
 		return
 	}
 
@@ -40,7 +41,7 @@ func (controller *Controller) RefreshToken(writer http.ResponseWriter, request *
 
 	jwt, err := jwt.Make(input.UserId)
 	if err != nil {
-		response.Send(err, http.StatusInternalServerError)
+		response.Send(fmt.Errorf("UserController.Refresh(): %w", err), http.StatusInternalServerError)
 		return
 	}
 

@@ -22,7 +22,7 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 
 	errors, input, err := validator.Validate(request)
 	if err != nil {
-		response.Send(err, http.StatusBadRequest)
+		response.Send(fmt.Errorf("ActivityController.Store(): %w", err), http.StatusBadRequest)
 		return
 	}
 
@@ -33,7 +33,7 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 
 	collection, err := controller.collectionDAO.Find(input.CollectionId)
 	if err != nil {
-		response.Send(err, http.StatusInternalServerError)
+		response.Send(fmt.Errorf("ActivityController.Store(): %w", err), http.StatusInternalServerError)
 		return
 	}
 
@@ -52,7 +52,7 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 	const limit = 20
 	exceedsLimit, err := controller.activityService.ExceedsLimit(limit, collection.Id, user.Id)
 	if err != nil {
-		response.Send(err, http.StatusInternalServerError)
+		response.Send(fmt.Errorf("ActivityController.Store(): %w", err), http.StatusInternalServerError)
 		return
 	}
 
@@ -64,7 +64,7 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 
 	hasDuplicate, err := controller.activityService.HasDuplicate(input.Name, user.Id)
 	if err != nil {
-		response.Send(err, http.StatusInternalServerError)
+		response.Send(fmt.Errorf("ActivityController.Store(): %w", err), http.StatusInternalServerError)
 		return
 	}
 
@@ -76,7 +76,7 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 	activity := activities.New(input.Name, input.Icon, input.CollectionId, user.Id)
 	err = controller.activityDAO.Save(&activity)
 	if err != nil {
-		response.Send(err, http.StatusInternalServerError)
+		response.Send(fmt.Errorf("ActivityController.Store(): %w", err), http.StatusInternalServerError)
 		return
 	}
 

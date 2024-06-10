@@ -1,6 +1,7 @@
 package records
 
 import (
+	"fmt"
 	"github.com/EugeneNail/actum/internal/service/jwt"
 	"github.com/EugeneNail/actum/internal/service/log"
 	"github.com/EugeneNail/actum/internal/service/response"
@@ -18,7 +19,7 @@ func (controller *Controller) Index(writer http.ResponseWriter, request *http.Re
 
 	errors, input, err := validation.NewValidator[indexInput]().Validate(request)
 	if err != nil {
-		response.Send(err, http.StatusBadRequest)
+		response.Send(fmt.Errorf("RecordController.Index(): %w", err), http.StatusBadRequest)
 		return
 	}
 
@@ -30,13 +31,13 @@ func (controller *Controller) Index(writer http.ResponseWriter, request *http.Re
 	user := jwt.GetUser(request)
 	cursor, err := time.Parse("2006-01-02", input.Cursor)
 	if err != nil {
-		response.Send(err, http.StatusBadRequest)
+		response.Send(fmt.Errorf("RecordController.Index(): %w", err), http.StatusBadRequest)
 		return
 	}
 
 	records, err := controller.recordService.CollectRecordsForCursor(cursor, user.Id)
 	if err != nil {
-		response.Send(err, http.StatusInternalServerError)
+		response.Send(fmt.Errorf("RecordController.Index(): %w", err), http.StatusInternalServerError)
 		return
 	}
 

@@ -15,13 +15,13 @@ func (controller *Controller) Destroy(writer http.ResponseWriter, request *http.
 
 	id, err := strconv.Atoi(routing.GetVariable(request, 0))
 	if err != nil {
-		response.Send(err, http.StatusBadRequest)
+		response.Send(fmt.Errorf("ActivityController.Destroy(): %w", err), http.StatusBadRequest)
 		return
 	}
 
 	activity, err := controller.activityDAO.Find(id)
 	if err != nil {
-		response.Send(err, http.StatusInternalServerError)
+		response.Send(fmt.Errorf("ActivityController.Destroy(): %w", err), http.StatusInternalServerError)
 		return
 	}
 
@@ -38,7 +38,7 @@ func (controller *Controller) Destroy(writer http.ResponseWriter, request *http.
 	}
 
 	if err := controller.activityDAO.Delete(activity); err != nil {
-		response.Send(err, http.StatusInternalServerError)
+		response.Send(fmt.Errorf("ActivityController.Destroy(): %w", err), http.StatusInternalServerError)
 		return
 	}
 

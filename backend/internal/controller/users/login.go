@@ -1,6 +1,7 @@
 package users
 
 import (
+	"fmt"
 	"github.com/EugeneNail/actum/internal/service/hash"
 	"github.com/EugeneNail/actum/internal/service/jwt"
 	"github.com/EugeneNail/actum/internal/service/log"
@@ -21,7 +22,7 @@ func (controller *Controller) Login(writer http.ResponseWriter, request *http.Re
 
 	errors, input, err := validator.Validate(request)
 	if err != nil {
-		response.Send(err, http.StatusBadRequest)
+		response.Send(fmt.Errorf("UserController.Login(): %w", err), http.StatusBadRequest)
 		return
 	}
 
@@ -32,7 +33,7 @@ func (controller *Controller) Login(writer http.ResponseWriter, request *http.Re
 
 	user, err := controller.dao.FindBy("email", strings.ToLower(input.Email))
 	if err != nil {
-		response.Send(err, http.StatusInternalServerError)
+		response.Send(fmt.Errorf("UserController.Login(): %w", err), http.StatusInternalServerError)
 		return
 	}
 
@@ -43,13 +44,13 @@ func (controller *Controller) Login(writer http.ResponseWriter, request *http.Re
 
 	accessToken, err := jwt.Make(user.Id)
 	if err != nil {
-		response.Send(err, http.StatusInternalServerError)
+		response.Send(fmt.Errorf("UserController.Login(): %w", err), http.StatusInternalServerError)
 		return
 	}
 
 	refreshToken, err := controller.refreshService.MakeToken(user.Id)
 	if err != nil {
-		response.Send(err, http.StatusInternalServerError)
+		response.Send(fmt.Errorf("UserController.Login(): %w", err), http.StatusInternalServerError)
 		return
 	}
 
