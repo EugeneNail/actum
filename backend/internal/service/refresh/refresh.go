@@ -49,3 +49,12 @@ func (service *Service) IsValid(token string, userId int) (bool, error) {
 
 	return count > 0, nil
 }
+
+func (service *Service) Unset(userId int) error {
+	_, err := service.db.Exec(`DELETE FROM user_refresh_tokens WHERE user_id = ?`, userId)
+	if err != nil {
+		return fmt.Errorf("refresh.Unset(): %w", err)
+	}
+
+	return nil
+}

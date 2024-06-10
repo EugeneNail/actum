@@ -34,6 +34,7 @@ func main() {
 	routing.Post("/api/users", userController.Store)
 	routing.Post("/api/users/login", userController.Login)
 	routing.Post("/api/users/refresh-token", userController.RefreshToken)
+	routing.Post("/api/users/logout", userController.Logout)
 
 	collectionDAO := collections.NewDAO(db)
 	collectionService := collections.NewService(db)
