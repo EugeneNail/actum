@@ -10,6 +10,11 @@ import (
 	"testing"
 )
 
+type Tokens struct {
+	Access  string `json:"access"`
+	Refresh string `json:"refresh"`
+}
+
 type Client struct {
 	t     *testing.T
 	token string
@@ -33,10 +38,10 @@ func NewClient(t *testing.T) (client Client) {
 
 func (client *Client) setToken(response *Response) {
 	decoder := json.NewDecoder(response.Body)
-	var token string
-	err := decoder.Decode(&token)
+	var tokens Tokens
+	err := decoder.Decode(&tokens)
 	Check(err)
-	client.token = "Bearer " + token
+	client.token = "Bearer " + tokens.Access
 }
 
 func NewClientWithoutAuth(t *testing.T) (client Client) {
