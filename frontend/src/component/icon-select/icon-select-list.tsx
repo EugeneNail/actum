@@ -4,17 +4,32 @@ import classNames from "classnames";
 import {useState} from "react";
 import {Icons8} from "../icon8/icons8.ts";
 import Icon8 from "../icon8/icon8.tsx";
+import {Color} from "../../model/color.tsx";
 
 type Props = {
     label: string
     selectedIconId: number
     group: number
+    color: Color
     setIcon: (icon: number) => void
 }
 
-export default function IconSelectList({label, selectedIconId, group, setIcon}: Props) {
+export default function IconSelectList({label, selectedIconId, group, color, setIcon}: Props) {
     const [isVisible, setVisible] = useState(false)
     const ids = Object.keys(Icons8).map(key => Number(key)).filter(id => id >= group && id < group + 100)
+
+    function getClassName(id: number) {
+        return classNames(
+            "icon-select-list__item",
+            {selected: id == selectedIconId},
+            {red: color == Color.Red},
+            {orange: color == Color.Orange},
+            {yellow: color == Color.Yellow},
+            {green: color == Color.Green},
+            {blue: color == Color.Blue},
+            {purple: color == Color.Purple},
+        )
+    }
 
     return (
         <div className={classNames("icon-select-list", {invisible: !isVisible})}>
@@ -24,7 +39,7 @@ export default function IconSelectList({label, selectedIconId, group, setIcon}: 
             </div>
             <ul className="icon-select-list__list">
                 {ids && ids.map(id => (
-                    <li key={id} className={classNames("icon-select-list__item", {selected: id == selectedIconId })} onClick={() => setIcon(id)}>
+                    <li key={id} className={getClassName(id)} onClick={() => setIcon(id)}>
                         <Icon8 className="icon-select-list__icon" id={id}/>
                     </li>
                 ))}

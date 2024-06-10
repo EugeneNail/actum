@@ -2,6 +2,7 @@ import Icon from "../icon/icon.tsx";
 import classNames from "classnames";
 import "./field.sass"
 import {ChangeEvent, useEffect, useState} from "react";
+import {Color} from "../../model/color.tsx";
 
 type FieldProps = {
     value: string
@@ -13,16 +14,24 @@ type FieldProps = {
     error?: string
     email?: boolean
     password?: boolean
+    color?: Color
     onChange: (event: ChangeEvent<HTMLInputElement>) => void
 }
 
-export default function Field({value, icon = "", name, label, max = 100, className, error = "", email, password, onChange}: FieldProps) {
+export default function Field({value, icon = "", name, label, max = 100, className, error = "", email, password, color = Color.Accent, onChange}: FieldProps) {
     const [isVisible, setVisible] = useState(true)
 
     className = classNames(
         "field",
         className,
-        {invalid: error?.length > 0}
+        {invalid: error?.length > 0},
+        {red: color == Color.Red},
+        {orange: color == Color.Orange},
+        {yellow: color == Color.Yellow},
+        {green: color == Color.Green},
+        {blue: color == Color.Blue},
+        {purple: color == Color.Purple},
+        {accent: color == Color.Accent}
     )
 
     useEffect(() => {
