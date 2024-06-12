@@ -3,6 +3,7 @@ package main
 import (
 	activityController "github.com/EugeneNail/actum/internal/controller/activities"
 	collectionController "github.com/EugeneNail/actum/internal/controller/collections"
+	photoController "github.com/EugeneNail/actum/internal/controller/photos"
 	recordController "github.com/EugeneNail/actum/internal/controller/records"
 	userController "github.com/EugeneNail/actum/internal/controller/users"
 	"github.com/EugeneNail/actum/internal/database/mysql"
