@@ -38,10 +38,10 @@ export default function Header() {
     return (
         <>
             {isVisible && <header className="header">
-                <NavLink className="header-link" to="/statistics">
+                <NavLink className="header-link green" to="/statistics">
                     <Icon className="header-link__icon" name="bar_chart"/>
                 </NavLink>
-                <NavLink className="header-link" to="/records">
+                <NavLink className="header-link red" to="/records">
                     <Icon className="header-link__icon" name="post"/>
                 </NavLink>
                 <div className="header__placeholder">
@@ -52,10 +52,10 @@ export default function Header() {
                         </Button>
                     </div>
                 </div>
-                <NavLink className="header-link" to="/collections">
+                <NavLink className="header-link orange" to="/collections">
                     <Icon className="header-link__icon" name="category"/>
                 </NavLink>
-                <NavLink className="header-link" to="/more">
+                <NavLink className="header-link  accent" to="/menu">
                     <Icon className="header-link__icon" bold name="more_horiz"/>
                 </NavLink>
             </header>

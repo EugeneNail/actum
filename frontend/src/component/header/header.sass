@@ -51,10 +51,31 @@
   &:not(.active):hover
     margin: 0
     padding: 5px
-    color: $accent
+
+    &.green
+      color: $green
+
+    &.red
+      color: $red
+
+    &.orange
+      color: $orange
+
+    &.accent
+      color: $accent
 
   &.active
-    color: $accent-strong
+    &.green
+      color: $green
+
+    &.red
+      color: $red
+
+    &.orange
+      color: $orange
+
+    &.accent
+      color: $accent-strong
 
 @keyframes push-and-pop
   0%

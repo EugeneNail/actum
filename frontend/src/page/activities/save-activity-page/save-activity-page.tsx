@@ -12,6 +12,7 @@ import FormSubmitButton from "../../../component/form/form-submit-button.tsx";
 import FormDeleteButton from "../../../component/form/form-delete-button.tsx";
 import IconSelect from "../../../component/icon-select/icon-select.tsx";
 import Throbber from "../../../component/throbber/throbber.tsx";
+import Collection from "../../../model/collection.ts";
 
 class Payload {
     name: string = ""
@@ -34,7 +35,7 @@ export default function SaveActivityPage() {
     const navigate = useNavigate()
     const notification = useNotificationContext()
     const {collectionId, activityId} = useParams<string>()
-    const [collectionName, setCollectionName] = useState<string>()
+    const [collection, setCollection] = useState(new Collection())
 
     useEffect(() => {
         document.title = "Новая активность"
@@ -58,7 +59,7 @@ export default function SaveActivityPage() {
             notification.pop(data)
             navigate("/collections")
         }
-        setCollectionName(data.name)
+        setCollection(data)
         setCollectionLoading(false)
     }
 
@@ -145,12 +146,12 @@ export default function SaveActivityPage() {
             }
             {!isActivityLoading && !isCollectionLoading &&
                 <div className="save-activity-page page">
-                    <Form title={willStore ? "Новая активность" : state.name} subtitle={(willStore ? "" : "Активность") + ` коллекции "${collectionName}"`}>
-                        <Field name="name" label="Название" icon="webhook" value={state.name} max={20} error={errors.name} onChange={setField}/>
-                        <IconSelect className="save-activity-page__icon-select" name="icon" value={state.icon} onChange={setField}/>
+                    <Form title={willStore ? "Новая активность" : state.name} subtitle={(willStore ? "" : "Активность") + ` коллекции "${collection.name}"`}>
+                        <Field name="name" label="Название" icon="webhook" color={collection.color} value={state.name} max={20} error={errors.name} onChange={setField}/>
+                        <IconSelect className="save-activity-page__icon-select" name="icon" color={collection.color} value={state.icon} onChange={setField}/>
                         <FormButtons>
-                            <FormBackButton/>
-                            <FormSubmitButton label="Сохранить" onClick={save}/>
+                            <FormBackButton color={collection.color} />
+                            <FormSubmitButton label="Сохранить" color={collection.color} onClick={save}/>
                             {!willStore && <FormDeleteButton onClick={() => navigate("./delete")}/>}
                         </FormButtons>
                     </Form>
