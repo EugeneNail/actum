@@ -14,17 +14,44 @@ input:-webkit-autofill
 
   &__icon-container
     transition: 0.3s
-    background: $accent-weak
-    color: $accent-strong
     height: 80%
     border-radius: 8px
     padding: 0 6px
     display: flex
     align-items: center
 
+  &.red &__icon-container
+    background: $red-weak
+    color: $red
+
+  &.orange &__icon-container
+    background: $orange-weak
+    color: $orange
+
+  &.yellow &__icon-container
+    background: $yellow-weak
+    color: $yellow
+
+  &.green &__icon-container
+    background: $green-weak
+    color: $green
+
+  &.blue &__icon-container
+    background: $blue-weak
+    color: $blue
+
+  &.purple &__icon-container
+    background: $purple-weak
+    color: $purple
+
+  &.accent &__icon-container
+    background: $accent-weak
+    color: $accent-strong
+
+
   &__content
     width: 100%
-    border-radius: 8px 8px 0px 0px
+    border-radius: 8px 8px 0 0
     grid-template-columns: auto 1fr auto
     display: grid
     place-items: center
@@ -48,11 +75,30 @@ input:-webkit-autofill
       transition: 0.3s
       color: $font-medium
 
-    &:focus
-      border-bottom: 3px $accent-strong solid
-
     &:focus::placeholder
       color: transparent
+
+  &.red &__input:focus
+    border-bottom: 3px $red solid
+
+  &.orange &__input:focus
+    border-bottom: 3px $orange solid
+
+  &.yellow &__input:focus
+    border-bottom: 3px $yellow solid
+
+  &.green &__input:focus
+    border-bottom: 3px $green solid
+
+  &.blue &__input:focus
+    border-bottom: 3px $blue solid
+
+  &.purple &__input:focus
+    border-bottom: 3px $purple solid
+
+  &.accent &__input:focus
+    border-bottom: 3px $accent-strong solid
+
 
   &__visibility
     font-variation-settings: 'FILL' 0, 'wght' 300
@@ -62,14 +108,14 @@ input:-webkit-autofill
 
   &__error
     height: 17px
-    color: $red-strong
+    color: $red
     font-size: 12px
     margin-top: 4px
 
 .field
   .invalid &__icon-container
-    background: $red-weak
-    color: $red-strong
+    background: $red-weak !important
+    color: $red !important
 
   .invalid &__input:focus
-    border-bottom: 3px $red-strong solid
+    border-bottom: 3px $red solid !important
