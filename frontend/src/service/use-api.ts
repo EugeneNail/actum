@@ -85,7 +85,7 @@ export function useApi() {
     api.navigate = navigate
 
     api.axios = axios.create({
-        baseURL: "http://actum.ddns.net:8080",
+        baseURL: import.meta.env.VITE_API_DOMAIN,
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",

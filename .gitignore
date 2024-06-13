@@ -1,11 +1,13 @@
 
-backend/.env
+.env
 .idea/*
 backend/create
 backend/migrate
-backend/main
-/backend/logs
-backend/migrations
+main
+/logs
+migrations
 /backend/photos
-/backend/storage
-/backend/cmd/test/main.go
+/storage
+/cmd/test/main.go
+/frontend/build
+/frontend/.env

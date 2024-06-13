@@ -15,7 +15,6 @@ export default function PhotoUploader({name, values, deletePhoto, onPhotosUpload
 
 
     async function loadBase64Images(event: ChangeEvent<HTMLInputElement>) {
-        console.log(21)
         const files = event.target.files ?? [] as File[]
         const length = files.length
         const names: string[] = []
@@ -30,7 +29,6 @@ export default function PhotoUploader({name, values, deletePhoto, onPhotosUpload
             }
         }
 
-        console.log(names)
         onPhotosUploaded(names)
     }
 
@@ -57,7 +55,7 @@ export default function PhotoUploader({name, values, deletePhoto, onPhotosUpload
                         <div className="photo-uploader__delete-button" onClick={() => deletePhoto(name)}>
                             <Icon className="photo-uploader__delete-button-icon" bold name="close"/>
                         </div>
-                        <img className="photo-uploader__img" src={"http://actum.ddns.net:8080/api/photos/" + name}
+                        <img className="photo-uploader__img" src={`${import.meta.env.VITE_API_DOMAIN}/api/photos/${name}`}
                              alt={name}/>
                     </div>
                 ))}
