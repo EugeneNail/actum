@@ -55,19 +55,20 @@ func main() {
 	routing.Delete("/api/activities/:id", activityController.Destroy)
 	routing.Get("/api/activities/:id", activityController.Show)
 
-	recordDAO := records.NewDAO(db)
-	recordService := records.NewService(db)
-	recordController := recordController.New(db, recordDAO, activityDAO, activityService, recordService)
-	routing.Post("/api/records", recordController.Store)
-	routing.Put("/api/records/:id", recordController.Update)
-	routing.Get("/api/records/:id", recordController.Show)
-	routing.Post("/api/records-list", recordController.Index)
-
 	photoDAO := photos.NewDAO(db)
+	photoService := photos.NewService(db)
 	photoController := photoController.New(photoDAO)
 	routing.Post("/api/photos", photoController.Store)
 	routing.Delete("/api/photos/:name", photoController.Destroy)
 	routing.Get("/api/photos/:name", photoController.Show)
+
+	recordDAO := records.NewDAO(db)
+	recordService := records.NewService(db)
+	recordController := recordController.New(db, recordDAO, activityDAO, activityService, recordService, photoService)
+	routing.Post("/api/records", recordController.Store)
+	routing.Put("/api/records/:id", recordController.Update)
+	routing.Get("/api/records/:id", recordController.Show)
+	routing.Post("/api/records-list", recordController.Index)
 
 	handler := middleware.BuildPipeline(db, []middleware.Middleware{
 		middleware.SetHeaders,

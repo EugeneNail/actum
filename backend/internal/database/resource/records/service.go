@@ -160,3 +160,48 @@ func (service *Service) IsDateTaken(date string, userId int) (bool, error) {
 
 	return count > 0, nil
 }
+
+func (service *Service) FetchIdsOfActivities(recordId int) ([]int, error) {
+	var ids []int
+
+	rows, err := service.db.Query(`
+		SELECT id 
+		FROM activities 
+		    JOIN records_activities 
+		        ON activities.id = records_activities.activity_id 
+		WHERE record_id = ?`, recordId)
+	defer rows.Close()
+	if err != nil {
+		return ids, fmt.Errorf("records.FetchIdsOfActivities(): %w", err)
+	}
+
+	for rows.Next() {
+		var id int
+		if err := rows.Scan(&id); err != nil {
+			return ids, fmt.Errorf("records.FetchIdsOfActivities(): %w", err)
+		}
+		ids = append(ids, id)
+	}
+
+	return ids, nil
+}
+
+func (service *Service) FetchNamesOfPhotos(recordId int) ([]string, error) {
+	var names []string
+
+	rows, err := service.db.Query(`SELECT name FROM photos WHERE record_id = ?`, recordId)
+	defer rows.Close()
+	if err != nil {
+		return names, fmt.Errorf("records.FetchNamesOfPhotos: failed to query photos: %w", err)
+	}
+
+	for rows.Next() {
+		var name string
+		if err := rows.Scan(&name); err != nil {
+			return names, fmt.Errorf("records.FetchNamesOfPhotos: failed to scan the name of the photo: %w", err)
+		}
+		names = append(names, name)
+	}
+
+	return names, nil
+}
