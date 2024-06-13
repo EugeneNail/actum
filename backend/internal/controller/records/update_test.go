@@ -1,8 +1,10 @@
 package records
 
 import (
+	"fmt"
 	"github.com/EugeneNail/actum/internal/database/resource/activities"
 	"github.com/EugeneNail/actum/internal/database/resource/collections"
+	"github.com/EugeneNail/actum/internal/service/fake"
 	"github.com/EugeneNail/actum/internal/service/tests"
 	"github.com/EugeneNail/actum/internal/service/tests/startup"
 	"net/http"
@@ -15,8 +17,18 @@ func TestUpdateValidData(t *testing.T) {
 
 	collections.NewFactory(1).Make(1).Insert()
 	activities.NewFactory(1, 1).Make(5).Insert()
+	var name string
+	client.
+		Post("/api/photos", fmt.Sprintf(`{
+			"image": "%s"
+		}`, fake.Base64Image())).
+		AssertStatus(http.StatusCreated).
+		ReadData(&name)
 
-	database.AssertCount("collections", 1).AssertCount("activities", 5)
+	database.
+		AssertCount("collections", 1).
+		AssertCount("activities", 5).
+		AssertCount("photos", 1)
 
 	client.
 		Post("/api/records", `{
@@ -47,17 +59,19 @@ func TestUpdateValidData(t *testing.T) {
 	}
 
 	client.
-		Put("/api/records/1", `{
+		Put("/api/records/1", fmt.Sprintf(`{
 			"mood": 5,
 			"weather": 2,
 			"notes": "Сюда смотри",
-			"activities": [1, 2, 4, 5]
-		}`).
+			"activities": [1, 2, 4, 5],
+			"photos": ["%s"]
+		}`, name)).
 		AssertStatus(http.StatusNoContent)
 
 	database.
 		AssertCount("records", 1).
 		AssertHas("records", map[string]any{
+			"id":      1,
 			"mood":    5,
 			"weather": 2,
 			"date":    "2024-01-01",
@@ -67,6 +81,11 @@ func TestUpdateValidData(t *testing.T) {
 		AssertLacks("records_activities", map[string]any{
 			"record_id":   1,
 			"activity_id": 3,
+		}).
+		AssertHas("photos", map[string]any{
+			"record_id": 1,
+			"name":      name,
+			"user_id":   1,
 		})
 }
 

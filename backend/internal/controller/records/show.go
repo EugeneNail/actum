@@ -36,46 +36,27 @@ func (controller *Controller) Show(writer http.ResponseWriter, request *http.Req
 		return
 	}
 
-	activities, err := controller.fetchIdsOfActivities(record.Id)
+	activities, err := controller.recordService.FetchIdsOfActivities(record.Id)
 	if err != nil {
 		response.Send(fmt.Errorf("RecordController.Show(): %w", err), http.StatusInternalServerError)
 		return
 	}
 
-	output := make(map[string]any, 5)
+	photos, err := controller.recordService.FetchNamesOfPhotos(record.Id)
+	if err != nil {
+		response.Send(fmt.Errorf("RecordController.Show(): %w", err), http.StatusInternalServerError)
+		return
+	}
+
+	output := make(map[string]any, 7)
 	output["date"] = record.Date.Format("2006-01-02")
 	output["mood"] = record.Mood
 	output["weather"] = record.Weather
 	output["notes"] = record.Notes
 	output["id"] = record.Id
 	output["activities"] = activities
+	output["photos"] = photos
 
 	response.Send(output, http.StatusOK)
 	log.Info("User", user.Id, "fetched record", record.Id)
-}
-
-func (controller *Controller) fetchIdsOfActivities(recordId int) ([]int, error) {
-	var ids []int
-
-	rows, err := controller.db.Query(`
-		SELECT id 
-		FROM activities 
-		    JOIN records_activities 
-		        ON activities.id = records_activities.activity_id 
-		WHERE record_id = ?`, recordId)
-	defer rows.Close()
-	if err != nil {
-		return ids, fmt.Errorf("fetchIdsOfActivities(): %w", err)
-	}
-
-	for rows.Next() {
-		var id int
-
-		if err := rows.Scan(&id); err != nil {
-			return ids, fmt.Errorf("fetchIdsOfActivities(): %w", err)
-		}
-		ids = append(ids, id)
-	}
-
-	return ids, nil
 }

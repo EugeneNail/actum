@@ -34,7 +34,7 @@ func Authenticate(db *sql.DB, next http.Handler) http.Handler {
 		response := response.NewSender(writer)
 
 		for _, route := range unprotectedRoutes {
-			pathMatched, err := regexp.MatchString(route.path, request.RequestURI)
+			pathMatched, err := regexp.MatchString("^"+route.path+"$", request.RequestURI)
 			if err != nil {
 				response.Send(fmt.Errorf("AuthenticateMiddleware: %w", err), http.StatusInternalServerError)
 				return

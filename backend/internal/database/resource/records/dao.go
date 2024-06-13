@@ -1,7 +1,6 @@
 package records
 
 import (
-	"context"
 	"database/sql"
 	"fmt"
 )
@@ -62,77 +61,6 @@ func (dao *DAO) Delete(id int) error {
 	_, err := dao.db.Exec(`DELETE FROM records WHERE id = ?`, id)
 	if err != nil {
 		return fmt.Errorf("records.Delete(): %w", err)
-	}
-
-	return nil
-}
-
-func (dao *DAO) SyncRelations(recordId int, activities []int) error {
-	tx, err := dao.db.BeginTx(context.Background(), &sql.TxOptions{})
-	defer tx.Rollback()
-	if err != nil {
-		return fmt.Errorf("records.SyncRelations(): %w", err)
-	}
-
-	if err = deleteUnusedRelations(tx, recordId, activities); err != nil {
-		return fmt.Errorf("records.SyncRelations(): %w", err)
-	}
-
-	if err = upsertRelations(tx, recordId, activities); err != nil {
-		return fmt.Errorf("records.SyncRelations(): %w", err)
-	}
-
-	if err := tx.Commit(); err != nil {
-		return fmt.Errorf("records.SyncRelations(): %w", err)
-	}
-
-	return nil
-}
-
-func deleteUnusedRelations(tx *sql.Tx, recordId int, activities []int) error {
-	var placeholders string
-	values := make([]any, len(activities)+1)
-	values[0] = recordId
-
-	for i, activityId := range activities {
-		values[i+1] = activityId
-		placeholders += "?,"
-	}
-	placeholders = "(" + placeholders[:len(placeholders)-1] + ")"
-
-	_, err := tx.Exec(
-		`DELETE FROM records_activities WHERE record_id = ? AND activity_id NOT IN `+placeholders,
-		values...,
-	)
-
-	if err != nil {
-		return fmt.Errorf("deleteUnusedRelations(): %w", err)
-	}
-
-	return nil
-}
-
-func upsertRelations(tx *sql.Tx, recordId int, activities []int) error {
-	const columnsCount = 2
-	var placeholders string
-	values := make([]any, columnsCount*len(activities))
-
-	for i, activityId := range activities {
-		values[columnsCount*i+0] = recordId
-		values[columnsCount*i+1] = activityId
-		placeholders += "(?, ?),"
-	}
-	placeholders = placeholders[:len(placeholders)-1]
-
-	_, err := tx.Exec(`
-		INSERT INTO records_activities (record_id, activity_id) 
-		VALUES `+placeholders+` 
-		ON DUPLICATE KEY UPDATE record_id = VALUES(record_id)
-	`, values...,
-	)
-
-	if err != nil {
-		return fmt.Errorf("upsertRelations(): %w", err)
 	}
 
 	return nil

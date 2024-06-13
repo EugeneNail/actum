@@ -22,7 +22,7 @@ func (controller *Controller) Show(writer http.ResponseWriter, request *http.Req
 		return
 	}
 
-	path := filepath.Join(env.Get("APP_PATH"), "photos", name)
+	path := filepath.Join(env.Get("APP_PATH"), "storage", "photos", name)
 	if _, err := os.Stat(path); err != nil && errors.Is(err, os.ErrNotExist) {
 		response.Send(fmt.Sprintf("Фотография %s не найдена", name), http.StatusNotFound)
 		return
