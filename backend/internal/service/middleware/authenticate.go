@@ -8,6 +8,7 @@ import (
 	"github.com/EugeneNail/actum/internal/service/jwt"
 	"github.com/EugeneNail/actum/internal/service/response"
 	"net/http"
+	"regexp"
 	"strings"
 	"time"
 )
@@ -24,6 +25,7 @@ func init() {
 		{"POST", "/api/users/login"},
 		{"POST", "/api/users"},
 		{"POST", "/api/users/refresh-token"},
+		{"GET", "/api/photos/[0-9a-zA-Z_.-]+"},
 	}
 }
 
@@ -32,7 +34,13 @@ func Authenticate(db *sql.DB, next http.Handler) http.Handler {
 		response := response.NewSender(writer)
 
 		for _, route := range unprotectedRoutes {
-			if route.method == request.Method && route.path == request.RequestURI {
+			pathMatched, err := regexp.MatchString(route.path, request.RequestURI)
+			if err != nil {
+				response.Send(fmt.Errorf("AuthenticateMiddleware: %w", err), http.StatusInternalServerError)
+				return
+			}
+
+			if route.method == request.Method && pathMatched {
 				next.ServeHTTP(writer, request)
 				return
 			}

@@ -66,6 +66,7 @@ func main() {
 	photoDAO := photos.NewDAO(db)
 	photoController := photoController.New(photoDAO)
 	routing.Post("/api/photos", photoController.Store)
+	routing.Get("/api/photos/:id", photoController.Show)
 
 	handler := middleware.BuildPipeline(db, []middleware.Middleware{
 		middleware.SetHeaders,

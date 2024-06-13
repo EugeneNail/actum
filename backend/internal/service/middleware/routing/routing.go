@@ -64,7 +64,7 @@ func Delete(pattern string, handlerFunction func(http.ResponseWriter, *http.Requ
 
 func RegisterRoute(method string, pattern string, handlerFunction func(http.ResponseWriter, *http.Request)) {
 	validateMethod(method)
-	pattern = regexp.MustCompile(":[a-zA-Z]*").ReplaceAllString(pattern, "([0-9a-zA-Z_-]+)")
+	pattern = regexp.MustCompile(":[a-zA-Z]*").ReplaceAllString(pattern, "([0-9a-zA-Z_.-]+)")
 	routes = append(routes, route{
 		method,
 		regexp.MustCompile("^" + pattern + "$"),
