@@ -20,6 +20,8 @@ commands=(
   "cd ../"
   "go mod download"
   "go clean -cache"
+  "go build -o ./migrations ./cmd/migrations/main.go"
+  "./migrations apply"
   "go build -o ./main ./cmd/main/main.go"
   "./main"
 )

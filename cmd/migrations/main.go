@@ -22,6 +22,7 @@ type migration struct {
 
 func main() {
 	env.Load()
+	createDatabase()
 	createTable()
 	createDirectory()
 	args := os.Args[1:]
@@ -49,6 +50,13 @@ func main() {
 		printError("Expected create, apply, rollback or refresh subcommand")
 	}
 
+}
+
+func createDatabase() {
+	db, err := mysql.Connect()
+	check(err)
+	_, err = db.Exec(`CREATE DATABASE IF NOT EXISTS actum`)
+	check(err)
 }
 
 func createTable() {
