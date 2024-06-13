@@ -18,8 +18,18 @@ func TestStoreValidData(t *testing.T) {
 
 	collections.NewFactory(1).Make(1).Insert()
 	activities.NewFactory(1, 1).Make(5).Insert().List()
+	var name string
+	client.
+		Post("/api/photos", fmt.Sprintf(`{
+			"image": "%s"
+		}`, fake.Base64Image())).
+		AssertStatus(http.StatusCreated).
+		ReadData(&name)
 
-	database.AssertCount("collections", 1).AssertCount("activities", 5)
+	database.
+		AssertCount("collections", 1).
+		AssertCount("activities", 5).
+		AssertCount("photos", 1)
 
 	notes := fake.Text()
 	client.
@@ -28,19 +38,27 @@ func TestStoreValidData(t *testing.T) {
 			"notes": "%s",
 			"weather": 7,
 			"date": "2024-05-29",
-			"activities": [1,2,3,5]
-		}`, notes)).
+			"activities": [1,2,3,5],
+			"photos": ["%s"]
+		}`, notes, name)).
 		AssertStatus(http.StatusCreated)
 
 	database.
 		AssertCount("records_activities", 4).
 		AssertCount("records", 1).
 		AssertHas("records", map[string]any{
+			"id":      1,
 			"mood":    1,
 			"weather": 7,
 			"notes":   notes,
 			"date":    "2024-05-29",
 			"user_id": 1,
+		}).
+		AssertCount("photos", 1).
+		AssertHas("photos", map[string]any{
+			"name":      name,
+			"record_id": 1,
+			"user_id":   1,
 		})
 
 	for _, activityId := range []int{1, 2, 3, 5} {
@@ -65,7 +83,8 @@ func TestStoreInvalidData(t *testing.T) {
 			"mood": 0,
 			"weather": 4,
 			"notes": "%s",
-			"date": "2024-35-29"
+			"date": "2024-35-29",
+			"photos": []
 		}`, notes)).
 		AssertStatus(http.StatusUnprocessableEntity)
 
@@ -116,7 +135,8 @@ func TestStoreConflictDate(t *testing.T) {
 			"weather": 3,
 			"notes": "%s",
 			"date": "2022-01-01",
-			"activities": [1,2,3,4,5]
+			"activities": [1,2,3,4,5],
+			"photos": []
 		}`, notes)).
 		AssertStatus(http.StatusCreated)
 
