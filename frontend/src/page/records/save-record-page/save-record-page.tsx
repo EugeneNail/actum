@@ -37,7 +37,7 @@ class Errors {
 
 export default function SaveRecordPage() {
     const willStore = window.location.pathname.includes("/new")
-    const [isRecordLoading, setRecordLoading] = useState(willStore)
+    const [isRecordLoading, setRecordLoading] = useState(!willStore)
     const [areCollectionsLoading, setCollectionsLoading] = useState(true)
     const {state, setState, setField, errors} = useFormState(new Payload(), new Errors())
     const [collections, setCollections] = useState<Collection[]>([])
@@ -213,7 +213,7 @@ export default function SaveRecordPage() {
                     {!areCollectionsLoading &&
                         <ActivityPicker collections={collections} value={state.activities} toggleActivity={addActivity}/>
                     }
-                    <Notes label="Заметки" name="notes" max={5000} value={state.notes} onChange={setField}/>
+                    <Notes name="notes" max={5000} value={state.notes} onChange={setField}/>
                     <PhotoUploader name="photos" values={state.photos} onPhotosUploaded={addPhotos} deletePhoto={deletePhoto} />
                     <FormButtons>
                         <FormBackButton/>

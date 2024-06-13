@@ -62,6 +62,13 @@ export default function RecordCard({record}: Props) {
                 )}
             </div>
             {record.notes.length > 0 && <p className="record-card__notes">{record.notes}</p>}
+            {record.photos && <div className="record-card__photos">
+                {record.photos.map(photo =>
+                    <div className="record-card__photo-container" key={photo}>
+                        <img className="record-card__photo" src={"http://actum.ddns.net:8080/api/photos/" + photo} alt={photo} />
+                    </div>
+                )}
+            </div>}
         </div>
     )
 }

@@ -21,21 +21,21 @@ type IndexRecord struct {
 	Mood        int               `json:"mood"`
 	Notes       string            `json:"notes"`
 	Collections []IndexCollection `json:"collections"`
+	Photos      []string          `json:"photos"`
 }
 
 type IndexCollection struct {
-	Id         int             `json:"id"`
+	Id         int             `json:"-"`
 	Name       string          `json:"name"`
 	Color      int             `json:"color"`
 	Activities []IndexActivity `json:"activities"`
 }
 
 type IndexActivity struct {
-	RecordId     int    `json:"recordId"`
-	CollectionId int    `json:"collectionId"`
+	RecordId     int    `json:"-"`
+	CollectionId int    `json:"-"`
 	Icon         int    `json:"icon"`
 	Name         string `json:"name"`
-	Weather      int    `json:"weather"`
 }
 
 func New(mood int, weather int, date string, notes string, userId int) (Record, error) {

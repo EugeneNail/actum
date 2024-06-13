@@ -80,14 +80,33 @@
     padding: 15px
 
   &__notes
+    text-align: justify
     position: relative
     border-top: 1px solid $delimiter
+    border-bottom: 1px solid $delimiter
     padding: 25px 15px
     white-space: pre-line
     font-size: 12px
     overflow: hidden
     color: lighten($font-medium, 15%)
 
+  &__photos
+    max-width: 100%
+    margin: 20px 15px 15px
+    display: flex
+    flex-wrap: wrap
+    gap: 3px
+    border-radius: 10px
+    overflow: hidden
+
+  &__photo-container
+    flex: 1 1 30%
+
+  &__photo
+    aspect-ratio: 1 / 1
+    height: 100%
+    width: 100%
+    object-fit: cover
 
 .record-card-collection
   margin-top: 7px

@@ -9,4 +9,5 @@ export default class ShortRecord {
     weather: Weather = Weather.Sunny
     notes: string = ""
     collections: ShortCollection[] = []
+    photos: string[] = []
 }

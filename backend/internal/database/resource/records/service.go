@@ -34,6 +34,10 @@ func (service *Service) CollectRecordsForCursor(cursor time.Time, userId int) ([
 		return records, fmt.Errorf("recordService.CollectRecordsForCursor(): %w", err)
 	}
 
+	if err := service.fetchPhotos(records, userId); err != nil {
+		return records, fmt.Errorf("recordService.CollectRecordsForCursor(): %w", err)
+	}
+
 	return records, nil
 }
 
@@ -146,6 +150,50 @@ func (service *Service) assignToRecords(records []*IndexRecord, activity IndexAc
 			record.Collections[i].Activities = append(record.Collections[i].Activities, activity)
 		}
 	}
+}
+
+func (service *Service) fetchPhotos(records []*IndexRecord, userId int) error {
+	query, values := service.preparePhotosQuery(records, userId)
+	rows, err := service.db.Query(query, values...)
+	defer rows.Close()
+	if err != nil {
+		return fmt.Errorf("fetchPhotos: failed to query photos: %w", err)
+	}
+
+	recordsById := make(map[int]*IndexRecord, len(records))
+	for _, record := range records {
+		recordsById[record.Id] = record
+	}
+
+	for rows.Next() {
+		var photo struct {
+			name     string
+			recordId int
+		}
+		if err := rows.Scan(&photo.name, &photo.recordId); err != nil {
+			return fmt.Errorf("fetchPhotos: failed to scan the name of the photo: %w", err)
+		}
+		record := recordsById[photo.recordId]
+		record.Photos = append(record.Photos, photo.name)
+	}
+
+	return nil
+}
+
+func (service *Service) preparePhotosQuery(records []*IndexRecord, userId int) (string, []any) {
+	var placeholders string
+	values := make([]any, len(records)+1)
+	values[0] = userId
+
+	for i, record := range records {
+		values[i+1] = record.Id
+		placeholders += "?,"
+	}
+	placeholders = "(" + placeholders[:len(placeholders)-1] + ")"
+
+	query := `SELECT name, record_id FROM photos WHERE user_id = ? AND record_id IN ` + placeholders
+
+	return query, values
 }
 
 func (service *Service) IsDateTaken(date string, userId int) (bool, error) {
