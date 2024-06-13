@@ -33,7 +33,7 @@ func (dao *DAO) FindBy(column string, name string) (Photo, error) {
 	err := dao.db.QueryRow(query, name).
 		Scan(&photo.Id, &photo.Name, &photo.RecordId, &photo.UserId)
 
-	if err != nil {
+	if err != nil && err != sql.ErrNoRows {
 		return photo, fmt.Errorf("photos.Find(): %w", err)
 	}
 
@@ -63,6 +63,15 @@ func (dao *DAO) Save(photo *Photo) error {
 
 	if lastInsertId != 0 {
 		photo.Id = int(lastInsertId)
+	}
+
+	return nil
+}
+
+func (dao *DAO) Delete(id int) error {
+	_, err := dao.db.Exec(`DELETE FROM photos WHERE id = ?`, id)
+	if err != nil {
+		return fmt.Errorf("photos.Delete: failed to delete photo %d:%w", id, err)
 	}
 
 	return nil
