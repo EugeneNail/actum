@@ -1,5 +1,5 @@
 import "./notes.sass"
-import {ChangeEvent, useRef} from "react";
+import {useRef} from "react";
 import classNames from "classnames";
 
 type Props = {
@@ -7,7 +7,7 @@ type Props = {
     name: string
     max: number
     value: string
-    onChange: (event: ChangeEvent<HTMLInputElement>) => void
+    onChange: (event: any) => void
 }
 
 export default function Notes({className, name, max, value, onChange}: Props) {
