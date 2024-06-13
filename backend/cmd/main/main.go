@@ -71,6 +71,7 @@ func main() {
 	routing.Post("/api/records-list", recordController.Index)
 
 	handler := middleware.BuildPipeline(db, []middleware.Middleware{
+		middleware.RedirectToFrontend,
 		middleware.SetHeaders,
 		middleware.Authenticate,
 		routing.Middleware,

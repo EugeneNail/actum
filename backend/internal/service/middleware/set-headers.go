@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"database/sql"
+	"github.com/EugeneNail/actum/internal/service/env"
 	"net/http"
 )
 
@@ -10,7 +11,7 @@ func SetHeaders(_ *sql.DB, next http.Handler) http.Handler {
 		writer.Header().Set("Content-Type", "application/json")
 		writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 		writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-		writer.Header().Set("Access-Control-Allow-Origin", "http://actum.ddns.net")
+		writer.Header().Set("Access-Control-Allow-Origin", env.Get("APP_ORIGIN"))
 
 		if request.Method == "OPTIONS" {
 			writer.WriteHeader(200)
