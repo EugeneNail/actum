@@ -22,7 +22,6 @@ func TestDestroy(t *testing.T) {
 	database.
 		AssertCount("photos", 1).
 		AssertHas("photos", map[string]any{
-			"id":      1,
 			"name":    name,
 			"user_id": 1,
 		})

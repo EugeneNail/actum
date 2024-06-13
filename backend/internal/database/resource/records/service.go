@@ -1,7 +1,6 @@
 package records
 
 import (
-	"context"
 	"database/sql"
 	"fmt"
 	"time"
@@ -160,97 +159,4 @@ func (service *Service) IsDateTaken(date string, userId int) (bool, error) {
 	}
 
 	return count > 0, nil
-}
-
-func (service *Service) SyncActivities(recordId int, activities []int) error {
-	tx, err := service.db.BeginTx(context.Background(), &sql.TxOptions{})
-	defer tx.Rollback()
-	if err != nil {
-		return fmt.Errorf("records.SyncActivities(): %w", err)
-	}
-
-	if err = deleteUnusedActivityRelations(tx, recordId, activities); err != nil {
-		return fmt.Errorf("records.SyncActivities(): %w", err)
-	}
-
-	if err = upsertActivityRelations(tx, recordId, activities); err != nil {
-		return fmt.Errorf("records.SyncActivities(): %w", err)
-	}
-
-	if err := tx.Commit(); err != nil {
-		return fmt.Errorf("records.SyncActivities(): %w", err)
-	}
-
-	return nil
-}
-
-func deleteUnusedActivityRelations(tx *sql.Tx, recordId int, activities []int) error {
-	var placeholders string
-	values := make([]any, len(activities)+1)
-	values[0] = recordId
-
-	for i, activityId := range activities {
-		values[i+1] = activityId
-		placeholders += "?,"
-	}
-	placeholders = "(" + placeholders[:len(placeholders)-1] + ")"
-
-	_, err := tx.Exec(
-		`DELETE FROM records_activities WHERE record_id = ? AND activity_id NOT IN `+placeholders,
-		values...,
-	)
-
-	if err != nil {
-		return fmt.Errorf("deleteUnusedActivityRelations(): %w", err)
-	}
-
-	return nil
-}
-
-func upsertActivityRelations(tx *sql.Tx, recordId int, activities []int) error {
-	const columnsCount = 2
-	var placeholders string
-	values := make([]any, columnsCount*len(activities))
-
-	for i, activityId := range activities {
-		values[columnsCount*i+0] = recordId
-		values[columnsCount*i+1] = activityId
-		placeholders += "(?, ?),"
-	}
-	placeholders = placeholders[:len(placeholders)-1]
-
-	_, err := tx.Exec(`
-		INSERT INTO records_activities (record_id, activity_id) 
-		VALUES `+placeholders+` 
-		ON DUPLICATE KEY UPDATE record_id = VALUES(record_id)
-	`, values...,
-	)
-
-	if err != nil {
-		return fmt.Errorf("upsertActivityRelations(): %w", err)
-	}
-
-	return nil
-}
-
-func (service *Service) SyncPhotos(recordId int, photoNames []string) error {
-	if len(photoNames) == 0 {
-		return nil
-	}
-
-	var placeholders string
-	values := make([]any, len(photoNames)+1)
-	values[0] = recordId
-
-	for i, name := range photoNames {
-		placeholders += "?,"
-		values[i+1] = name
-	}
-	placeholders = "(" + placeholders[:len(placeholders)-1] + ")"
-
-	if _, err := service.db.Exec(`UPDATE photos SET record_id = ? WHERE name IN`+placeholders, values...); err != nil {
-		return fmt.Errorf("records.SyncPhotos: failed to update relations: %w", err)
-	}
-
-	return nil
 }

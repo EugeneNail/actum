@@ -58,6 +58,16 @@ func Records(t *testing.T) (tests.Client, tests.Database) {
 
 	t.Cleanup(func() {
 		tests.Check(mysql.TruncateMany(tests.DB, []string{"user_refresh_tokens", "records", "activities", "collections", "users"}))
+
+		photosDirectory := filepath.Join(env.Get("APP_PATH"), "storage", "photos")
+		files, err := os.ReadDir(photosDirectory)
+		tests.Check(err)
+
+		for _, file := range files {
+			filePath := filepath.Join(photosDirectory, file.Name())
+			tests.Check(os.Remove(filePath))
+		}
+
 	})
 
 	client := tests.NewClient(t)

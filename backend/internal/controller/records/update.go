@@ -84,12 +84,12 @@ func (controller *Controller) Update(writer http.ResponseWriter, request *http.R
 		return
 	}
 
-	if err = controller.recordService.SyncActivities(record.Id, input.Activities); err != nil {
+	if err = controller.activityService.SyncRelations(record.Id, input.Activities); err != nil {
 		response.Send(fmt.Errorf("RecordController.Store(): %w", err), http.StatusInternalServerError)
 		return
 	}
 
-	if err = controller.recordService.SyncPhotos(record.Id, input.Photos); err != nil {
+	if err = controller.photoService.SyncRelations(record.Id, input.Photos); err != nil {
 		response.Send(fmt.Errorf("RecordController.Store(): %w", err), http.StatusInternalServerError)
 		return
 	}
