@@ -232,3 +232,25 @@ func upsertActivityRelations(tx *sql.Tx, recordId int, activities []int) error {
 
 	return nil
 }
+
+func (service *Service) SyncPhotos(recordId int, photoNames []string) error {
+	if len(photoNames) == 0 {
+		return nil
+	}
+
+	var placeholders string
+	values := make([]any, len(photoNames)+1)
+	values[0] = recordId
+
+	for i, name := range photoNames {
+		placeholders += "?,"
+		values[i+1] = name
+	}
+	placeholders = "(" + placeholders[:len(placeholders)-1] + ")"
+
+	if _, err := service.db.Exec(`UPDATE photos SET record_id = ? WHERE name IN`+placeholders, values...); err != nil {
+		return fmt.Errorf("records.SyncPhotos: failed to update relations: %w", err)
+	}
+
+	return nil
+}

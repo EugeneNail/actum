@@ -11,11 +11,12 @@ import (
 )
 
 type storeInput struct {
-	Mood       int    `json:"mood" rules:"required|integer|min:1|max:5"`
-	Weather    int    `json:"weather" rules:"required|integer|min:1|max:9"`
-	Notes      string `json:"notes" rules:"max:5000"`
-	Date       string `json:"date" rules:"required|date|today|after:2020-01-01"`
-	Activities []int  `json:"activities" rules:"required"`
+	Mood       int      `json:"mood" rules:"required|integer|min:1|max:5"`
+	Weather    int      `json:"weather" rules:"required|integer|min:1|max:9"`
+	Notes      string   `json:"notes" rules:"max:5000"`
+	Date       string   `json:"date" rules:"required|date|today|after:2020-01-01"`
+	Activities []int    `json:"activities" rules:"required"`
+	Photos     []string `json:"photos"`
 }
 
 func (controller *Controller) Store(writer http.ResponseWriter, request *http.Request) {
@@ -57,6 +58,18 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 		return
 	}
 
+	allExist, missingPhotos, err := controller.photoService.CheckExistence(input.Photos, user.Id)
+	if err != nil {
+		response.Send(fmt.Errorf("RecordController.Store(): %w", err), http.StatusInternalServerError)
+		return
+	}
+
+	if !allExist {
+		errors := map[string]any{"photos": fmt.Sprintf("Фотографии %v не найдены.", missingPhotos)}
+		response.Send(errors, http.StatusNotFound)
+		return
+	}
+
 	record, err := records.New(input.Mood, input.Weather, input.Date, input.Notes, user.Id)
 	if err != nil {
 		response.Send(fmt.Errorf("RecordController.Store(): %w", err), http.StatusInternalServerError)
@@ -69,6 +82,11 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 	}
 
 	if err = controller.recordService.SyncActivities(record.Id, input.Activities); err != nil {
+		response.Send(fmt.Errorf("RecordController.Store(): %w", err), http.StatusInternalServerError)
+		return
+	}
+
+	if err = controller.recordService.SyncPhotos(record.Id, input.Photos); err != nil {
 		response.Send(fmt.Errorf("RecordController.Store(): %w", err), http.StatusInternalServerError)
 		return
 	}

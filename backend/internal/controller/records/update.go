@@ -12,10 +12,11 @@ import (
 )
 
 type updateInput struct {
-	Mood       int    `json:"mood" rules:"required|integer|min:1|max:5"`
-	Weather    int    `json:"weather" rules:"required|integer|min:1|max:9"`
-	Notes      string `json:"notes" rules:"max:5000"`
-	Activities []int  `json:"activities" rules:"required"`
+	Mood       int      `json:"mood" rules:"required|integer|min:1|max:5"`
+	Weather    int      `json:"weather" rules:"required|integer|min:1|max:9"`
+	Notes      string   `json:"notes" rules:"max:5000"`
+	Activities []int    `json:"activities" rules:"required"`
+	Photos     []string `json:"photos"`
 }
 
 func (controller *Controller) Update(writer http.ResponseWriter, request *http.Request) {
@@ -62,6 +63,18 @@ func (controller *Controller) Update(writer http.ResponseWriter, request *http.R
 		return
 	}
 
+	allExist, missingPhotos, err := controller.photoService.CheckExistence(input.Photos, user.Id)
+	if err != nil {
+		response.Send(fmt.Errorf("RecordController.Store(): %w", err), http.StatusInternalServerError)
+		return
+	}
+
+	if !allExist {
+		errors := map[string]any{"photos": fmt.Sprintf("Фотографии %v не найдены.", missingPhotos)}
+		response.Send(errors, http.StatusNotFound)
+		return
+	}
+
 	recordBefore := record
 	record.Notes = input.Notes
 	record.Mood = input.Mood
@@ -71,8 +84,13 @@ func (controller *Controller) Update(writer http.ResponseWriter, request *http.R
 		return
 	}
 
-	if err := controller.recordService.SyncActivities(record.Id, input.Activities); err != nil {
-		response.Send(fmt.Errorf("RecordController.Update(): %w", err), http.StatusInternalServerError)
+	if err = controller.recordService.SyncActivities(record.Id, input.Activities); err != nil {
+		response.Send(fmt.Errorf("RecordController.Store(): %w", err), http.StatusInternalServerError)
+		return
+	}
+
+	if err = controller.recordService.SyncPhotos(record.Id, input.Photos); err != nil {
+		response.Send(fmt.Errorf("RecordController.Store(): %w", err), http.StatusInternalServerError)
 		return
 	}
 
