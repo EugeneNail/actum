@@ -17,6 +17,7 @@ import WeatherSelect from "../../../component/weather-select/weather-select.tsx"
 import {Mood} from "../../../model/mood.ts";
 import {Weather} from "../../../model/weather.ts";
 import Throbber from "../../../component/throbber/throbber.tsx";
+import PhotoUploader from "../../../component/photo-uploader/photo-uploader.tsx";
 
 class Payload {
     mood = Mood.Neutral
@@ -24,6 +25,7 @@ class Payload {
     weather = Weather.Sunny
     notes = ""
     activities: number[] = []
+    photos: string[] = []
 }
 
 class Errors {
@@ -34,13 +36,13 @@ class Errors {
 }
 
 export default function SaveRecordPage() {
-    const [isRecordLoading, setRecordLoading] = useState(false)
-    const [areCollectionsLoading, setCollectionsLoading] = useState(false)
+    const willStore = window.location.pathname.includes("/new")
+    const [isRecordLoading, setRecordLoading] = useState(willStore)
+    const [areCollectionsLoading, setCollectionsLoading] = useState(true)
     const {state, setState, setField, errors} = useFormState(new Payload(), new Errors())
     const [collections, setCollections] = useState<Collection[]>([])
     const api = useApi()
     const notification = useNotificationContext()
-    const willStore = window.location.pathname.includes("/new")
     const navigate = useNavigate()
     const {id} = useParams<string>()
 
@@ -68,7 +70,8 @@ export default function SaveRecordPage() {
             weather: data.weather,
             date: data.date,
             notes: data.notes,
-            activities: data.activities
+            activities: data.activities,
+            photos: data.photos ?? []
         })
         document.title = data.date + " - Записи"
 
@@ -157,7 +160,8 @@ export default function SaveRecordPage() {
             mood: Number(state.mood),
             weather: Number(state.weather),
             notes: state.notes,
-            activities: state.activities
+            activities: state.activities,
+            photos: state.photos ?? []
         })
 
         if (status == 422) {
@@ -176,6 +180,26 @@ export default function SaveRecordPage() {
         navigate("/records")
     }
 
+    function addPhotos(urls: string[]) {
+        setState({
+            ...state,
+            photos: [...state.photos, ...urls]
+        })
+    }
+
+
+    async function deletePhoto(name: string) {
+        const {status} = await api.delete(`/api/photos/${name}`)
+        if (status == 204) {
+            setState({
+                ...state,
+                photos: state.photos.filter(photoName => photoName != name)
+            })
+        } else {
+            notification.pop("Не удалось удалить фотографию")
+        }
+    }
+
 
     return (
         <div className="save-record-page page">
@@ -190,6 +214,7 @@ export default function SaveRecordPage() {
                         <ActivityPicker collections={collections} value={state.activities} toggleActivity={addActivity}/>
                     }
                     <Notes label="Заметки" name="notes" max={5000} value={state.notes} onChange={setField}/>
+                    <PhotoUploader name="photos" values={state.photos} onPhotosUploaded={addPhotos} deletePhoto={deletePhoto} />
                     <FormButtons>
                         <FormBackButton/>
                         <FormSubmitButton label="Сохранить" onClick={save}/>
