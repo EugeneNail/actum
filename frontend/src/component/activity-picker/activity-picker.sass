@@ -1,18 +1,26 @@
 @import ../../variables
 
 .activity-picker
-  gap: 10px
   display: flex
+  gap: 10px
   flex-direction: column
 
+  &__label
+    text-align: center
+    font-size: 24px
+    color: $font-strong
+
 .picker-collection
+  background: $background
+  border-radius: 10px
+
   &__header
     user-select: none
     border-radius: 10px
     display: flex
     align-items: center
-    height: 60px
-    padding: 0 20px
+    height: 50px
+    padding: 0 15px
     cursor: pointer
 
     @media(pointer: fine)
@@ -20,7 +28,7 @@
         background: lighten($background, 3%)
 
   &__name
-    font-size: 20px
+    font-size: 14px
     color: $font-strong
     margin-bottom: 3px
 

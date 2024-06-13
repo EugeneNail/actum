@@ -23,7 +23,7 @@ export default function MoodSelect({className, name, value, onChange}: Props) {
     return (
         <div className={classNames("mood-select", className)}>
             <input type="number" name={name} id={name} className="mood-select__input" onChange={onChange}/>
-            <p className="mood-select__label">Как прошел день?</p>
+            <p className="mood-select__label">Как вы себя чувствуете?</p>
             <div className="mood-select__moods">
                 <Icon className={classNames("mood-select__mood", {selected: value == 5})} name="sentiment_very_satisfied" onClick={() => setMood(5)} />
                 <Icon className={classNames("mood-select__mood", {selected: value == 4})} name="sentiment_satisfied" onClick={() => setMood(4)} />

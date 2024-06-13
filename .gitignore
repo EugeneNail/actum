@@ -8,3 +8,4 @@ backend/main
 backend/migrations
 /backend/photos
 /backend/storage
+/backend/cmd/test/main.go

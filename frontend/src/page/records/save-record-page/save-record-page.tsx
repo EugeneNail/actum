@@ -205,7 +205,7 @@ export default function SaveRecordPage() {
         <div className="save-record-page page">
             {isRecordLoading && <Throbber/>}
             {!isRecordLoading &&
-                <Form title={willStore ? "Новая запись" : "Запись"}>
+                <Form title={willStore ? "Новая запись" : "Запись"} noBackground>
                     <DatePicker active={willStore} name="date" value={state.date} error={errors.date} onChange={setField}/>
                     <MoodSelect name="mood" value={state.mood} onChange={setField}/>
                     <WeatherSelect name="weather" value={state.weather} onChange={setField}/>

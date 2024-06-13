@@ -1,16 +1,26 @@
 @import ../../variables
 
 .photo-uploader
+  margin-top: 50px
 
   &__label
+    text-align: center
+    font-size: 24px
+    color: $font-strong
 
   &__input
     display: none
 
   &__photos
+    margin-top: 30px
     gap: 10px
-    display: grid
-    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr))
+    display: flex
+    flex-wrap: wrap
+    //display: grid
+    //grid-template-columns: repeat(auto-fit, minmax(90px, 1fr))
+
+  &__photos > *
+    flex: 1 1 30%
 
   &__image-container
     aspect-ratio: 1 / 1
@@ -26,11 +36,12 @@
     right: 5px
     top: 5px
     color: black
-    width: 25px
-    height: 25px
+    width: 20px
+    height: 20px
     display: grid
     place-items: center
     cursor: pointer
+    box-shadow: 0 0 5px black
 
     @media (pointer: fine)
       &:hover

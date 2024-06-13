@@ -4,14 +4,13 @@ import classNames from "classnames";
 
 type Props = {
     className?: string
-    label: string
     name: string
     max: number
     value: string
     onChange: (event: ChangeEvent<HTMLInputElement>) => void
 }
 
-export default function Notes({className, label, name, max, value, onChange}: Props) {
+export default function Notes({className, name, max, value, onChange}: Props) {
     const ref = useRef<HTMLTextAreaElement>(document.createElement('textarea'))
 
     function resizeToContent() {
@@ -20,10 +19,10 @@ export default function Notes({className, label, name, max, value, onChange}: Pr
 
     return (
         <div className={classNames("notes", className)}>
-            <label  className="notes__label" htmlFor={name}>{label}</label>
+            <label className="notes__label" htmlFor={name}>Как прошел день?</label>
             <textarea className="notes__textarea"
                       ref={ref}
-                      placeholder="Что интересного случилось?"
+                      placeholder="Расскажите, что интересного случилось"
                       value={value}
                       name={name}
                       id={name}
