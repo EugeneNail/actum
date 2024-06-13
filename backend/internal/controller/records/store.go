@@ -68,7 +68,7 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 		return
 	}
 
-	if err = controller.recordDAO.SyncRelations(record.Id, input.Activities); err != nil {
+	if err = controller.recordService.SyncActivities(record.Id, input.Activities); err != nil {
 		response.Send(fmt.Errorf("RecordController.Store(): %w", err), http.StatusInternalServerError)
 		return
 	}

@@ -71,7 +71,7 @@ func (controller *Controller) Update(writer http.ResponseWriter, request *http.R
 		return
 	}
 
-	if err := controller.recordDAO.SyncRelations(record.Id, input.Activities); err != nil {
+	if err := controller.recordService.SyncActivities(record.Id, input.Activities); err != nil {
 		response.Send(fmt.Errorf("RecordController.Update(): %w", err), http.StatusInternalServerError)
 		return
 	}
