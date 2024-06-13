@@ -17,7 +17,7 @@ commands=(
   "npm install"
   "npm audit fix"
   "npm run build"
-  "cd ../backend"
+  "cd ../"
   "go mod download"
   "go clean -cache"
   "go build -o ./main ./cmd/main/main.go"
