@@ -6,3 +6,4 @@ backend/migrate
 backend/main
 /backend/logs
 backend/migrations
+/backend/photos

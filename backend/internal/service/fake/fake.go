@@ -1,6 +1,13 @@
 package fake
 
 import (
+	"bytes"
+	"encoding/base64"
+	"github.com/EugeneNail/actum/internal/service/tests"
+	"image"
+	"image/color"
+	"image/draw"
+	"image/png"
 	"math/rand/v2"
 	"strings"
 )
@@ -145,4 +152,19 @@ func TextLength(min int, max int) string {
 	}
 
 	return strings.Join(paragraphs, "\\n")
+}
+
+func Base64Image() string {
+	return Base64ImageSize(500, 1000)
+}
+
+func Base64ImageSize(width int, height int) string {
+	img := image.NewRGBA(image.Rect(0, 0, width, height))
+	draw.Draw(img, img.Bounds(), &image.Uniform{color.RGBA{255, 255, 255, 255}}, image.Point{}, draw.Src)
+	var buffer bytes.Buffer
+
+	err := png.Encode(&buffer, img)
+	tests.Check(err)
+
+	return base64.StdEncoding.EncodeToString(buffer.Bytes())
 }

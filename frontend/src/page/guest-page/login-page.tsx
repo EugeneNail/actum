@@ -21,6 +21,7 @@ export default function LoginPage() {
     const {state, setField, errors, setErrors} = useFormState(new Payload(), new Errors())
     const api = useApi()
     const navigate = useNavigate()
+    document.title = "Вход - Actum"
 
     async function login() {
         const {data, status} = await api.post("/api/users/login", state)

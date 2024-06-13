@@ -25,6 +25,7 @@ export default function SignupPage() {
     const {state, setField, errors, setErrors} = useFormState(new Payload(), new Errors())
     const api = useApi()
     const navigate = useNavigate()
+    document.title = "Регистрация - Actum"
 
     async function signup() {
         const {data, status} = await api.post("/api/users", state)
