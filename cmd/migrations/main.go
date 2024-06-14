@@ -53,10 +53,23 @@ func main() {
 }
 
 func createDatabase() {
-	db, err := mysql.Connect()
+	db, err := sql.Open("mysql", fmt.Sprintf(
+		"%s:%s@tcp(%s:%s)/",
+		env.Get("DB_USERNAME"),
+		env.Get("DB_PASSWORD"),
+		env.Get("DB_HOST"),
+		env.Get("DB_PORT"),
+	))
 	check(err)
-	_, err = db.Exec(`CREATE DATABASE IF NOT EXISTS actum`)
+	defer db.Close()
+
+	result, err := db.Exec(fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s", env.Get("DB_NAME")))
 	check(err)
+	rowsAffected, err := result.RowsAffected()
+	check(err)
+	if rowsAffected > 0 {
+		fmt.Println("DONE created database `actum`")
+	}
 }
 
 func createTable() {
