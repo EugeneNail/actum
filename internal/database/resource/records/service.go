@@ -45,7 +45,7 @@ func (service *Service) fetchRecords(start time.Time, end time.Time, userId int)
 	var records []*IndexRecord
 
 	rows, err := service.db.Query(
-		`SELECT id, mood, weather, date, notes FROM records WHERE user_id = ? AND date > ? AND date <= ?`,
+		`SELECT id, mood, weather, date, notes FROM records WHERE user_id = ? AND date > ? AND date <= ? ORDER BY date DESC`,
 		userId, start, end,
 	)
 	defer rows.Close()
