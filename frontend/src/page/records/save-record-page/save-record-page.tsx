@@ -35,6 +35,8 @@ class Errors {
     activities = ""
 }
 
+const months = ["Января", "Февраля", "Марта", "Апреля", "Мая", "Июня", "Июля", "Августа", "Сентября", "Октября", "Ноября", "Декабря"]
+
 export default function SaveRecordPage() {
     const willStore = window.location.pathname.includes("/new")
     const [isRecordLoading, setRecordLoading] = useState(!willStore)
@@ -73,9 +75,16 @@ export default function SaveRecordPage() {
             activities: data.activities,
             photos: data.photos ?? []
         })
-        document.title = data.date + " - Записи"
+        document.title = dateToTitle(data.date)
 
         setRecordLoading(false)
+    }
+
+
+    function dateToTitle(date: string): string {
+        const day = date.substring(8, 10)
+        const month = Number(date.substring(5, 7))
+        return `${day} ${months[month]} - Записи`
     }
 
 

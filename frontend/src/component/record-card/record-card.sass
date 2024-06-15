@@ -3,19 +3,20 @@
 .record-card
   background: $background
   border-radius: 10px
+  transition: 0.3s
+  cursor: pointer
+  overflow: hidden
+
+  @media (pointer: fine)
+    &:hover
+      background: lighten($background, 2%)
 
   &__header
-    cursor: pointer
     display: flex
     border-bottom: 1px solid $delimiter
     align-items: center
     gap: 10px
     padding: 10px
-    border-radius: 10px 10px 0 0
-    transition: 0.3s
-
-    &:hover
-      background: lighten($background, 2%)
 
   &__date
     font-size: 16px
@@ -55,13 +56,13 @@
       color: #8d8d8d
 
     &.windy
-      color: #87CEFA
+      color: $blue
 
     &.rainy
-      color: #40A4DF
+      color: $blue
 
     &.thunder
-      color: $blue
+      color: $purple
 
     &.foggy
       color: #D3D3D3
@@ -70,7 +71,7 @@
       color: #FFFAFA
 
     &.cold
-      color: #ADD8E6
+      color: $blue
 
   &__weather-name
     margin-top: 5px
@@ -88,7 +89,7 @@
     white-space: pre-line
     font-size: 12px
     overflow: hidden
-    color: lighten($font-medium, 15%)
+    color: darken($font-strong, 10%)
 
   &__photos
     max-width: 100%

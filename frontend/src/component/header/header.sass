@@ -1,6 +1,7 @@
 @import ../../variables
 
 .header
+  z-index: 10
   height: 50px
   position: fixed
   bottom: 0
@@ -16,6 +17,9 @@
   transition: border-radius 0.5s
   padding: 0 20px
   gap: 10px
+
+  @media screen and (orientation: landscape)
+    border-radius: 10px 10px 0 0 !important
 
   &__placeholder
     height: 100%
@@ -41,13 +45,13 @@
     color: black
 
 .header-link
+  width: 55px
   display: flex
   flex-direction: column
   align-content: center
   align-items: center
   border-radius: 100px
   transition: 0.3s
-  margin: 5px
 
   &:not(.active):hover
     margin: 0

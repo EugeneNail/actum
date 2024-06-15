@@ -47,8 +47,8 @@ export default function RecordCard({record}: Props) {
 
 
     return (
-        <div className="record-card">
-            <div className="record-card__header" onClick={() => navigate(`./${record.id}`)}>
+        <div className="record-card" onClick={() => navigate(`./${record.id}`)}>
+            <div className="record-card__header">
                 <Icon className={moodClassName} name={MoodIcons[record.mood]}/>
                 <Icon className={weatherClassName} name={WeatherIcons[record.weather]}/>
                 <div className="record-card__label">
