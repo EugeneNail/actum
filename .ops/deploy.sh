@@ -23,6 +23,7 @@ commands=(
   "go build -o ./migrations ./cmd/migrations/main.go"
   "./migrations apply"
   "go build -o ./main ./cmd/main/main.go"
+  "pkill -f ./main"
   "./main"
 )
 
