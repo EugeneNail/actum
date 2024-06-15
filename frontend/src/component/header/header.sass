@@ -3,9 +3,10 @@
 .header
   height: 50px
   position: fixed
-  bottom: 20px
+  bottom: 0
   left: 50%
   transform: translateX(-50%)
+  width: 100%
   max-width: 500px
   background: $background
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.4)
@@ -13,10 +14,8 @@
   justify-content: space-between
   align-items: center
   transition: border-radius 0.5s
-  border-radius: 50px
-  padding: 0 10px
+  padding: 0 20px
   gap: 10px
-  animation: push-and-pop 0.5s linear
 
   &__placeholder
     height: 100%
@@ -31,8 +30,7 @@
     border-radius: 50px
     background: $background
     position: absolute
-    top: 50%
-    transform: translateY(-50%)
+    top: -15px
 
   &__button
     text-shadow: none
@@ -43,7 +41,10 @@
     color: black
 
 .header-link
-  display: block
+  display: flex
+  flex-direction: column
+  align-content: center
+  align-items: center
   border-radius: 100px
   transition: 0.3s
   margin: 5px
@@ -77,8 +78,14 @@
     &.accent
       color: $accent-strong
 
-@keyframes push-and-pop
-  0%
-    opacity: 0
-  100%
-    opacity: 1
+  &__icon
+    font-size: 33px
+    font-variation-settings: 'FILL' 1, 'wght' 200
+
+  &__label
+    text-align: center
+    font-size: 10px
+    color: inherit
+
+  &:last-child &__icon
+    font-variation-settings: 'FILL' 1, 'wght' 700 !important
