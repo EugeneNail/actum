@@ -130,14 +130,14 @@ func (controller *Controller) Login(writer http.ResponseWriter, request *http.Re
 func (controller *Controller) Logout(writer http.ResponseWriter, request *http.Request) {
 	response := response.NewSender(writer)
 
-	user := jwt.GetUser(request)
-	if err := controller.refreshService.Unset(user.Id); err != nil {
+	userId := jwt.GetUserId(request)
+	if err := controller.refreshService.Unset(userId); err != nil {
 		response.Send(fmt.Errorf("UserController.Logout(): %w", err), http.StatusInternalServerError)
 		return
 	}
 
 	writer.WriteHeader(http.StatusNoContent)
-	log.Info("User", user.Id, "logged out")
+	log.Info("User", userId, "logged out")
 
 }
 

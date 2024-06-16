@@ -62,14 +62,14 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 		return
 	}
 
-	user := jwt.GetUser(request)
-	if collection.UserId != user.Id {
+	userId := jwt.GetUserId(request)
+	if collection.UserId != userId {
 		response.Send("Вы не можете добавить активность в чужую коллекцию.", http.StatusForbidden)
 		return
 	}
 
 	const limit = 20
-	exceedsLimit, err := controller.activityService.ExceedsLimit(limit, collection.Id, user.Id)
+	exceedsLimit, err := controller.activityService.ExceedsLimit(limit, collection.Id, userId)
 	if err != nil {
 		response.Send(fmt.Errorf("ActivityController.Store(): %w", err), http.StatusInternalServerError)
 		return
@@ -81,7 +81,7 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 		return
 	}
 
-	hasDuplicate, err := controller.activityService.HasDuplicate(input.Name, user.Id)
+	hasDuplicate, err := controller.activityService.HasDuplicate(input.Name, userId)
 	if err != nil {
 		response.Send(fmt.Errorf("ActivityController.Store(): %w", err), http.StatusInternalServerError)
 		return
@@ -92,7 +92,7 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 		return
 	}
 
-	activity := New(input.Name, input.Icon, input.CollectionId, user.Id)
+	activity := New(input.Name, input.Icon, input.CollectionId, userId)
 	err = controller.activityDAO.Save(&activity)
 	if err != nil {
 		response.Send(fmt.Errorf("ActivityController.Store(): %w", err), http.StatusInternalServerError)
@@ -100,7 +100,7 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 	}
 
 	response.Send(activity.Id, http.StatusCreated)
-	log.Info("User", user.Id, "created activity", activity.Id, "of collection", collection.Id)
+	log.Info("User", userId, "created activity", activity.Id, "of collection", collection.Id)
 }
 
 type updateInput struct {
@@ -130,8 +130,8 @@ func (controller *Controller) Update(writer http.ResponseWriter, request *http.R
 		return
 	}
 
-	user := jwt.GetUser(request)
-	if activity.UserId != user.Id {
+	userId := jwt.GetUserId(request)
+	if activity.UserId != userId {
 		response.Send("Вы не можете изменить чужую активность.", http.StatusForbidden)
 		return
 	}
@@ -156,7 +156,7 @@ func (controller *Controller) Update(writer http.ResponseWriter, request *http.R
 	}
 
 	writer.WriteHeader(http.StatusNoContent)
-	log.Info("User", user.Id, "changed activity", activityBefore, "to", fmt.Sprintf("%+v", activity))
+	log.Info("User", userId, "changed activity", activityBefore, "to", fmt.Sprintf("%+v", activity))
 }
 
 func (controller *Controller) Show(writer http.ResponseWriter, request *http.Request) {
@@ -179,14 +179,14 @@ func (controller *Controller) Show(writer http.ResponseWriter, request *http.Req
 		return
 	}
 
-	user := jwt.GetUser(request)
-	if activity.UserId != user.Id {
+	userId := jwt.GetUserId(request)
+	if activity.UserId != userId {
 		response.Send("Вы не можете использовать чужую активность.", http.StatusForbidden)
 		return
 	}
 
 	response.Send(activity, http.StatusOK)
-	log.Info("User", user.Id, "fetched activity", activity.Id)
+	log.Info("User", userId, "fetched activity", activity.Id)
 }
 
 func (controller *Controller) Destroy(writer http.ResponseWriter, request *http.Request) {
@@ -210,8 +210,8 @@ func (controller *Controller) Destroy(writer http.ResponseWriter, request *http.
 		return
 	}
 
-	user := jwt.GetUser(request)
-	if activity.UserId != user.Id {
+	userId := jwt.GetUserId(request)
+	if activity.UserId != userId {
 		response.Send("Вы пытаетесь использовать чужую активность.", http.StatusForbidden)
 		return
 	}
@@ -222,6 +222,6 @@ func (controller *Controller) Destroy(writer http.ResponseWriter, request *http.
 	}
 
 	writer.WriteHeader(http.StatusNoContent)
-	log.Info("User", user.Id, "deleted activity", activity.Id)
+	log.Info("User", userId, "deleted activity", activity.Id)
 
 }

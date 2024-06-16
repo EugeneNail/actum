@@ -6,7 +6,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/EugeneNail/actum/internal/resource/users"
 	"github.com/EugeneNail/actum/internal/service/env"
 	"net/http"
 	"strings"
@@ -25,8 +24,8 @@ type Payload struct {
 
 type CtxKey string
 
-func GetUser(request *http.Request) users.User {
-	return request.Context().Value(CtxKey("user")).(users.User)
+func GetUserId(request *http.Request) int {
+	return request.Context().Value(CtxKey("userId")).(int)
 }
 
 func Make(userId int) (string, error) {

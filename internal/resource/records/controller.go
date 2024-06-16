@@ -55,8 +55,8 @@ func (controller *Controller) Show(writer http.ResponseWriter, request *http.Req
 		return
 	}
 
-	user := jwt.GetUser(request)
-	if record.UserId != user.Id {
+	userId := jwt.GetUserId(request)
+	if record.UserId != userId {
 		response.Send("Вы не можете использовать чужую запись.", http.StatusForbidden)
 		return
 	}
@@ -83,7 +83,7 @@ func (controller *Controller) Show(writer http.ResponseWriter, request *http.Req
 	output["photos"] = photos
 
 	response.Send(output, http.StatusOK)
-	log.Info("User", user.Id, "fetched record", record.Id)
+	log.Info("User", userId, "fetched record", record.Id)
 }
 
 type storeInput struct {
@@ -109,8 +109,8 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 		return
 	}
 
-	user := jwt.GetUser(request)
-	isDateTaken, err := controller.recordService.IsDateTaken(input.Date, user.Id)
+	userId := jwt.GetUserId(request)
+	isDateTaken, err := controller.recordService.IsDateTaken(input.Date, userId)
 	if err != nil {
 		response.Send(fmt.Errorf("RecordController.Store(): %w", err), http.StatusInternalServerError)
 		return
@@ -122,7 +122,7 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 		return
 	}
 
-	allExist, missingActivities, err := controller.activityService.CheckExistence(input.Activities, user.Id)
+	allExist, missingActivities, err := controller.activityService.CheckExistence(input.Activities, userId)
 	if err != nil {
 		response.Send(fmt.Errorf("RecordController.Store(): %w", err), http.StatusInternalServerError)
 		return
@@ -134,7 +134,7 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 		return
 	}
 
-	allExist, missingPhotos, err := controller.photoService.CheckExistence(input.Photos, user.Id)
+	allExist, missingPhotos, err := controller.photoService.CheckExistence(input.Photos, userId)
 	if err != nil {
 		response.Send(fmt.Errorf("RecordController.Store(): %w", err), http.StatusInternalServerError)
 		return
@@ -146,7 +146,7 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 		return
 	}
 
-	record, err := New(input.Mood, input.Weather, input.Date, input.Notes, user.Id)
+	record, err := New(input.Mood, input.Weather, input.Date, input.Notes, userId)
 	if err != nil {
 		response.Send(fmt.Errorf("RecordController.Store(): %w", err), http.StatusInternalServerError)
 		return
@@ -168,7 +168,7 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 	}
 
 	response.Send(record.Id, http.StatusCreated)
-	log.Info("User", user.Id, "created record", record.Id, "for date", input.Date, "with", len(input.Activities), "activities")
+	log.Info("User", userId, "created record", record.Id, "for date", input.Date, "with", len(input.Activities), "activities")
 }
 
 type updateInput struct {
@@ -210,8 +210,8 @@ func (controller *Controller) Update(writer http.ResponseWriter, request *http.R
 		return
 	}
 
-	user := jwt.GetUser(request)
-	allExist, missingActivities, err := controller.activityService.CheckExistence(input.Activities, user.Id)
+	userId := jwt.GetUserId(request)
+	allExist, missingActivities, err := controller.activityService.CheckExistence(input.Activities, userId)
 	if err != nil {
 		response.Send(fmt.Errorf("RecordController.Update(): %w", err), http.StatusInternalServerError)
 		return
@@ -223,7 +223,7 @@ func (controller *Controller) Update(writer http.ResponseWriter, request *http.R
 		return
 	}
 
-	allExist, missingPhotos, err := controller.photoService.CheckExistence(input.Photos, user.Id)
+	allExist, missingPhotos, err := controller.photoService.CheckExistence(input.Photos, userId)
 	if err != nil {
 		response.Send(fmt.Errorf("RecordController.Store(): %w", err), http.StatusInternalServerError)
 		return
@@ -255,7 +255,7 @@ func (controller *Controller) Update(writer http.ResponseWriter, request *http.R
 	}
 
 	writer.WriteHeader(http.StatusNoContent)
-	log.Info("User", user.Id, "changed record", fmt.Sprintf("%+v", recordBefore), "to", fmt.Sprintf("%+v", record))
+	log.Info("User", userId, "changed record", fmt.Sprintf("%+v", recordBefore), "to", fmt.Sprintf("%+v", record))
 }
 
 type indexInput struct {
@@ -276,19 +276,19 @@ func (controller *Controller) Index(writer http.ResponseWriter, request *http.Re
 		return
 	}
 
-	user := jwt.GetUser(request)
+	userId := jwt.GetUserId(request)
 	cursor, err := time.Parse("2006-01-02", input.Cursor)
 	if err != nil {
 		response.Send(fmt.Errorf("RecordController.Index(): %w", err), http.StatusBadRequest)
 		return
 	}
 
-	records, err := controller.recordService.CollectRecordsForCursor(cursor, user.Id)
+	records, err := controller.recordService.CollectRecordsForCursor(cursor, userId)
 	if err != nil {
 		response.Send(fmt.Errorf("RecordController.Index(): %w", err), http.StatusInternalServerError)
 		return
 	}
 
 	response.Send(records, http.StatusOK)
-	log.Info("User", user.Id, "fetched", len(records), "records for 2 weeks from cursor", input.Cursor)
+	log.Info("User", userId, "fetched", len(records), "records for 2 weeks from cursor", input.Cursor)
 }

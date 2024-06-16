@@ -3,8 +3,8 @@ package middleware
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
-	"github.com/EugeneNail/actum/internal/resource/users"
 	"github.com/EugeneNail/actum/internal/service/jwt"
 	"github.com/EugeneNail/actum/internal/service/response"
 	"net/http"
@@ -70,14 +70,14 @@ func Authenticate(db *sql.DB, next http.Handler) http.Handler {
 			return
 		}
 
-		user, err := getUser(db, payload.Id)
+		userExists, err := userExists(db, payload.Id)
 		if err != nil {
 			http.Error(writer, err.Error(), http.StatusInternalServerError)
 		}
 
-		if user.Id == 0 {
+		if !userExists {
 			writer.WriteHeader(http.StatusUnauthorized)
-			message := []byte(fmt.Sprintf(`"Пользователь %d не найден"`, user.Id))
+			message := []byte(fmt.Sprintf(`"Пользователь %d не найден"`, payload.Id))
 
 			if _, err := writer.Write(message); err != nil {
 				http.Error(writer, err.Error(), http.StatusInternalServerError)
@@ -85,20 +85,19 @@ func Authenticate(db *sql.DB, next http.Handler) http.Handler {
 			return
 		}
 
-		ctx := context.WithValue(request.Context(), jwt.CtxKey("user"), user)
+		ctx := context.WithValue(request.Context(), jwt.CtxKey("userExists"), payload.Id)
 		next.ServeHTTP(writer, request.WithContext(ctx))
 	})
 }
 
-func getUser(db *sql.DB, userId int) (users.User, error) {
-	var user users.User
+func userExists(db *sql.DB, userId int) (bool, error) {
+	var count int
+	err := db.QueryRow(`SELECT COUNT(*) FROM users WHERE id = ? LIMIT 1`, userId).
+		Scan(&count)
 
-	err := db.QueryRow(`SELECT * FROM users WHERE id = ? LIMIT 1`, userId).
-		Scan(&user.Id, &user.Name, &user.Email, &user.Password)
-
-	if err != nil && err != sql.ErrNoRows {
-		return user, fmt.Errorf("authenticate.getUser(): %w", err)
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		return false, fmt.Errorf("authenticate.userExists(): %w", err)
 	}
 
-	return user, nil
+	return count > 0, nil
 }

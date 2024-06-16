@@ -43,8 +43,8 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 	}
 
 	const limit = 15
-	user := jwt.GetUser(request)
-	exceededLimit, err := controller.service.ExceedsLimit(limit, user.Id)
+	userId := jwt.GetUserId(request)
+	exceededLimit, err := controller.service.ExceedsLimit(limit, userId)
 	if err != nil {
 		response.Send(fmt.Errorf("CollectionController.Store(): %w", err), http.StatusInternalServerError)
 		return
@@ -56,7 +56,7 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 		return
 	}
 
-	hasDuplicate, err := controller.service.HasDuplicate(input.Name, user.Id)
+	hasDuplicate, err := controller.service.HasDuplicate(input.Name, userId)
 	if err != nil {
 		response.Send(fmt.Errorf("CollectionController.Store(): %w", err), http.StatusInternalServerError)
 		return
@@ -67,14 +67,14 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 		return
 	}
 
-	collection := New(input.Name, input.Color, user.Id)
+	collection := New(input.Name, input.Color, userId)
 	if err := controller.dao.Save(&collection); err != nil {
 		response.Send(fmt.Errorf("CollectionController.Store(): %w", err), http.StatusInternalServerError)
 		return
 	}
 
 	response.Send(collection.Id, http.StatusCreated)
-	log.Info("User", user.Id, "created collection", collection.Id)
+	log.Info("User", userId, "created collection", collection.Id)
 }
 
 type updateInput struct {
@@ -103,8 +103,8 @@ func (controller *Controller) Update(writer http.ResponseWriter, request *http.R
 		return
 	}
 
-	user := jwt.GetUser(request)
-	if user.Id != collection.UserId {
+	userId := jwt.GetUserId(request)
+	if userId != collection.UserId {
 		response.Send("Мы не можете изменить чужую коллекцию.", http.StatusForbidden)
 		return
 	}
@@ -128,7 +128,7 @@ func (controller *Controller) Update(writer http.ResponseWriter, request *http.R
 	}
 
 	writer.WriteHeader(http.StatusNoContent)
-	log.Info("User", user.Id, "renamed collection", collection.Id, "to", fmt.Sprintf(`"%s"`, input.Name))
+	log.Info("User", userId, "renamed collection", collection.Id, "to", fmt.Sprintf(`"%s"`, input.Name))
 }
 
 func (controller *Controller) Show(writer http.ResponseWriter, request *http.Request) {
@@ -151,14 +151,14 @@ func (controller *Controller) Show(writer http.ResponseWriter, request *http.Req
 		return
 	}
 
-	user := jwt.GetUser(request)
-	if collection.UserId != user.Id {
+	userId := jwt.GetUserId(request)
+	if collection.UserId != userId {
 		response.Send("Вы не можете использовать чужую коллекцию.", http.StatusForbidden)
 		return
 	}
 
 	response.Send(collection, http.StatusOK)
-	log.Info("User", user.Id, "fetched collection", collection.Id)
+	log.Info("User", userId, "fetched collection", collection.Id)
 }
 
 func (controller *Controller) Destroy(writer http.ResponseWriter, request *http.Request) {
@@ -184,8 +184,8 @@ func (controller *Controller) Destroy(writer http.ResponseWriter, request *http.
 		return
 	}
 
-	user := jwt.GetUser(request)
-	if user.Id != collection.UserId {
+	userId := jwt.GetUserId(request)
+	if userId != collection.UserId {
 		response.Send("Вы можете не удалить чужую коллекцию.", http.StatusForbidden)
 		return
 	}
@@ -196,20 +196,20 @@ func (controller *Controller) Destroy(writer http.ResponseWriter, request *http.
 	}
 
 	writer.WriteHeader(http.StatusNoContent)
-	log.Info("User", user.Id, "deleted collection", collection.Id)
+	log.Info("User", userId, "deleted collection", collection.Id)
 }
 
 func (controller *Controller) Index(writer http.ResponseWriter, request *http.Request) {
 	response := response.NewSender(writer)
 
-	user := jwt.GetUser(request)
+	userId := jwt.GetUserId(request)
 
-	collections, err := controller.service.CollectCollections(user.Id)
+	collections, err := controller.service.CollectCollections(userId)
 	if err != nil {
 		response.Send(fmt.Errorf("CollectionController.index(): %w", err), http.StatusInternalServerError)
 		return
 	}
 
 	response.Send(collections, http.StatusOK)
-	log.Info("User", user.Id, "indexed", len(collections), "collections")
+	log.Info("User", userId, "indexed", len(collections), "collections")
 }

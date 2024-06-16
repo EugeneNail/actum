@@ -70,15 +70,15 @@ func (controller *Controller) Store(writer http.ResponseWriter, request *http.Re
 		return
 	}
 
-	user := jwt.GetUser(request)
-	photo := New(name, nil, user.Id)
+	userId := jwt.GetUserId(request)
+	photo := New(name, nil, userId)
 	if err := controller.dao.Save(&photo); err != nil {
 		response.Send(fmt.Errorf("photoController.Store: failed to save to database: %w", err), http.StatusInternalServerError)
 		return
 	}
 
 	response.Send(name, http.StatusCreated)
-	log.Info("User", user.Id, "uploaded photo", photo.Id, "with name", name)
+	log.Info("User", userId, "uploaded photo", photo.Id, "with name", name)
 }
 
 func (controller *Controller) Destroy(writer http.ResponseWriter, request *http.Request) {
@@ -96,8 +96,8 @@ func (controller *Controller) Destroy(writer http.ResponseWriter, request *http.
 		return
 	}
 
-	user := jwt.GetUser(request)
-	if photo.UserId != user.Id {
+	userId := jwt.GetUserId(request)
+	if photo.UserId != userId {
 		response.Send("Вы не можете удалять чужие фотографии", http.StatusForbidden)
 		return
 	}
@@ -113,7 +113,7 @@ func (controller *Controller) Destroy(writer http.ResponseWriter, request *http.
 	}
 
 	writer.WriteHeader(http.StatusNoContent)
-	log.Info("User", user.Id, "deleted photo", photo.Id)
+	log.Info("User", userId, "deleted photo", photo.Id)
 }
 func (controller *Controller) Show(writer http.ResponseWriter, request *http.Request) {
 	response := response.NewSender(writer)
