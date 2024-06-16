@@ -2,6 +2,7 @@ package users
 
 import (
 	"fmt"
+	"github.com/EugeneNail/actum/internal/resource/users"
 	"github.com/EugeneNail/actum/internal/service/hash"
 	"github.com/EugeneNail/actum/internal/service/jwt"
 	"github.com/EugeneNail/actum/internal/service/refresh"
@@ -138,7 +139,7 @@ func TestRefreshValidation(t *testing.T) {
 			"id": 2,
 		})
 
-	tests.AssertValidationSuccess[refreshInput](t, []tests.ValidationTest{
+	tests.AssertValidationSuccess[users.refreshInput](t, []tests.ValidationTest{
 		{"uuid", "Uuid 1", "6d56e42c-7f75-42d9-be95-2493652937d5"},
 		{"uuid", "Uuid 2", "39bef25d-8a12-46c8-92bc-12ddf369de34"},
 		{"uuid", "Uuid 3", "990ade10-74f0-42ad-bcc8-a1452647dde5"},
@@ -148,7 +149,7 @@ func TestRefreshValidation(t *testing.T) {
 		{"userId", "Existing user", 1},
 	})
 
-	tests.AssertValidationFail[refreshInput](t, []tests.ValidationTest{
+	tests.AssertValidationFail[users.refreshInput](t, []tests.ValidationTest{
 		{"uuid", "Short", "d1f1ef3b-e8e9-436d-a6b3-036c715b756"},
 		{"uuid", "Long", "162b519a-f026-4b9e-a2e9-0143be261a8da"},
 		{"uuid", "Invalid characters", "f34bf4bd-7376-4mdf-8da6-74e3t6609535"},

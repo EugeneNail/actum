@@ -1,7 +1,7 @@
 package collections
 
 import (
-	"github.com/EugeneNail/actum/internal/database/resource/activities"
+	"github.com/EugeneNail/actum/internal/resource/activities"
 )
 
 type Collection struct {

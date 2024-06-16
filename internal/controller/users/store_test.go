@@ -1,6 +1,7 @@
 package users
 
 import (
+	"github.com/EugeneNail/actum/internal/resource/users"
 	"github.com/EugeneNail/actum/internal/service/env"
 	"github.com/EugeneNail/actum/internal/service/hash"
 	"github.com/EugeneNail/actum/internal/service/tests"
@@ -71,7 +72,7 @@ func TestStoreDuplicateEmail(t *testing.T) {
 func TestStoreValidation(t *testing.T) {
 	env.Load()
 
-	tests.AssertValidationSuccess[storeInput](t, []tests.ValidationTest{
+	tests.AssertValidationSuccess[users.storeInput](t, []tests.ValidationTest{
 		{"name", "Name 1", "Ева"},
 		{"name", "Name 2", "Вася"},
 		{"name", "Name 3", "Александр"},
@@ -89,7 +90,7 @@ func TestStoreValidation(t *testing.T) {
 		{"password", "Password 4", "/Pb/>BX<82rQvW4tq!'9i1@0(e7Kzq/F?RnP<iq:ob;h#l,'%q"},
 	})
 
-	tests.AssertValidationFail[storeInput](t, []tests.ValidationTest{
+	tests.AssertValidationFail[users.storeInput](t, []tests.ValidationTest{
 		{"name", "Empty name", ""},
 		{"name", "Too short name", "Jo"},
 		{"name", "Too long name", strings.Repeat("Very", 5) + "LongName"},

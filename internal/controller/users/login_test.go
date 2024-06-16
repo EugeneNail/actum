@@ -1,6 +1,7 @@
 package users
 
 import (
+	"github.com/EugeneNail/actum/internal/resource/users"
 	"github.com/EugeneNail/actum/internal/service/env"
 	"github.com/EugeneNail/actum/internal/service/hash"
 	"github.com/EugeneNail/actum/internal/service/tests"
@@ -118,7 +119,7 @@ func TestLoginIncorrectPassword(t *testing.T) {
 func TestLoginValidation(t *testing.T) {
 	env.Load()
 
-	tests.AssertValidationSuccess[loginInput](t, []tests.ValidationTest{
+	tests.AssertValidationSuccess[users.loginInput](t, []tests.ValidationTest{
 		{"email", "Email 1", "Twila_Braun-Bogisich@gmail.com"},
 		{"email", "Email 2", "Noemie16@gmail.com"},
 		{"email", "Email 3", "Catalina41@gmail.com"},
@@ -131,7 +132,7 @@ func TestLoginValidation(t *testing.T) {
 		{"password", "Password 4", "_d=)21YWPX@%HHbV2et:D_,MH+Y0tV,+@:^]5Ne)!vgHH%@1Ls)M.BYb7bs3t~Py^5"},
 	})
 
-	tests.AssertValidationFail[loginInput](t, []tests.ValidationTest{
+	tests.AssertValidationFail[users.loginInput](t, []tests.ValidationTest{
 		{"email", "Empty email", ""},
 		{"email", "Email has no mail", "Enoch_Corwin@"},
 		{"email", "Email has no separator", "Cleta_Schimmelicloud.com"},

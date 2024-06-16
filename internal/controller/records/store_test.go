@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/EugeneNail/actum/internal/database/resource/activities"
 	"github.com/EugeneNail/actum/internal/database/resource/collections"
+	"github.com/EugeneNail/actum/internal/resource/records"
 	"github.com/EugeneNail/actum/internal/service/fake"
 	"github.com/EugeneNail/actum/internal/service/tests"
 	"github.com/EugeneNail/actum/internal/service/tests/startup"
@@ -192,7 +193,7 @@ func TestStoreValidation(t *testing.T) {
 	yesterday := time.Now().Add(time.Hour * 24 * -1).Format("2006-01-02")
 	yearAgo := time.Now().Add(time.Hour * 24 * 365 * -1).Format("2006-01-02")
 
-	tests.AssertValidationSuccess[storeInput](t, []tests.ValidationTest{
+	tests.AssertValidationSuccess[records.storeInput](t, []tests.ValidationTest{
 		{"mood", "Mood 1", 1},
 		{"mood", "Mood 2", 2},
 		{"mood", "Mood 3", 3},
@@ -220,7 +221,7 @@ func TestStoreValidation(t *testing.T) {
 		{"activities", "Activities", []int{1, 2, 3}},
 	})
 
-	tests.AssertValidationFail[storeInput](t, []tests.ValidationTest{
+	tests.AssertValidationFail[records.storeInput](t, []tests.ValidationTest{
 		{"mood", "Mood 1", 0},
 		{"mood", "Mood 2", -1},
 		{"mood", "Mood 3", 6},

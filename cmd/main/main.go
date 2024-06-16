@@ -1,17 +1,12 @@
 package main
 
 import (
-	activityController "github.com/EugeneNail/actum/internal/controller/activities"
-	collectionController "github.com/EugeneNail/actum/internal/controller/collections"
-	photoController "github.com/EugeneNail/actum/internal/controller/photos"
-	recordController "github.com/EugeneNail/actum/internal/controller/records"
-	userController "github.com/EugeneNail/actum/internal/controller/users"
 	"github.com/EugeneNail/actum/internal/database/mysql"
-	"github.com/EugeneNail/actum/internal/database/resource/activities"
-	"github.com/EugeneNail/actum/internal/database/resource/collections"
-	"github.com/EugeneNail/actum/internal/database/resource/photos"
-	"github.com/EugeneNail/actum/internal/database/resource/records"
-	"github.com/EugeneNail/actum/internal/database/resource/users"
+	"github.com/EugeneNail/actum/internal/resource/activities"
+	"github.com/EugeneNail/actum/internal/resource/collections"
+	"github.com/EugeneNail/actum/internal/resource/photos"
+	"github.com/EugeneNail/actum/internal/resource/records"
+	"github.com/EugeneNail/actum/internal/resource/users"
 	"github.com/EugeneNail/actum/internal/service/env"
 	"github.com/EugeneNail/actum/internal/service/log"
 	"github.com/EugeneNail/actum/internal/service/middleware"
@@ -32,7 +27,7 @@ func main() {
 
 	userDAO := users.NewDAO(db)
 	refreshService := refresh.NewService(db)
-	userController := userController.New(db, userDAO, refreshService)
+	userController := users.NewController(db, userDAO, refreshService)
 	routing.Post("/api/users", userController.Store)
 	routing.Post("/api/users/login", userController.Login)
 	routing.Post("/api/users/refresh-token", userController.RefreshToken)
@@ -40,7 +35,7 @@ func main() {
 
 	collectionDAO := collections.NewDAO(db)
 	collectionService := collections.NewService(db)
-	collectionController := collectionController.New(db, collectionDAO, collectionService)
+	collectionController := collections.NewController(db, collectionDAO, collectionService)
 	routing.Post("/api/collections", collectionController.Store)
 	routing.Put("/api/collections/:id", collectionController.Update)
 	routing.Delete("/api/collections/:id", collectionController.Destroy)
@@ -49,7 +44,7 @@ func main() {
 
 	activityDAO := activities.NewDAO(db)
 	activityService := activities.NewService(db, activityDAO)
-	activityController := activityController.New(db, activityDAO, collectionDAO, activityService)
+	activityController := activities.NewController(db, activityDAO, collectionDAO, activityService)
 	routing.Post("/api/activities", activityController.Store)
 	routing.Put("/api/activities/:id", activityController.Update)
 	routing.Delete("/api/activities/:id", activityController.Destroy)
@@ -57,14 +52,14 @@ func main() {
 
 	photoDAO := photos.NewDAO(db)
 	photoService := photos.NewService(db)
-	photoController := photoController.New(photoDAO)
+	photoController := photos.NewController(photoDAO)
 	routing.Post("/api/photos", photoController.Store)
 	routing.Delete("/api/photos/:name", photoController.Destroy)
 	routing.Get("/api/photos/:name", photoController.Show)
 
 	recordDAO := records.NewDAO(db)
 	recordService := records.NewService(db)
-	recordController := recordController.New(db, recordDAO, activityDAO, activityService, recordService, photoService)
+	recordController := records.NewController(db, recordDAO, activityDAO, activityService, recordService, photoService)
 	routing.Post("/api/records", recordController.Store)
 	routing.Put("/api/records/:id", recordController.Update)
 	routing.Get("/api/records/:id", recordController.Show)

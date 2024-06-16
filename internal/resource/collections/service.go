@@ -3,7 +3,7 @@ package collections
 import (
 	"database/sql"
 	"fmt"
-	"github.com/EugeneNail/actum/internal/database/resource/activities"
+	"github.com/EugeneNail/actum/internal/resource/activities"
 )
 
 type Service struct {

@@ -2,6 +2,7 @@ package activities
 
 import (
 	"github.com/EugeneNail/actum/internal/database/resource/activities"
+	activities2 "github.com/EugeneNail/actum/internal/resource/activities"
 	"github.com/EugeneNail/actum/internal/service/tests"
 	"github.com/EugeneNail/actum/internal/service/tests/startup"
 	"net/http"
@@ -238,7 +239,7 @@ func TestStoreValidation(t *testing.T) {
 			"id": 1,
 		})
 
-	tests.AssertValidationSuccess[storeInput](t, []tests.ValidationTest{
+	tests.AssertValidationSuccess[activities2.storeInput](t, []tests.ValidationTest{
 		{"name", "Short", "Бег"},
 		{"name", "Long", "Название  активности"},
 		{"name", "One word", "Душ"},
@@ -252,7 +253,7 @@ func TestStoreValidation(t *testing.T) {
 		{"collectionId", "Existent collection", 1},
 	})
 
-	tests.AssertValidationFail[storeInput](t, []tests.ValidationTest{
+	tests.AssertValidationFail[activities2.storeInput](t, []tests.ValidationTest{
 		{"name", "Too short", "Не"},
 		{"name", "Too long", "Очень длинное название"},
 		{"name", "Has comma", "Спать, спать и спать"},

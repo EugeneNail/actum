@@ -2,6 +2,7 @@ package collections
 
 import (
 	"github.com/EugeneNail/actum/internal/database/resource/collections"
+	collections2 "github.com/EugeneNail/actum/internal/resource/collections"
 	"github.com/EugeneNail/actum/internal/service/tests"
 	"github.com/EugeneNail/actum/internal/service/tests/startup"
 	"net/http"
@@ -115,7 +116,7 @@ func TestStoreTooMany(t *testing.T) {
 }
 
 func TestStoreValidation(t *testing.T) {
-	tests.AssertValidationSuccess[storeInput](t, []tests.ValidationTest{
+	tests.AssertValidationSuccess[collections2.storeInput](t, []tests.ValidationTest{
 		{"name", "Short", "Бег"},
 		{"name", "One word", "Спорт"},
 		{"name", "Multiple words", "Уборка дома"},
@@ -131,7 +132,7 @@ func TestStoreValidation(t *testing.T) {
 		{"color", "Color 6", 6},
 	})
 
-	tests.AssertValidationFail[storeInput](t, []tests.ValidationTest{
+	tests.AssertValidationFail[collections2.storeInput](t, []tests.ValidationTest{
 		{"name", "Too short", "Be"},
 		{"name", "Too long", "Поешь этих мягких булок"},
 		{"name", "Has comma", "Вчера, сегодня"},

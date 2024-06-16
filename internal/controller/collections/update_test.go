@@ -1,6 +1,7 @@
 package collections
 
 import (
+	"github.com/EugeneNail/actum/internal/resource/collections"
 	"github.com/EugeneNail/actum/internal/service/tests"
 	"github.com/EugeneNail/actum/internal/service/tests/startup"
 	"net/http"
@@ -137,7 +138,7 @@ func TestUpdateSomeoneElsesCollection(t *testing.T) {
 }
 
 func TestUpdateValidation(t *testing.T) {
-	tests.AssertValidationSuccess[storeInput](t, []tests.ValidationTest{
+	tests.AssertValidationSuccess[collections.storeInput](t, []tests.ValidationTest{
 		{"name", "Short", "Сон"},
 		{"name", "One word", "Сидение"},
 		{"name", "Multiple words", "Вставание рано"},
@@ -153,7 +154,7 @@ func TestUpdateValidation(t *testing.T) {
 		{"color", "Color 6", 6},
 	})
 
-	tests.AssertValidationFail[storeInput](t, []tests.ValidationTest{
+	tests.AssertValidationFail[collections.storeInput](t, []tests.ValidationTest{
 		{"name", "Too short", "Мб"},
 		{"name", "Too long", "Тут написано что-то очень длинное"},
 		{"name", "Has comma", "Ем, сплю, работаю"},

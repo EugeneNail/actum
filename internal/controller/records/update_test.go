@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/EugeneNail/actum/internal/database/resource/activities"
 	"github.com/EugeneNail/actum/internal/database/resource/collections"
+	"github.com/EugeneNail/actum/internal/resource/records"
 	"github.com/EugeneNail/actum/internal/service/fake"
 	"github.com/EugeneNail/actum/internal/service/tests"
 	"github.com/EugeneNail/actum/internal/service/tests/startup"
@@ -246,7 +247,7 @@ func TestUpdateWithSomeoneElsesActivities(t *testing.T) {
 }
 
 func TestUpdateValidation(t *testing.T) {
-	tests.AssertValidationSuccess[updateInput](t, []tests.ValidationTest{
+	tests.AssertValidationSuccess[records.updateInput](t, []tests.ValidationTest{
 		{"mood", "Mood 1", 1},
 		{"mood", "Mood 2", 2},
 		{"mood", "Mood 3", 3},
@@ -268,7 +269,7 @@ func TestUpdateValidation(t *testing.T) {
 		{"activities", "Activities 1", []int{1, 2, 3}},
 	})
 
-	tests.AssertValidationFail[updateInput](t, []tests.ValidationTest{
+	tests.AssertValidationFail[records.updateInput](t, []tests.ValidationTest{
 		{"mood", "Zero", 0},
 		{"mood", "Non integer", 1.1},
 		{"mood", "Negative", -1},
