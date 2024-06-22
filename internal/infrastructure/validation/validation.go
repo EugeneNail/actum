@@ -2,7 +2,7 @@ package validation
 
 import (
 	"fmt"
-	"github.com/EugeneNail/actum/internal/service/validation/rule"
+	"github.com/EugeneNail/actum/internal/infrastructure/validation/rule"
 	"reflect"
 	"strings"
 )

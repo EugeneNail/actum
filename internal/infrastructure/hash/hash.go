@@ -3,7 +3,7 @@ package hash
 import (
 	"crypto/sha256"
 	"encoding/base64"
-	"github.com/EugeneNail/actum/internal/service/env"
+	"github.com/EugeneNail/actum/internal/infrastructure/env"
 )
 
 func New(data string) string {

@@ -2,7 +2,7 @@ package log
 
 import (
 	"fmt"
-	"github.com/EugeneNail/actum/internal/service/env"
+	"github.com/EugeneNail/actum/internal/infrastructure/env"
 	"io"
 	"log"
 	"os"

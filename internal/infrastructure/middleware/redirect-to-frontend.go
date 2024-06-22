@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"github.com/EugeneNail/actum/internal/service/env"
+	"github.com/EugeneNail/actum/internal/infrastructure/env"
 	"net/http"
 	"path/filepath"
 	"strings"

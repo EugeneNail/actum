@@ -2,7 +2,7 @@ package response
 
 import (
 	"encoding/json"
-	"github.com/EugeneNail/actum/internal/service/log"
+	"github.com/EugeneNail/actum/internal/infrastructure/log"
 	"net/http"
 )
 
