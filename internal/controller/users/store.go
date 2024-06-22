@@ -3,8 +3,8 @@ package users
 import (
 	"fmt"
 	"github.com/EugeneNail/actum/internal/database/resource/users"
+	"github.com/EugeneNail/actum/internal/service/auth/jwt"
 	"github.com/EugeneNail/actum/internal/service/hash"
-	"github.com/EugeneNail/actum/internal/service/jwt"
 	"github.com/EugeneNail/actum/internal/service/log"
 	"github.com/EugeneNail/actum/internal/service/response"
 	"github.com/EugeneNail/actum/internal/service/validation"

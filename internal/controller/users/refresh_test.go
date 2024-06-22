@@ -2,8 +2,8 @@ package users
 
 import (
 	"fmt"
+	"github.com/EugeneNail/actum/internal/service/auth/jwt"
 	"github.com/EugeneNail/actum/internal/service/hash"
-	"github.com/EugeneNail/actum/internal/service/jwt"
 	"github.com/EugeneNail/actum/internal/service/refresh"
 	"github.com/EugeneNail/actum/internal/service/tests"
 	"github.com/EugeneNail/actum/internal/service/tests/startup"

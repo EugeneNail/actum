@@ -2,7 +2,7 @@ package users
 
 import (
 	"fmt"
-	"github.com/EugeneNail/actum/internal/service/jwt"
+	"github.com/EugeneNail/actum/internal/service/auth/jwt"
 	"github.com/EugeneNail/actum/internal/service/log"
 	"github.com/EugeneNail/actum/internal/service/response"
 	"net/http"
