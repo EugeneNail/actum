@@ -2,8 +2,8 @@ package controller
 
 import (
 	"encoding/json"
-	"github.com/EugeneNail/actum/internal/service/log"
-	"github.com/EugeneNail/actum/internal/service/validation"
+	"github.com/EugeneNail/actum/internal/infrastructure/log"
+	"github.com/EugeneNail/actum/internal/infrastructure/validation"
 	"net/http"
 )
 

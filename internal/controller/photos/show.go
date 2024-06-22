@@ -3,9 +3,9 @@ package photos
 import (
 	"errors"
 	"fmt"
-	"github.com/EugeneNail/actum/internal/service/env"
-	"github.com/EugeneNail/actum/internal/service/middleware/routing"
-	"github.com/EugeneNail/actum/internal/service/response"
+	"github.com/EugeneNail/actum/internal/infrastructure/env"
+	"github.com/EugeneNail/actum/internal/infrastructure/middleware/routing"
+	"github.com/EugeneNail/actum/internal/infrastructure/response"
 	"net/http"
 	"os"
 	"path/filepath"

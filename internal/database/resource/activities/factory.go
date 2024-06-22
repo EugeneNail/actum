@@ -2,8 +2,8 @@ package activities
 
 import (
 	"github.com/EugeneNail/actum/internal/database/mysql"
-	"github.com/EugeneNail/actum/internal/service/fake"
-	"github.com/EugeneNail/actum/internal/service/tests"
+	"github.com/EugeneNail/actum/internal/infrastructure/fake"
+	"github.com/EugeneNail/actum/internal/infrastructure/tests"
 )
 
 type Factory struct {

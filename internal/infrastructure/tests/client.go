@@ -3,7 +3,7 @@ package tests
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/EugeneNail/actum/internal/service/env"
+	"github.com/EugeneNail/actum/internal/infrastructure/env"
 	"math/rand/v2"
 	"net/http"
 	"strings"
@@ -23,14 +23,22 @@ type Client struct {
 func NewClient(t *testing.T) (client Client) {
 	client.t = t
 
-	response := client.Post("/api/users", `{
-		"name": "John",
-		"email": "blank@gmail.com",
-		"password": "Strong123",
-		"passwordConfirmation": "Strong123"
-	}`)
+	client.
+		Post("/api/auth/register", `{
+			"name": "John",
+			"email": "blank@gmail.com",
+			"password": "Strong123",
+			"passwordConfirmation": "Strong123"
+		}`).
+		AssertStatus(http.StatusCreated)
 
-	response.AssertStatus(http.StatusCreated)
+	response := client.
+		Post("/api/auth/login", `{
+			"email": "blank@gmail.com",
+			"password": "Strong123"
+		}`).
+		AssertStatus(http.StatusOK)
+
 	client.setToken(response)
 
 	return

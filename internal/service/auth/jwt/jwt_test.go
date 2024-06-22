@@ -5,7 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
-	"github.com/EugeneNail/actum/internal/service/env"
+	"github.com/EugeneNail/actum/internal/infrastructure/env"
 	"strings"
 	"testing"
 	"time"

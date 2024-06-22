@@ -3,7 +3,7 @@ package users
 import (
 	"database/sql"
 	"github.com/EugeneNail/actum/internal/database/resource/users"
-	"github.com/EugeneNail/actum/internal/service/refresh"
+	"github.com/EugeneNail/actum/internal/service/auth/refresh"
 )
 
 type Controller struct {

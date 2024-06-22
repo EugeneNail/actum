@@ -2,11 +2,11 @@ package photos
 
 import (
 	"fmt"
+	"github.com/EugeneNail/actum/internal/infrastructure/env"
+	"github.com/EugeneNail/actum/internal/infrastructure/log"
+	"github.com/EugeneNail/actum/internal/infrastructure/middleware/routing"
+	"github.com/EugeneNail/actum/internal/infrastructure/response"
 	"github.com/EugeneNail/actum/internal/service/auth/jwt"
-	"github.com/EugeneNail/actum/internal/service/env"
-	"github.com/EugeneNail/actum/internal/service/log"
-	"github.com/EugeneNail/actum/internal/service/middleware/routing"
-	"github.com/EugeneNail/actum/internal/service/response"
 	"net/http"
 	"os"
 	"path/filepath"

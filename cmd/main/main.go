@@ -12,11 +12,11 @@ import (
 	"github.com/EugeneNail/actum/internal/database/resource/photos"
 	"github.com/EugeneNail/actum/internal/database/resource/records"
 	"github.com/EugeneNail/actum/internal/database/resource/users"
-	"github.com/EugeneNail/actum/internal/service/env"
-	"github.com/EugeneNail/actum/internal/service/log"
-	"github.com/EugeneNail/actum/internal/service/middleware"
-	"github.com/EugeneNail/actum/internal/service/middleware/routing"
-	"github.com/EugeneNail/actum/internal/service/refresh"
+	"github.com/EugeneNail/actum/internal/infrastructure/env"
+	"github.com/EugeneNail/actum/internal/infrastructure/log"
+	"github.com/EugeneNail/actum/internal/infrastructure/middleware"
+	"github.com/EugeneNail/actum/internal/infrastructure/middleware/routing"
+	"github.com/EugeneNail/actum/internal/service/auth/refresh"
 	"net/http"
 	"os"
 )
@@ -33,8 +33,6 @@ func main() {
 	userDAO := users.NewDAO(db)
 	refreshService := refresh.NewService(db)
 	userController := userController.New(db, userDAO, refreshService)
-	routing.Post("/api/users", userController.Store)
-	routing.Post("/api/users/login", userController.Login)
 	routing.Post("/api/users/refresh-token", userController.RefreshToken)
 	routing.Post("/api/users/logout", userController.Logout)
 
@@ -70,10 +68,9 @@ func main() {
 	routing.Get("/api/records/:id", recordController.Show)
 	routing.Post("/api/records-list", recordController.Index)
 
-	handler := middleware.BuildPipeline(db, []middleware.Middleware{
+	handler := middleware.BuildPipeline([]middleware.Middleware{
 		middleware.RedirectToFrontend,
 		middleware.SetHeaders,
-		middleware.Authenticate,
 		routing.Middleware,
 	})
 

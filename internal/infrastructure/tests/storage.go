@@ -1,7 +1,7 @@
 package tests
 
 import (
-	"github.com/EugeneNail/actum/internal/service/env"
+	"github.com/EugeneNail/actum/internal/infrastructure/env"
 	"os"
 	"path/filepath"
 	"testing"

@@ -2,12 +2,12 @@ package users
 
 import (
 	"fmt"
+	"github.com/EugeneNail/actum/internal/infrastructure/hash"
+	"github.com/EugeneNail/actum/internal/infrastructure/tests"
+	"github.com/EugeneNail/actum/internal/infrastructure/tests/startup"
+	"github.com/EugeneNail/actum/internal/infrastructure/uuid"
 	"github.com/EugeneNail/actum/internal/service/auth/jwt"
-	"github.com/EugeneNail/actum/internal/service/hash"
-	"github.com/EugeneNail/actum/internal/service/refresh"
-	"github.com/EugeneNail/actum/internal/service/tests"
-	"github.com/EugeneNail/actum/internal/service/tests/startup"
-	"github.com/EugeneNail/actum/internal/service/uuid"
+	"github.com/EugeneNail/actum/internal/service/auth/refresh"
 	"net/http"
 	"testing"
 	"time"

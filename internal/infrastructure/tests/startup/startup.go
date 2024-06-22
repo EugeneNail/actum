@@ -2,8 +2,8 @@ package startup
 
 import (
 	"github.com/EugeneNail/actum/internal/database/mysql"
-	"github.com/EugeneNail/actum/internal/service/env"
-	"github.com/EugeneNail/actum/internal/service/tests"
+	"github.com/EugeneNail/actum/internal/infrastructure/env"
+	"github.com/EugeneNail/actum/internal/infrastructure/tests"
 	"os"
 	"path/filepath"
 	"testing"

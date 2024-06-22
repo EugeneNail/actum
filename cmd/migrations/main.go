@@ -6,7 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/EugeneNail/actum/internal/database/mysql"
-	"github.com/EugeneNail/actum/internal/service/env"
+	"github.com/EugeneNail/actum/internal/infrastructure/env"
 	"log"
 	"os"
 	"path/filepath"
@@ -250,7 +250,7 @@ func getMigrations(direction string) []migration {
 func checkTransaction(err error, migration migration, transaction *sql.Tx) {
 	if err != nil {
 		transaction.Rollback()
-		fmt.Println("FAIL", migration.name, "\n")
+		fmt.Println("FAIL", migration.name, "\n ")
 		log.Fatal(err)
 	}
 }

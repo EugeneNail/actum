@@ -3,7 +3,7 @@ package fake
 import (
 	"bytes"
 	"encoding/base64"
-	"github.com/EugeneNail/actum/internal/service/tests"
+	"github.com/EugeneNail/actum/internal/infrastructure/tests"
 	"image"
 	"image/color"
 	"image/draw"

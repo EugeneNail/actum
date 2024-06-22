@@ -2,9 +2,9 @@ package collections
 
 import (
 	"fmt"
+	"github.com/EugeneNail/actum/internal/infrastructure/log"
+	"github.com/EugeneNail/actum/internal/infrastructure/response"
 	"github.com/EugeneNail/actum/internal/service/auth/jwt"
-	"github.com/EugeneNail/actum/internal/service/log"
-	"github.com/EugeneNail/actum/internal/service/response"
 	"net/http"
 )
 

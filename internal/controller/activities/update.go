@@ -2,11 +2,11 @@ package activities
 
 import (
 	"fmt"
+	"github.com/EugeneNail/actum/internal/infrastructure/log"
+	"github.com/EugeneNail/actum/internal/infrastructure/middleware/routing"
+	"github.com/EugeneNail/actum/internal/infrastructure/response"
+	"github.com/EugeneNail/actum/internal/infrastructure/validation"
 	"github.com/EugeneNail/actum/internal/service/auth/jwt"
-	"github.com/EugeneNail/actum/internal/service/log"
-	"github.com/EugeneNail/actum/internal/service/middleware/routing"
-	"github.com/EugeneNail/actum/internal/service/response"
-	"github.com/EugeneNail/actum/internal/service/validation"
 	"net/http"
 	"strconv"
 )

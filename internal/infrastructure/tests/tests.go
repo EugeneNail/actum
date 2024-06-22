@@ -3,7 +3,7 @@ package tests
 import (
 	"database/sql"
 	"github.com/EugeneNail/actum/internal/database/mysql"
-	"github.com/EugeneNail/actum/internal/service/env"
+	"github.com/EugeneNail/actum/internal/infrastructure/env"
 )
 
 var DB *sql.DB
