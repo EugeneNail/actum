@@ -39,7 +39,7 @@ func (s *service) Login(ctx context.Context, email string, password string) (str
 		return "", "", errors.Wrap(err, "failed to create jwt token")
 	}
 
-	refreshToken, err := s.refresh.MakeToken(user.Id)
+	refreshToken, err := s.refresh.NewToken(user.Id)
 	if err != nil {
 		return "", "", errors.Wrap(err, "failed to create refresh token")
 	}

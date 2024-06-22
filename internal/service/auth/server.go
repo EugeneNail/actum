@@ -16,8 +16,16 @@ func NewServer(authentication AuthenticationService) *Server {
 	return &Server{authentication: authentication}
 }
 
-func (s *Server) Login(context.Context, *pb.LoginRequest) (*pb.LoginResponse, error) {
-	return &pb.LoginResponse{}, nil
+func (s *Server) Login(ctx context.Context, r *pb.LoginRequest) (*pb.LoginResponse, error) {
+	accessToken, refreshToken, err := s.authentication.Login(ctx, r.Email, r.Password)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &pb.LoginResponse{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+	}, nil
 }
 
 func (s *Server) Register(ctx context.Context, r *pb.RegisterRequest) (*pb.RegisterResponse, error) {
