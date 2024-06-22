@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/EugeneNail/actum/internal/database/resource/users"
-	"github.com/EugeneNail/actum/internal/service/jwt"
+	"github.com/EugeneNail/actum/internal/service/auth/jwt"
 	"github.com/EugeneNail/actum/internal/service/response"
 	"net/http"
 	"regexp"

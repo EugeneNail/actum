@@ -1,14 +1,13 @@
 package middleware
 
 import (
-	"database/sql"
 	"github.com/EugeneNail/actum/internal/service/env"
 	"net/http"
 	"path/filepath"
 	"strings"
 )
 
-func RedirectToFrontend(_ *sql.DB, handler http.Handler) http.Handler {
+func RedirectToFrontend(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 
 		if !strings.HasPrefix(request.URL.Path, "/api") {

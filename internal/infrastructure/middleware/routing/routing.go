@@ -2,7 +2,6 @@ package routing
 
 import (
 	"context"
-	"database/sql"
 	"net/http"
 	"regexp"
 	"strings"
@@ -18,7 +17,7 @@ type route struct {
 
 type CtxKey string
 
-func Middleware(_ *sql.DB, __ http.Handler) http.Handler {
+func Middleware(__ http.Handler) http.Handler {
 	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 		var allowedMethods []string
 		for _, route := range routes {
