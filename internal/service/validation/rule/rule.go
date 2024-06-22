@@ -1,8 +1,10 @@
 package rule
 
 import (
+	"database/sql"
 	"fmt"
 	"github.com/EugeneNail/actum/internal/database/mysql"
+	"github.com/EugeneNail/actum/internal/infrastructure/errors"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -216,19 +218,10 @@ func newUniqueRuleFunc(rule []string) Func {
 		}
 
 		query := fmt.Sprintf("SELECT COUNT(*) FROM %s WHERE %s = ?", table, column)
-		rows, err := db.Query(query, value)
-		defer rows.Close()
-		if err != nil {
-			return "", fmt.Errorf("newUniqueRuleFunc(): %w", err)
-		}
-
 		var count int
-		for rows.Next() {
-			err := rows.Scan(&count)
-
-			if err != nil {
-				return "", fmt.Errorf("newUniqueRuleFunc(): %w", err)
-			}
+		err = db.QueryRow(query, value).Scan(&count)
+		if err != nil && !errors.Is(err, sql.ErrNoRows) {
+			return "", fmt.Errorf("newUniqueRuleFunc(): %w", err)
 		}
 
 		if count > 0 {
