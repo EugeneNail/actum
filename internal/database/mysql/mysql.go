@@ -10,7 +10,14 @@ import (
 )
 
 func Connect() (*sql.DB, error) {
-	db, err := sql.Open("mysql", GetDsn())
+	db, err := sql.Open("mysql", fmt.Sprintf(
+		"%s:%s@tcp(%s:%s)/%s?parseTime=true",
+		os.Getenv("DB_USERNAME"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_PORT"),
+		os.Getenv("DB_NAME"),
+	))
 	if err != nil {
 		return db, fmt.Errorf("mysql.Connect(): %w", err)
 	}
@@ -23,15 +30,25 @@ func Connect() (*sql.DB, error) {
 	return db, nil
 }
 
-func GetDsn() string {
-	return fmt.Sprintf(
+func MustConnect() *sql.DB {
+	db, err := sql.Open("mysql", fmt.Sprintf(
 		"%s:%s@tcp(%s:%s)/%s?parseTime=true",
 		os.Getenv("DB_USERNAME"),
 		os.Getenv("DB_PASSWORD"),
 		os.Getenv("DB_HOST"),
 		os.Getenv("DB_PORT"),
 		os.Getenv("DB_NAME"),
-	)
+	))
+	if err != nil {
+		panic(err)
+	}
+
+	db.SetMaxOpenConns(150)
+	db.SetMaxIdleConns(150)
+	db.SetConnMaxLifetime(time.Second * 5)
+	db.SetConnMaxIdleTime(time.Second * 10)
+
+	return db
 }
 
 func Truncate(db *sql.DB, table string) error {
